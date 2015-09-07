@@ -1,5 +1,5 @@
 // 
-// impressionistDoc.cpp
+// ImpressionistDoc.cpp
 //
 // It basically maintain the bitmap for answering the color query from the brush.
 // It also acts as the bridge between brushes and UI (including views)
