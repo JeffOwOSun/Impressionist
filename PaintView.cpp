@@ -150,6 +150,7 @@ int PaintView::handle(int event)
 	    redraw();
 		break;
 	case FL_PUSH:
+		printf("pushed!\n");
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
 		if (Fl::event_button()>1)
@@ -160,6 +161,7 @@ int PaintView::handle(int event)
 		redraw();
 		break;
 	case FL_DRAG:
+		printf("dragged\n");
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
 		if (Fl::event_button()>1)
@@ -170,6 +172,7 @@ int PaintView::handle(int event)
 		redraw();
 		break;
 	case FL_RELEASE:
+		printf("released\n");
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
 		if (Fl::event_button()>1)
@@ -180,6 +183,7 @@ int PaintView::handle(int event)
 		redraw();
 		break;
 	case FL_MOVE:
+		printf("moved!\n");
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
 		break;
