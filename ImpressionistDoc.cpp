@@ -1,5 +1,5 @@
 // 
-// ImpressionistDoc.cpp
+// impressionistDoc.cpp
 //
 // It basically maintain the bitmap for answering the color query from the brush.
 // It also acts as the bridge between brushes and UI (including views)
@@ -14,6 +14,7 @@
 
 // Include individual brush headers here.
 #include "PointBrush.h"
+#include "LineBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
