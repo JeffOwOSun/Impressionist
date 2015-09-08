@@ -8,6 +8,7 @@
 #define CIRCLEBRUSH_H
 
 #include "ImpBrush.h"
+#include <math.h>
 
 class CircleBrush : public ImpBrush
 {
@@ -19,8 +20,6 @@ public:
 	void BrushEnd( const Point source, const Point target );
 	char* BrushName( void );
 };
-
-extern void DrawCircle(float cx, float cy, float r, int num_segments);
 
 extern int GetNumCircleSegments(float r);
 

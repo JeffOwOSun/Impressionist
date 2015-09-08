@@ -35,47 +35,29 @@ void CircleBrush::BrushMove( const Point source, const Point target )
 		printf( "CircleBrush::BrushMove  document is NULL\n" );
 		return;
 	}
-	//get the size of the circle;
-	float size = (float) pDoc -> getSize();
+	//get the radius of the circle;
+	float r = ((float) pDoc -> getSize()) / 2;
 	//The brush is moved to a new place. I need to draw a filled circle there
-	int num_segments = GetNumCircleSegments(size);
-	DrawFilledCircle(target.x, target.y, size, num_segments);
-}
+	int num_segments = GetNumCircleSegments(r);
 
-void CircleBrush::BrushEnd( const Point source, const Point target )
-{
-	// do nothing so far
-}
-
-int GetNumCircleSegments(float r)
-{
-	return 10 * sqrtf(r);//change the 10 to a smaller/bigger number as needed
-}
-/**
-* \brief Draw a Filled circle
-* \param cx Coordinate for center
-* \param cy Coordinate for center
-* \param r Radius
-* \param num_segments Number of segment you want to draw to approximate the arc
-*/
-void DrawFilledCircle(float cx, float cy, float r, int num_segments)
-{
 	float theta = 2 * 3.1415926 / float(num_segments);
 	float tangetial_factor = tanf(theta);//calculate the tangential factor
 
 	float radial_factor = cosf(theta);//calculate the radial factor
-
+	
+	//set the initial point coordinate
 	float x = r;//we start at angle = 0
-
 	float y = 0;
 
 	glBegin(GL_TRIANGLE_FAN);
+	//set color
+	SetColor(source);
 	//first point is the center point
-	glVertex2f(cx, cy);
+	glVertex2f(target.x, target.y);
 	//then loop to add the bounding points to the vertex map
-	for(int ii = 0; ii < num_segments; ii++)
+	for (int ii = 0; ii < num_segments; ii++)
 	{
-		glVertex2f(x + cx, y + cy);//output vertex
+		glVertex2f(x + target.x, y + target.y);//output vertex
 
 		//calculate the tangential vector
 		//remember, the radial vector is (x, y)
@@ -96,6 +78,16 @@ void DrawFilledCircle(float cx, float cy, float r, int num_segments)
 	}
 	//last point should return to the first bounding point,
 	//for GL_TRIANGLE_FAN doesn't close the loop altomatically
-	glVertex2f(cx + r, cy);
+	glVertex2f(target.x + r, target.y);
 	glEnd();
+}
+
+void CircleBrush::BrushEnd( const Point source, const Point target )
+{
+	// do nothing so far
+}
+
+int GetNumCircleSegments(float r)
+{
+	return 10 * sqrtf(r);//change the 10 to a smaller/bigger number as needed
 }
