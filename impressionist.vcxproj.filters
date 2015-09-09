@@ -39,14 +39,13 @@
     <ClCompile Include="PointBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="ScatteredPointBrush.cpp">
-=======
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="LineBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="CircleBrush.cpp">
->>>>>>> master
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -75,14 +74,13 @@
     <ClInclude Include="PointBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="ScatteredPointBrush.h">
-=======
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="CircleBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LineBrush.h">
->>>>>>> master
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
