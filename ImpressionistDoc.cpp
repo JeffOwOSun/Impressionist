@@ -1,4 +1,4 @@
-// 
+//
 // impressionistDoc.cpp
 //
 // It basically maintain the bitmap for answering the color query from the brush.
@@ -14,15 +14,16 @@
 
 // Include individual brush headers here.
 #include "PointBrush.h"
+#include "CircleBrush.h"
 #include "LineBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
-ImpressionistDoc::ImpressionistDoc() 
+ImpressionistDoc::ImpressionistDoc()
 {
-	// Set NULL image name as init. 
-	m_imageName[0]	='\0';	
+	// Set NULL image name as init.
+	m_imageName[0]	='\0';
 
 	m_nWidth		= -1;
 	m_ucBitmap		= NULL;
@@ -39,12 +40,12 @@ ImpressionistDoc::ImpressionistDoc()
 	ImpBrush::c_pBrushes[BRUSH_LINES]				
 		= new LineBrush( this, "Lines" );
 	ImpBrush::c_pBrushes[BRUSH_CIRCLES]				
-		= new PointBrush( this, "Circles" );
+		= new CircleBrush( this, "Circles" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS]	
 		= new PointBrush( this, "Scattered Points" );
-	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]		
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]
 		= new PointBrush( this, "Scattered Lines" );
-	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]
 		= new PointBrush( this, "Scattered Circles" );
 
 	// make one of the brushes current
@@ -54,9 +55,9 @@ ImpressionistDoc::ImpressionistDoc()
 
 
 //---------------------------------------------------------
-// Set the current UI 
+// Set the current UI
 //---------------------------------------------------------
-void ImpressionistDoc::setUI(ImpressionistUI* ui) 
+void ImpressionistDoc::setUI(ImpressionistUI* ui)
 {
 	m_pUI	= ui;
 }
@@ -64,7 +65,7 @@ void ImpressionistDoc::setUI(ImpressionistUI* ui)
 //---------------------------------------------------------
 // Returns the active picture/painting name
 //---------------------------------------------------------
-char* ImpressionistDoc::getImageName() 
+char* ImpressionistDoc::getImageName()
 {
 	return m_imageName;
 }
@@ -88,17 +89,17 @@ int ImpressionistDoc::getSize()
 
 //---------------------------------------------------------
 // Load the specified image
-// This is called by the UI when the load image button is 
+// This is called by the UI when the load image button is
 // pressed.
 //---------------------------------------------------------
-int ImpressionistDoc::loadImage(char *iname) 
+int ImpressionistDoc::loadImage(char *iname)
 {
 	// try to open the image to read
 	unsigned char*	data;
-	int				width, 
+	int				width,
 					height;
 
-	if ( (data=readBMP(iname, width, height))==NULL ) 
+	if ( (data=readBMP(iname, width, height))==NULL )
 	{
 		fl_alert("Can't load bitmap file");
 		return 0;
@@ -120,17 +121,17 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_ucPainting	= new unsigned char [width*height*3];
 	memset(m_ucPainting, 0, width*height*3);
 
-	m_pUI->m_mainWindow->resize(m_pUI->m_mainWindow->x(), 
-								m_pUI->m_mainWindow->y(), 
-								width*2, 
+	m_pUI->m_mainWindow->resize(m_pUI->m_mainWindow->x(),
+								m_pUI->m_mainWindow->y(),
+								width*2,
 								height+25);
 
 	// display it on origView
-	m_pUI->m_origView->resizeWindow(width, height);	
+	m_pUI->m_origView->resizeWindow(width, height);
 	m_pUI->m_origView->refresh();
 
 	// refresh paint view as well
-	m_pUI->m_paintView->resizeWindow(width, height);	
+	m_pUI->m_paintView->resizeWindow(width, height);
 	m_pUI->m_paintView->refresh();
 
 
@@ -140,10 +141,10 @@ int ImpressionistDoc::loadImage(char *iname)
 
 //----------------------------------------------------------------
 // Save the specified image
-// This is called by the UI when the save image menu button is 
+// This is called by the UI when the save image menu button is
 // pressed.
 //----------------------------------------------------------------
-int ImpressionistDoc::saveImage(char *iname) 
+int ImpressionistDoc::saveImage(char *iname)
 {
 
 	writeBMP(iname, m_nPaintWidth, m_nPaintHeight, m_ucPainting);
@@ -153,14 +154,14 @@ int ImpressionistDoc::saveImage(char *iname)
 
 //----------------------------------------------------------------
 // Clear the drawing canvas
-// This is called by the UI when the clear canvas menu item is 
+// This is called by the UI when the clear canvas menu item is
 // chosen
 //-----------------------------------------------------------------
-int ImpressionistDoc::clearCanvas() 
+int ImpressionistDoc::clearCanvas()
 {
 
 	// Release old storage
-	if ( m_ucPainting ) 
+	if ( m_ucPainting )
 	{
 		delete [] m_ucPainting;
 
@@ -168,10 +169,10 @@ int ImpressionistDoc::clearCanvas()
 		m_ucPainting	= new unsigned char [m_nPaintWidth*m_nPaintHeight*3];
 		memset(m_ucPainting, 0, m_nPaintWidth*m_nPaintHeight*3);
 
-		// refresh paint view as well	
+		// refresh paint view as well
 		m_pUI->m_paintView->refresh();
 	}
-	
+
 	return 0;
 }
 
@@ -180,14 +181,14 @@ int ImpressionistDoc::clearCanvas()
 //------------------------------------------------------------------
 GLubyte* ImpressionistDoc::GetOriginalPixel( int x, int y )
 {
-	if ( x < 0 ) 
+	if ( x < 0 )
 		x = 0;
-	else if ( x >= m_nWidth ) 
+	else if ( x >= m_nWidth )
 		x = m_nWidth-1;
 
-	if ( y < 0 ) 
+	if ( y < 0 )
 		y = 0;
-	else if ( y >= m_nHeight ) 
+	else if ( y >= m_nHeight )
 		y = m_nHeight-1;
 
 	return (GLubyte*)(m_ucBitmap + 3 * (y*m_nWidth + x));
@@ -200,4 +201,3 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 {
 	return GetOriginalPixel( p.x, p.y );
 }
-
