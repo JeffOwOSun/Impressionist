@@ -458,7 +458,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushLineWidthSlider->step(1);
 		m_BrushLineWidthSlider->value(m_nWidth);
 		m_BrushLineWidthSlider->align(FL_ALIGN_RIGHT);
-		m_BrushSizeSlider->callback(cb_widthSlides);
+		m_BrushLineWidthSlider->callback(cb_widthSlides);
 
     m_brushDialog->end();	
 
