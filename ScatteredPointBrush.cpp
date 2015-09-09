@@ -5,7 +5,7 @@
 // will look like the file with the different GL primitive calls.
 //
 #include <cstdlib>
-#include <time>
+#include <ctime>
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
 #include "ScatteredPointBrush.h"
@@ -21,12 +21,11 @@ void ScatteredPointBrush::BrushBegin( const Point source, const Point target )
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
 
-	//get the size of the scattered area
-	int size = pDoc->getSize();
 	//set the point size to 1
 	glPointSize((float)1);
 
 	BrushMove( source, target );
+	srand(time(0));
 }
 
 void ScatteredPointBrush::BrushMove( const Point source, const Point target )
@@ -38,19 +37,19 @@ void ScatteredPointBrush::BrushMove( const Point source, const Point target )
 		printf( "ScatteredPointBrush::BrushMove  document is NULL\n" );
 		return;
 	}
+	//get the size of the scattered area
+	int size = pDoc->getSize();
+	//# of points
+	int num_points = size;
 
-	for (int i = 0; i < size; ++i) {
-		for (int j = 0; j < size; ++j) {
-			srand(time(0));
-			if (((float) rand()) / ((float) RAND_MAX) > 0.5) {
-				//paint a point
-				glBegin( GL_POINTS );
-				Point paintPoint = new Point (target.x - size/2 + i, target.y - size/2 + j );
-				SetColor( paintPoint );
-				glVertex2d(paintPoint.x, paintPoint.y);
-				glEnd();
-			}
-		}
+	for (int i = 0; i < num_points; ++i) {
+		int x = rand() % size - size / 2;
+		int y = rand() % size - size / 2;
+		glBegin(GL_POINTS);
+		Point paintPoint = Point((target.x + x), (target.y + y));
+		SetColor(paintPoint);
+		glVertex2d(paintPoint.x, paintPoint.y);
+		glEnd();
 	}
 }
 
