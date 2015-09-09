@@ -20,7 +20,7 @@ void PointBrush::BrushBegin( const Point source, const Point target )
 {
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
-
+	
 	int size = pDoc->getSize();
 
 
