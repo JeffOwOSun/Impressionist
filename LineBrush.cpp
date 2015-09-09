@@ -20,9 +20,17 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
+	// The following lines is a pseudo implementation.
+	// We should control the width of line brush here and the
+	// control panel should called "line width".
+	// Which means the actual implementation should be like
+	/*
+		int width = pDoc->getLineWidth();
+		glLineWidth((float)size);
+	*/
 	int size = pDoc->getSize();
-
 	glLineWidth((float)size);
+	
 	BrushMove(source, target);
 
 }
@@ -37,11 +45,12 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		return;
 	}
 
-	glColor3f(1.0f, 0.0f, 0.5f);
-	glBegin(GL_LINES);
+	int lineLength = pDoc->getSize();
+
 	SetColor(source);
-	glVertex2d(target.x - 10, target.y);
-	glVertex2d(target.x + 10, target.y);
+	glBegin(GL_LINES);
+	glVertex2d(target.x - lineLength, target.y);
+	glVertex2d(target.x + lineLength, target.y);
 
 	GLenum error_flag;
 	error_flag = glGetError();
