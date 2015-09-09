@@ -28,8 +28,9 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 		int width = pDoc->getLineWidth();
 		glLineWidth((float)size);
 	*/
-	int size = pDoc->getSize();
-	glLineWidth((float)size);
+	int width = pDoc->getWidth();
+	printf("%d\n", width);
+	glLineWidth((float)width);
 	
 	BrushMove(source, target);
 
