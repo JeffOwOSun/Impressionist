@@ -38,7 +38,7 @@ void CircleBrush::BrushMove( const Point source, const Point target )
 
 	float r = ((float) pDoc -> getSize()) / 2;
 
-	DrawCircle(source, target, r)
+	DrawCircle(source, target, r);
 }
 
 void CircleBrush::BrushEnd( const Point source, const Point target )
@@ -49,7 +49,7 @@ void CircleBrush::BrushEnd( const Point source, const Point target )
 /**
  * \brief Draw a circle, with source point and target point and radius given
  */
-void DrawCircle(Point source, Point target, float r) {
+void CircleBrush::DrawCircle(Point source, Point target, float r) {
 	//The brush is moved to a new place. I need to draw a filled circle there
 	int num_segments = 10 * sqrtf(r);//change the 10 to a smaller/bigger number as needed
 

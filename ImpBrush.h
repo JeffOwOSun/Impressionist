@@ -63,6 +63,4 @@ private:
 	char*				m_pBrushName;
 };
 
-extern void SetColor( const Point source );
-
 #endif
