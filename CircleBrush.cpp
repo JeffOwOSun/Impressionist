@@ -38,7 +38,7 @@ void CircleBrush::BrushMove( const Point source, const Point target )
 
 	float r = ((float) pDoc -> getSize()) / 2;
 
-	DrawCircle(source, target, r)
+	DrawCircle(source, target, r);
 }
 
 void CircleBrush::BrushEnd( const Point source, const Point target )

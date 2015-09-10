@@ -18,6 +18,7 @@
 #include "CircleBrush.h"
 #include "LineBrush.h"
 #include "ScatteredLineBrush.h"
+#include "ScatteredCircleBrush.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 

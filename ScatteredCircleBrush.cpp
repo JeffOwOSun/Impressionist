@@ -41,7 +41,8 @@ void ScatteredCircleBrush::BrushMove( const Point source, const Point target )
 	for (int i = 0; i < num_points; ++i) {
 		int x = rand() % size - size / 2;
 		int y = rand() % size - size / 2;
-    DrawCircle(paintPoint, paintPoint, size / 2);
+		Point paintPoint = Point((target.x + x), (target.y + y));
+		DrawCircle(paintPoint, paintPoint, size / 2);
 	}
 }
 
