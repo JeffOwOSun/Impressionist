@@ -21,6 +21,6 @@ public:
 	char* BrushName( void );
 };
 
-extern int GetNumCircleSegments(float r);
+extern void DrawCircle(Point source, Point target, float r);
 
 #endif
