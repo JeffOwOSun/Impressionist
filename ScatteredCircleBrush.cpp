@@ -13,7 +13,7 @@
 extern float frand();
 
 ScatteredCircleBrush::ScatteredCircleBrush( ImpressionistDoc* pDoc, char* name ) :
-	ImpBrush(pDoc,name)
+	CircleBrush(pDoc,name)
 {}
 
 void ScatteredCircleBrush::BrushBegin( const Point source, const Point target )
