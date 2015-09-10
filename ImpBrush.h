@@ -24,7 +24,7 @@ enum
 
 class ImpressionistDoc; // Pre-declaring class
 
-class Point 
+class Point
 {
 public:
 	Point() {};
@@ -33,7 +33,7 @@ public:
 	int x, y;
 };
 
-class ImpBrush 
+class ImpBrush
 {
 protected:
 	ImpBrush::ImpBrush( ImpressionistDoc* pDoc = NULL, char* name = NULL );
@@ -52,7 +52,7 @@ public:
 
 	// Return the name of the brush (not used in this version).
 	char* BrushName( void );
-	
+
 	static int			c_nBrushCount;	// How many brushes we have,
 	static ImpBrush**	c_pBrushes;		// and what they are.
 
@@ -62,5 +62,7 @@ private:
 	// Brush's name (not used in this version).
 	char*				m_pBrushName;
 };
+
+extern void SetColor( const Point source );
 
 #endif
