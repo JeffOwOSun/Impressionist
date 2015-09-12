@@ -150,6 +150,7 @@
     <ClCompile Include="PointBrush.cpp" />
     <ClCompile Include="ScatteredLineBrush.cpp" />
     <ClCompile Include="ScatteredPointBrush.cpp" />
+    <ClCompile Include="utility\BrushPaint.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitmap.h" />
@@ -166,6 +167,7 @@
     <ClInclude Include="PointBrush.h" />
     <ClInclude Include="ScatteredLineBrush.h" />
     <ClInclude Include="ScatteredPointBrush.h" />
+    <ClInclude Include="utility\BrushPaint.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
