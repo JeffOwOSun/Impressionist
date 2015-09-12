@@ -35,16 +35,29 @@ void CircleBrush::BrushMove( const Point source, const Point target )
 		printf( "CircleBrush::BrushMove  document is NULL\n" );
 		return;
 	}
-	//get the radius of the circle;
+
 	float r = ((float) pDoc -> getSize()) / 2;
+
+	DrawCircle(source, target, r);
+}
+
+void CircleBrush::BrushEnd( const Point source, const Point target )
+{
+	// do nothing so far
+}
+
+/**
+ * \brief Draw a circle, with source point and target point and radius given
+ */
+void CircleBrush::DrawCircle(Point source, Point target, float r) {
 	//The brush is moved to a new place. I need to draw a filled circle there
-	int num_segments = GetNumCircleSegments(r);
+	int num_segments = 10 * sqrtf(r);//change the 10 to a smaller/bigger number as needed
 
 	float theta = 2 * 3.1415926 / float(num_segments);
 	float tangetial_factor = tanf(theta);//calculate the tangential factor
 
 	float radial_factor = cosf(theta);//calculate the radial factor
-	
+
 	//set the initial point coordinate
 	float x = r;//we start at angle = 0
 	float y = 0;
@@ -80,14 +93,4 @@ void CircleBrush::BrushMove( const Point source, const Point target )
 	//for GL_TRIANGLE_FAN doesn't close the loop altomatically
 	glVertex2f(target.x + r, target.y);
 	glEnd();
-}
-
-void CircleBrush::BrushEnd( const Point source, const Point target )
-{
-	// do nothing so far
-}
-
-int GetNumCircleSegments(float r)
-{
-	return 10 * sqrtf(r);//change the 10 to a smaller/bigger number as needed
 }
