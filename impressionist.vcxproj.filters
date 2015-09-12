@@ -36,6 +36,9 @@
     <ClCompile Include="PaintView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="utility\BrushPaint.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="PointBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -45,10 +48,10 @@
     <ClCompile Include="ScatteredLineBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utility\BrushPaint.cpp">
+    <ClCompile Include="CircleBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CircleBrush.cpp">
+    <ClCompile Include="ScatteredCircleBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScatteredPointBrush.cpp">
@@ -77,6 +80,9 @@
     <ClInclude Include="PaintView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utility\BrushPaint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="PointBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -86,13 +92,13 @@
     <ClInclude Include="ScatteredLineBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utility\BrushPaint.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CircleBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScatteredPointBrush.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScatteredCircleBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

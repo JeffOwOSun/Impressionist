@@ -1,5 +1,5 @@
 //
-// ScatteredPointBrush.cpp
+// ScatteredCircleBrush.cpp
 //
 // The implementation of Scattered Point Brush. It is a kind of ImpBrush. All your brush implementations
 // will look like the file with the different GL primitive calls.
@@ -8,52 +8,45 @@
 #include <ctime>
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
-#include "ScatteredPointBrush.h"
+#include "ScatteredCircleBrush.h"
 
 extern float frand();
 
-ScatteredPointBrush::ScatteredPointBrush( ImpressionistDoc* pDoc, char* name ) :
-	ImpBrush(pDoc,name)
+ScatteredCircleBrush::ScatteredCircleBrush( ImpressionistDoc* pDoc, char* name ) :
+	CircleBrush(pDoc,name)
 {}
 
-void ScatteredPointBrush::BrushBegin( const Point source, const Point target )
+void ScatteredCircleBrush::BrushBegin( const Point source, const Point target )
 {
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
-
-	//set the point size to 1
-	glPointSize((float)1);
-
+  //set the brush size for this stroke
+  size = pDoc->getSize();
+  //fix the point nubmer to be 3
+  num_points = 3;
 	srand(time(0));
 	BrushMove( source, target );
 }
 
-void ScatteredPointBrush::BrushMove( const Point source, const Point target )
+void ScatteredCircleBrush::BrushMove( const Point source, const Point target )
 {
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
 
 	if ( pDoc == NULL ) {
-		printf( "ScatteredPointBrush::BrushMove  document is NULL\n" );
+		printf( "ScatteredCircleBrush::BrushMove  document is NULL\n" );
 		return;
 	}
-	//get the size of the scattered area
-	int size = pDoc->getSize();
-	//# of points
-	int num_points = size;
 
 	for (int i = 0; i < num_points; ++i) {
 		int x = rand() % size - size / 2;
 		int y = rand() % size - size / 2;
-		glBegin(GL_POINTS);
 		Point paintPoint = Point((target.x + x), (target.y + y));
-		SetColor(paintPoint);
-		glVertex2d(paintPoint.x, paintPoint.y);
-		glEnd();
+		DrawCircle(paintPoint, paintPoint, size / 2);
 	}
 }
 
-void ScatteredPointBrush::BrushEnd( const Point source, const Point target )
+void ScatteredCircleBrush::BrushEnd( const Point source, const Point target )
 {
 	// do nothing so far
 }
