@@ -23,8 +23,6 @@ void PointBrush::BrushBegin( const Point source, const Point target )
 	
 	int size = pDoc->getSize();
 
-
-
 	glPointSize( (float)size );
 
 	BrushMove( source, target );
