@@ -280,6 +280,11 @@ void ImpressionistUI::cb_sizeSlides(Fl_Widget* o, void* v)
 	((ImpressionistUI*)(o->user_data()))->m_nSize=int( ((Fl_Slider *)o)->value() ) ;
 }
 
+void ImpressionistUI::cb_widthSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nWidth = int(((Fl_Slider *)o)->value());
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -328,6 +333,11 @@ int ImpressionistUI::getSize()
 	return m_nSize;
 }
 
+int ImpressionistUI::getWidth()
+{
+	return m_nWidth;
+}
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -337,6 +347,13 @@ void ImpressionistUI::setSize( int size )
 
 	if (size<=40) 
 		m_BrushSizeSlider->value(m_nSize);
+}
+
+void ImpressionistUI::setWidth(int width)
+{
+	m_nWidth = width;
+	if (width <= 40)
+		m_BrushLineWidthSlider->value(m_nWidth);
 }
 
 // Main menu definition
@@ -402,6 +419,7 @@ ImpressionistUI::ImpressionistUI() {
 	// init values
 
 	m_nSize = 10;
+	m_nWidth = 1;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -428,6 +446,19 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushSizeSlider->value(m_nSize);
 		m_BrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_BrushSizeSlider->callback(cb_sizeSlides);
+
+		// Add brush size slider to the dialog
+		m_BrushLineWidthSlider = new Fl_Value_Slider(10, 120, 300, 20, "Line Width");
+		m_BrushLineWidthSlider->user_data((void*)(this));
+		m_BrushLineWidthSlider->type(FL_HOR_NICE_SLIDER);
+		m_BrushLineWidthSlider->labelfont(FL_COURIER);
+		m_BrushLineWidthSlider->labelsize(12);
+		m_BrushLineWidthSlider->minimum(1);
+		m_BrushLineWidthSlider->maximum(40);
+		m_BrushLineWidthSlider->step(1);
+		m_BrushLineWidthSlider->value(m_nWidth);
+		m_BrushLineWidthSlider->align(FL_ALIGN_RIGHT);
+		m_BrushLineWidthSlider->callback(cb_widthSlides);
 
     m_brushDialog->end();	
 
