@@ -11,7 +11,7 @@
 extern float frand();
 
 LineBrush::LineBrush(ImpressionistDoc* pDoc, char* name) :
-ImpBrush(pDoc, name)
+ImpBrush(pDoc, name), lineLength(10), lineAngle(0), lineXProj(10), lineYProj(0)
 {
 }
 
@@ -31,6 +31,16 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	int width = pDoc->getWidth();
 	printf("%d\n", width);
 	glLineWidth((float)width);
+
+	//get the size of the brush and save it
+	lineLength = pDoc->getSize();
+
+	//get the angle of the brush and save it
+	lineAngle = pDoc->getAngle();
+
+	//calculate the x and y projection of line length
+	lineXProj = (int) lineLength * cos(lineAngle);
+	lineYProj = (int) lineLength * sin(lineAngle);
 	
 	BrushMove(source, target);
 
@@ -46,12 +56,17 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		return;
 	}
 
-	int lineLength = pDoc->getSize();
+	//calculate the start and end point of the line to draw
+	int x1, y1, x2, y2;
+	x1 = target.x - lineXProj / 2;
+	y1 = target.y - lineYProj / 2;
+	x2 = target.x + lineXProj / 2;
+	y2 = target.y + lineYProj / 2;
 
 	SetColor(source);
 	glBegin(GL_LINES);
-	glVertex2d(target.x - lineLength, target.y);
-	glVertex2d(target.x + lineLength, target.y);
+	glVertex2d(x1, y1);
+	glVertex2d(x2, y2);
 
 	GLenum error_flag;
 	error_flag = glGetError();
