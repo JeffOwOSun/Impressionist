@@ -9,7 +9,7 @@
 #include <math.h>
 
 ScatteredLineBrush::ScatteredLineBrush(ImpressionistDoc* pDoc, char* name) :
-ImpBrush(pDoc, name)
+ImpBrush(pDoc, name), lineLength(10), lineAngle(0), lineXProj(10), lineYProj(0)
 {
 
 }
@@ -19,8 +19,28 @@ void ScatteredLineBrush::BrushBegin(const Point source, const Point target)
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
-	int size = pDoc->getSize();
-	glLineWidth((float)1);
+	// The following lines is a pseudo implementation.
+	// We should control the width of line brush here and the
+	// control panel should called "line width".
+	// Which means the actual implementation should be like
+	/*
+	int width = pDoc->getLineWidth();
+	glLineWidth((float)size);
+	*/
+	int width = pDoc->getWidth();
+	printf("%d\n", width);
+	glLineWidth((float)width);
+
+	//get the size of the brush and save it
+	lineLength = pDoc->getSize();
+
+	//get the angle of the brush and save it
+	lineAngle = pDoc->getAngle();
+
+	//calculate the x and y projection of line length
+	lineXProj = (int)lineLength * cos(lineAngle);
+	lineYProj = (int)lineLength * sin(lineAngle);
+
 	BrushMove(source, target);
 }
 
@@ -33,26 +53,20 @@ void ScatteredLineBrush::BrushMove(const Point source, const Point target)
 		printf("ScatteredLineBrush::BrushMove document is NULL \n");
 		return;
 	}
-
-	int lineLength = pDoc->getSize();
 	
-	int upperX = target.x + lineLength;
-	int lowerX = target.x - lineLength;
-	int upperY = target.y + lineLength;
-	int lowerY = target.y - lineLength;
+	int upperX = target.x + lineXProj / 2;
+	int lowerX = target.x - lineXProj / 2;
+	int upperY = target.y + lineYProj / 2;
+	int lowerY = target.y - lineYProj / 2;
 
 
 	for (int i = 0; i < 4; i++) {
 		glBegin(GL_LINES);
-		int offset = rand() % (2 * lineLength);
-		int offset2 = rand() % (2 * lineLength);
-		Point tmp_point;
-		tmp_point.x = target.x - lineLength + offset;
-		tmp_point.y = target.y - lineLength + offset2;
-		SetColor(tmp_point);
-		printf("%d%d\n", offset, offset2);
-		glVertex2d(tmp_point.x - lineLength, tmp_point.y);
-		glVertex2d(tmp_point.x + lineLength, tmp_point.y);
+		int offsetX = rand() % (2 * lineLength) - lineLength;
+		int offsetY = rand() % (2 * lineLength) - lineLength;
+		SetColor(Point(source.x + offsetX, source.y + offsetY));
+		glVertex2d(upperX + offsetX, upperY + offsetY);
+		glVertex2d(lowerX + offsetX, lowerY + offsetY);
 		glEnd();
 	}
 	
