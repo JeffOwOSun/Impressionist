@@ -56,11 +56,10 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	}
 
 	//calculate the start and end point of the line to draw
-	int x1, y1, x2, y2;
-	x1 = target.x - lineXProj / 2;
-	y1 = target.y - lineYProj / 2;
-	x2 = target.x + lineXProj / 2;
-	y2 = target.y + lineYProj / 2;
+	int x1 = target.x - lineXProj / 2;
+	int y1 = target.y - lineYProj / 2;
+	int x2 = target.x + lineXProj / 2;
+	int y2 = target.y + lineYProj / 2;
 
 	SetColor(source);
 	glBegin(GL_LINES);
