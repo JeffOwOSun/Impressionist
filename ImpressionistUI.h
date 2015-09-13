@@ -37,6 +37,13 @@ public:
 	Fl_Window*			m_brushDialog;
 	Fl_Choice*			m_BrushTypeChoice;
 
+	// implement four ways to contol the stroke direction
+	// 1. Use slider value to control angle of lines
+	// 2. Use Right Mouse-dragged lines to indicate the angle
+	// 3. Use the direction of mouse moving
+	// 4. Use the gradient to control Stroke direction
+	Fl_Choice*			m_StrokeDirectionChoice;
+	
 	Fl_Slider*			m_BrushSizeSlider;
 	Fl_Slider*			m_BrushLineWidthSlider;
 	Fl_Slider*			m_BrushLineAngleSlider;
@@ -50,6 +57,8 @@ public:
 	void				resize_windows(int w, int h);
 
 	// Interface to get attribute
+	int					getStrokeDirection();
+	void				setStrokeDirection(int type);
 
 	int					getSize();
 	void				setSize(int size);
@@ -64,13 +73,15 @@ private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
 
 	// All attributes here
+	int		m_nStrokeDirection;
 	int		m_nSize;
 	int		m_nWidth;
 	int		m_nAngle;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
-	static Fl_Menu_Item		brushTypeMenu[NUM_BRUSH_TYPE+1];
+	static Fl_Menu_Item		brushTypeMenu[NUM_BRUSH_TYPE + 1];
+	static Fl_Menu_Item		strokeDirectionMenu[NUM_STROKE_DIR + 1];
 
 	static ImpressionistUI*	whoami(Fl_Menu_* o);
 
@@ -87,6 +98,7 @@ private:
 	static void	cb_sizeSlides(Fl_Widget* o, void* v);
 	static void cb_widthSlides(Fl_Widget* o, void* v);
 	static void cb_angleSlides(Fl_Widget* o, void* v);
+	static void cb_strokeDirectionChoice(Fl_Widget* o, void* v);
 };
 
 #endif

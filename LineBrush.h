@@ -24,6 +24,8 @@ private:
 	int lineAngle;
 	int lineXProj; //X projection of line length
 	int lineYProj; //Y projection of line length
+	int prevMouseX;
+	int prevMouseY;
 };
 
 #endif

@@ -25,9 +25,13 @@ public:
 
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
 	void	setBrushType(int type);			// called by the UI to set the brushType
+
+	int		getStrokeDirectionType();
 	int		getSize();						// get the UI size
 	int		getWidth();
 	int		getAngle();						// get the brush angle
+	
+	void	setStrokeDirectionType(int type); // called by the UI to set the brushType
 	void	setSize(int size);				// set the UI size
 	void	setWidth(int width);
 	void	setAngle(int angle);			// set the brush angle
@@ -48,7 +52,8 @@ public:
 
 
 	// The current active brush.
-	ImpBrush*			m_pCurrentBrush;	
+	ImpBrush*			m_pCurrentBrush;
+	int				m_pCurrentDirection;
 	// Size of the brush.
 	int m_nSize;							
 
