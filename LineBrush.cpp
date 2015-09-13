@@ -29,7 +29,6 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 		glLineWidth((float)size);
 	*/
 	int width = pDoc->getWidth();
-	printf("%d\n", width);
 	glLineWidth((float)width);
 
 	//get the size of the brush and save it
@@ -73,7 +72,6 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	if (error_flag != GL_NO_ERROR) {
 		printf("Error: %1s (%i) in %1s.\n", gluErrorString(error_flag), error_flag, "method name");
 	}
-
 	glEnd();
 }
 

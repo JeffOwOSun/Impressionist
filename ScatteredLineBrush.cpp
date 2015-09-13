@@ -20,7 +20,8 @@ void ScatteredLineBrush::BrushBegin(const Point source, const Point target)
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
 	int size = pDoc->getSize();
-	glLineWidth((float)1);
+	int width = pDoc->getWidth();
+	glLineWidth((float)width);
 	BrushMove(source, target);
 }
 
@@ -50,7 +51,6 @@ void ScatteredLineBrush::BrushMove(const Point source, const Point target)
 		tmp_point.x = target.x - lineLength + offset;
 		tmp_point.y = target.y - lineLength + offset2;
 		SetColor(tmp_point);
-		printf("%d%d\n", offset, offset2);
 		glVertex2d(tmp_point.x - lineLength, tmp_point.y);
 		glVertex2d(tmp_point.x + lineLength, tmp_point.y);
 		glEnd();
