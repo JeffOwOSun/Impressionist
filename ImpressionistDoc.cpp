@@ -94,6 +94,11 @@ int ImpressionistDoc::getWidth()
 	return m_pUI->getWidth();
 }
 
+int ImpressionistDoc::getAngle()
+{
+	return m_pUI->getAngle();
+}
+
 //---------------------------------------------------------
 // Load the specified image
 // This is called by the UI when the load image button is

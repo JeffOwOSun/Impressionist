@@ -285,6 +285,11 @@ void ImpressionistUI::cb_widthSlides(Fl_Widget* o, void* v)
 	((ImpressionistUI*)(o->user_data()))->m_nWidth = int(((Fl_Slider *)o)->value());
 }
 
+void ImpressionistUI::cb_angleSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nAngle = int(((Fl_Slider *)o)->value());
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -338,6 +343,11 @@ int ImpressionistUI::getWidth()
 	return m_nWidth;
 }
 
+int ImpressionistUI::getAngle()
+{
+	return m_nAngle;
+}
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -354,6 +364,13 @@ void ImpressionistUI::setWidth(int width)
 	m_nWidth = width;
 	if (width <= 40)
 		m_BrushLineWidthSlider->value(m_nWidth);
+}
+
+void ImpressionistUI::setAngle(int angle)
+{
+	m_nAngle = angle;
+	if (angle <= 360)
+		m_BrushLineAngleSlider->value(m_nAngle);
 }
 
 // Main menu definition
@@ -420,6 +437,7 @@ ImpressionistUI::ImpressionistUI() {
 
 	m_nSize = 10;
 	m_nWidth = 1;
+	m_nAngle = 0;
 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -448,7 +466,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushSizeSlider->callback(cb_sizeSlides);
 
 		// Add brush size slider to the dialog
-		m_BrushLineWidthSlider = new Fl_Value_Slider(10, 120, 300, 20, "Line Width");
+		m_BrushLineWidthSlider = new Fl_Value_Slider(10, 110, 300, 20, "Line Width");
 		m_BrushLineWidthSlider->user_data((void*)(this));
 		m_BrushLineWidthSlider->type(FL_HOR_NICE_SLIDER);
 		m_BrushLineWidthSlider->labelfont(FL_COURIER);
@@ -459,6 +477,19 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushLineWidthSlider->value(m_nWidth);
 		m_BrushLineWidthSlider->align(FL_ALIGN_RIGHT);
 		m_BrushLineWidthSlider->callback(cb_widthSlides);
+
+		// Add brush angle slider to the dialog
+		m_BrushLineAngleSlider = new Fl_Value_Slider(10, 140, 300, 20, "Line Angle");
+		m_BrushLineAngleSlider->user_data((void*)(this));
+		m_BrushLineAngleSlider->type(FL_HOR_NICE_SLIDER);
+		m_BrushLineAngleSlider->labelfont(FL_COURIER);
+		m_BrushLineAngleSlider->labelsize(12);
+		m_BrushLineAngleSlider->minimum(0);
+		m_BrushLineAngleSlider->maximum(359);
+		m_BrushLineAngleSlider->step(1);
+		m_BrushLineAngleSlider->value(m_nAngle);
+		m_BrushLineAngleSlider->align(FL_ALIGN_RIGHT);
+		m_BrushLineAngleSlider->callback(cb_angleSlides);
 
     m_brushDialog->end();	
 
