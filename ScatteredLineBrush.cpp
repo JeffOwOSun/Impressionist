@@ -40,7 +40,6 @@ void ScatteredLineBrush::BrushBegin(const Point source, const Point target)
 	//calculate the x and y projection of line length
 	lineXProj = (int)lineLength * cos(lineAngle);
 	lineYProj = (int)lineLength * sin(lineAngle);
-
 	BrushMove(source, target);
 }
 
@@ -62,11 +61,13 @@ void ScatteredLineBrush::BrushMove(const Point source, const Point target)
 
 	for (int i = 0; i < 4; i++) {
 		glBegin(GL_LINES);
+
 		int offsetX = rand() % (2 * lineLength) - lineLength;
 		int offsetY = rand() % (2 * lineLength) - lineLength;
 		SetColor(Point(source.x + offsetX, source.y + offsetY));
 		glVertex2d(upperX + offsetX, upperY + offsetY);
 		glVertex2d(lowerX + offsetX, lowerY + offsetY);
+
 		glEnd();
 	}
 	
