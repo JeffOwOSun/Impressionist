@@ -167,6 +167,7 @@
     <ClInclude Include="ScatteredPointBrush.h" />
     <ClInclude Include="ScatteredCircleBrush.h" />
     <ClInclude Include="utility\Filter.h" />
+    <ClInclude Include="utility\SaveMatrix.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

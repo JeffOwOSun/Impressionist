@@ -104,5 +104,8 @@
     <ClInclude Include="utility\Filter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utility\SaveMatrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

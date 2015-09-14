@@ -144,28 +144,41 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_ucBitmap		= data;
 
 	// allocate and calculate the Intensity map of the original Image
-	m_ucIntensity = new unsigned char[width*height];
+	m_ucIntensity = new GLubyte[width*height];
 	for (int i = 0; i < width; ++i)
 		for (int j = 0; j < height; ++j)
 			m_ucIntensity[j * width + i] = filterIntensity(m_ucBitmap + 3 * (j * width + i));
+
+	//DEBUG//saveMatrix<unsigned char>("m_ucIntensity.txt", m_ucIntensity, width, height);
 
 	// allocate and calculate the gradient map of the original Image
 	// TODO: Wrap these filters in custom classes
 	m_iGradientX = new GLint[width*height];
 	m_iGradientY = new GLint[width*height];
 	GLint SobelX[9] =	  {	-1, 0, 1,
-						-2, 0, 2,
-						-1, 0, 1 }; //NOTE: Y from bottom to top
-	GLint SobelY[9] =   {	-1,-2,-1,
-						 0, 0, 0,
-						 1, 2, 1 };
+							-2, 0, 2,
+							-1, 0, 1 }; //NOTE: Y from bottom to top
+	GLint SobelY[9] =     {	-1,-2,-1,
+							 0, 0, 0,
+							 1, 2, 1 };
+	GLdouble Gaussian[9] =    {	0.0625, 0.125, 0.0625,
+								0.125, 0.250, 0.125,
+								0.0625, 0.125, 0.0625 };
+	GLubyte* blurred = new GLubyte[width*height];
 	for (int i = 0; i < width; ++i)
 		for (int j = 0; j < height; ++j)
 		{
-			m_iGradientX[j * width + i] = applyFilter(SobelX, 3, 3, m_ucIntensity, width, height, i, j);
-			m_iGradientY[j * width + i] = applyFilter(SobelY, 3, 3, m_ucIntensity, width, height, i, j);
+			blurred[j * width + i] = applyFilter((GLdouble*)&Gaussian, 3, 3, m_ucIntensity, width, height, i, j);
 		}
-
+	//DEBUG//saveMatrix<unsigned char>("m_blurred.txt", blurred, width, height);
+	for (int i = 0; i < width; ++i)
+		for (int j = 0; j < height; ++j)
+		{
+			m_iGradientX[j * width + i] = applyFilter((GLint*)&SobelX, 3, 3, blurred, width, height, i, j);
+			m_iGradientY[j * width + i] = applyFilter((GLint*)&SobelY, 3, 3, blurred, width, height, i, j);
+		}
+	//DEBUG//saveMatrix<int>("m_iGradientX.txt", m_iGradientX, width, height);
+	//DEBUG//saveMatrix<int>("m_iGradientY.txt", m_iGradientY, width, height);
 
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
