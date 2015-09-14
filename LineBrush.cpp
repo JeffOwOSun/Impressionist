@@ -7,6 +7,8 @@
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
 #include "LineBrush.h"
+#include <iostream>
+using namespace std;
 
 extern float frand();
 
@@ -40,6 +42,11 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	//calculate the x and y projection of line length
 	lineXProj = (int) lineLength * cos(lineAngle);
 	lineYProj = (int) lineLength * sin(lineAngle);
+
+
+	// If the option is ....
+	prevMouseX = Fl::event_x();
+	prevMouseY = Fl::event_y();
 	
 	BrushMove(source, target);
 
@@ -49,6 +56,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 {
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg = pDoc->m_pUI;
+
+	cout << Fl::event_x() << " " << Fl::event_y() << endl;
 
 	if (pDoc == NULL) {
 		printf("LineBrush::BrushMove document is NULL \n");
@@ -60,7 +69,7 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	int y1 = target.y - lineYProj / 2;
 	int x2 = target.x + lineXProj / 2;
 	int y2 = target.y + lineYProj / 2;
-
+	cout << pDoc->getStrokeDirectionType() << endl;
 	SetColor(source);
 	glBegin(GL_LINES);
 	glVertex2d(x1, y1);
