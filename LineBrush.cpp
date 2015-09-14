@@ -40,15 +40,13 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	lineAngle = pDoc->getAngle();
 
 	//calculate the x and y projection of line length
-	lineXProj = (int) lineLength * cos(lineAngle);
-	lineYProj = (int) lineLength * sin(lineAngle);
-
+	lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+	lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 
 	// If the option is ....
 	prevMouseX = Fl::event_x();
 	prevMouseY = Fl::event_y();
-	cout << "when begin : " << prevMouseX << " " << prevMouseY << endl;
-	
+
 	BrushMove(source, target);
 
 }
@@ -61,8 +59,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	int strokeDirection = pDoc->getStrokeDirectionType();
 	switch (strokeDirection)
 	{
-	case DIR_SLIDER_OR_RIGHT_MOUSE :
-		
+	case DIR_SLIDER_OR_RIGHT_MOUSE:
+
 		break;
 	case DIR_BRUSH_DIRECTION:
 	{
@@ -77,12 +75,23 @@ void LineBrush::BrushMove(const Point source, const Point target)
 			lineAngle = atan(diffY / diffX);
 			cout << temp << endl;
 		}
-		lineXProj = (int)lineLength * cos(lineAngle);
-		lineYProj = (int)lineLength * sin(lineAngle);
+		lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+		lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
+		break;
 	}
-		break;
 	case DIR_GRADIENT:
+	{
+		//get the gradient at given source pixel
+		int idx = source.y * pDoc->m_nWidth + source.x;
+		GLint gradientX = pDoc->m_iGradientX[idx];
+		GLint gradientY = pDoc->m_iGradientY[idx];
+		//calculate line Angle and projection
+		lineAngle = (int)(atan2(gradientX, -gradientY) / PI * 360); //rotate 90 degree counter clockwise
+		printf("gradientX: %d gradientY: %d lineAngle: %d\n", gradientX, gradientY, lineAngle);
+		lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+		lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 		break;
+	}
 	}
 
 	if (pDoc == NULL) {

@@ -381,7 +381,7 @@ void ImpressionistUI::setWidth(int width)
 void ImpressionistUI::setAngle(int angle)
 {
 	m_nAngle = angle;
-	if (angle <= 360)
+	if (angle <= 359)
 		m_BrushLineAngleSlider->value(m_nAngle);
 }
 
@@ -447,6 +447,7 @@ ImpressionistUI::ImpressionistUI() {
 			// install paint view window
 			m_paintView = new PaintView(300, 25, 300, 275, "This is the paint view");//0jon
 			m_paintView->box(FL_DOWN_FRAME);
+			m_paintView->m_pUI = this; //add UI pointer to paintView so that paintView can update attributes in UI
 
 			// install original view window
 			m_origView = new OriginalView(0, 25, 300, 275, "This is the orig view");//300jon

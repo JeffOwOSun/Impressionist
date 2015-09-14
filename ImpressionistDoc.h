@@ -9,6 +9,8 @@
 
 #include "impressionist.h"
 #include "bitmap.h"
+#include "utility\Filter.h"
+//#include "utility\SaveMatrix.h"
 
 class ImpressionistUI;
 
@@ -47,8 +49,13 @@ public:
 	int				m_nPaintWidth, 
 					m_nPaintHeight;	
 	// Bitmaps for original image and painting.
-	unsigned char*	m_ucBitmap;
-	unsigned char*	m_ucPainting;
+	GLubyte*	m_ucBitmap;
+	GLubyte*	m_ucPainting;
+	// Bitmap for intensity of original image.
+	GLubyte*	m_ucIntensity;
+	// Gradient map for intensity of original image.
+	GLint * m_iGradientX;
+	GLint * m_iGradientY;
 
 
 	// The current active brush.
