@@ -257,3 +257,67 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 {
 	return GetOriginalPixel( p.x, p.y );
 }
+
+//------------------------------------------------------------------
+// Get the Intensity of original image coord x and y
+//------------------------------------------------------------------
+GLubyte ImpressionistDoc::GetIntensity(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_ucIntensity[y*m_nWidth + x];
+}
+GLubyte ImpressionistDoc::GetIntensity(Point point)
+{
+	return GetIntensity(point.x, point.y);
+}
+//------------------------------------------------------------------
+// Get the Gradient of original image coord x and y
+//------------------------------------------------------------------
+GLint ImpressionistDoc::GetGradientX(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_iGradientX[y*m_nWidth + x];
+}
+
+GLint ImpressionistDoc::GetGradientY(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_iGradientY[y*m_nWidth + x];
+}
+
+GLint ImpressionistDoc::GetGradientX(Point point)
+{
+	return GetGradientX(point.x, point.y);
+}
+GLint ImpressionistDoc::GetGradientY(Point point)
+{
+	return GetGradientY(point.x, point.y);
+}
+

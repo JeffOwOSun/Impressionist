@@ -82,9 +82,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	case DIR_GRADIENT:
 	{
 		//get the gradient at given source pixel
-		int idx = source.y * pDoc->m_nWidth + source.x;
-		GLint gradientX = pDoc->m_iGradientX[idx];
-		GLint gradientY = pDoc->m_iGradientY[idx];
+		GLint gradientX = pDoc->GetGradientX(source);
+		GLint gradientY = pDoc->GetGradientY(source);
 		//calculate line Angle and projection
 		lineAngle = (int)(atan2(gradientX, -gradientY) / PI * 360); //rotate 90 degree counter clockwise
 		printf("gradientX: %d gradientY: %d lineAngle: %d\n", gradientX, gradientY, lineAngle);
