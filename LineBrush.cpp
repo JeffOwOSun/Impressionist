@@ -47,6 +47,7 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	// If the option is ....
 	prevMouseX = Fl::event_x();
 	prevMouseY = Fl::event_y();
+	cout << "when begin : " << prevMouseX << " " << prevMouseY << endl;
 	
 	BrushMove(source, target);
 
@@ -57,7 +58,32 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
-	cout << Fl::event_x() << " " << Fl::event_y() << endl;
+	int strokeDirection = pDoc->getStrokeDirectionType();
+	switch (strokeDirection)
+	{
+	case DIR_SLIDER_OR_RIGHT_MOUSE :
+		
+		break;
+	case DIR_BRUSH_DIRECTION:
+	{
+		int curMouseX = Fl::event_x();
+		int curMouseY = Fl::event_y();
+		double diffX = curMouseX - prevMouseX;
+		if (diffX = 0) lineAngle = 0;
+		else {
+			double diffY = curMouseY - prevMouseY;
+			double temp = atan(diffY / diffX);
+			cout << "aaaa " << diffY / diffX << endl;
+			lineAngle = atan(diffY / diffX);
+			cout << temp << endl;
+		}
+		lineXProj = (int)lineLength * cos(lineAngle);
+		lineYProj = (int)lineLength * sin(lineAngle);
+	}
+		break;
+	case DIR_GRADIENT:
+		break;
+	}
 
 	if (pDoc == NULL) {
 		printf("LineBrush::BrushMove document is NULL \n");
@@ -69,7 +95,6 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	int y1 = target.y - lineYProj / 2;
 	int x2 = target.x + lineXProj / 2;
 	int y2 = target.y + lineYProj / 2;
-	cout << pDoc->getStrokeDirectionType() << endl;
 	SetColor(source);
 	glBegin(GL_LINES);
 	glVertex2d(x1, y1);
@@ -81,6 +106,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		printf("Error: %1s (%i) in %1s.\n", gluErrorString(error_flag), error_flag, "method name");
 	}
 	glEnd();
+	prevMouseX = Fl::event_x();
+	prevMouseY = Fl::event_y();
 }
 
 void LineBrush::BrushEnd(const Point source, const Point target)
