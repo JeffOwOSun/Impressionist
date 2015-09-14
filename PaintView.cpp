@@ -214,8 +214,6 @@ int PaintView::handle(int event)
 
 	}
 
-
-
 	return 1;
 }
 
@@ -242,7 +240,7 @@ void PaintView::SaveCurrentContent()
 				  m_nWindowHeight - m_nDrawHeight, 
 				  m_nDrawWidth, 
 				  m_nDrawHeight, 
-				  GL_RGB, 
+				  GL_RGB, //only three bytes for one image
 				  GL_UNSIGNED_BYTE, 
 				  m_pPaintBitstart );
 }

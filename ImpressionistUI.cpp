@@ -381,7 +381,7 @@ void ImpressionistUI::setWidth(int width)
 void ImpressionistUI::setAngle(int angle)
 {
 	m_nAngle = angle;
-	if (angle <= 360)
+	if (angle <= 359)
 		m_BrushLineAngleSlider->value(m_nAngle);
 }
 
