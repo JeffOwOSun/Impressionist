@@ -9,6 +9,8 @@
 #include "impressionistUI.h"
 #include "paintview.h"
 #include "ImpBrush.h"
+#include <cmath>
+#define PI 3.14159265358979
 
 
 #define LEFT_MOUSE_DOWN		1
@@ -100,7 +102,10 @@ void PaintView::draw()
 
 		Point source( coord.x + m_nStartCol, m_nEndRow - coord.y );
 		Point target( coord.x, m_nWindowHeight - coord.y );
-		
+		/* printf("=====================\nsource: x-%d y-%d\ntarget: x-%d y-%d\nm_nStartRow: %d m_nEndRow: %d\nm_nStartCol: %d m_nEndCol: %d\n", 
+			   source.x, source.y, target.x, target.y, m_nStartRow, m_nEndRow, m_nStartCol, m_nEndCol);
+		*/
+
 		// This is the event handler
 		switch (eventToDo) 
 		{
@@ -117,13 +122,33 @@ void PaintView::draw()
 			RestoreContent();
 			break;
 		case RIGHT_MOUSE_DOWN:
-
+			//Handle right mouse down event
+			//remember the point for the beginning of the red line
+			m_ptLastPoint = Point(target);
 			break;
 		case RIGHT_MOUSE_DRAG:
-
+			//Handle right mouse drag event
+			//restorecontent to clear any previously drawn red line
+			RestoreContent();
+			//then draw a new red line
+			glBegin(GL_LINES);
+				glColor3ub(255, 0, 0); //set the color to red
+				glVertex2d(m_ptLastPoint.x, m_ptLastPoint.y);
+				glVertex2d(target.x, target.y);
+			glEnd();
 			break;
 		case RIGHT_MOUSE_UP:
-
+			//Restorecontent to clear red line
+			RestoreContent();
+			//set the angle and line length, somehow
+			//PROBLEM: this paintview is owned by impressionistUI
+			//but it's not aware of the impressionistUI
+			//but then we cannot update the impressionistUI widgets
+			
+			//calculate the line length and angle
+			//use the calculated value to update UI elements
+			m_pUI->setSize(sqrt(pow(m_ptLastPoint.x - target.x, 2) + pow(m_ptLastPoint.y - target.y, 2)));
+			m_pUI->setAngle(atan2((double)target.y - m_ptLastPoint.y, (double)target.x - m_ptLastPoint.x) / PI * 360);
 			break;
 
 		default:

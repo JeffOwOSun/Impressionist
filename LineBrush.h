@@ -9,6 +9,7 @@
 
 #include "ImpBrush.h"
 #include <cmath>
+#define PI 3.14159265358979
 
 class LineBrush : public ImpBrush
 {

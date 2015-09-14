@@ -40,14 +40,12 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	lineAngle = pDoc->getAngle();
 
 	//calculate the x and y projection of line length
-	lineXProj = (int) lineLength * cos(lineAngle);
-	lineYProj = (int) lineLength * sin(lineAngle);
-
+	lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+	lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 
 	// If the option is ....
 	prevMouseX = Fl::event_x();
 	prevMouseY = Fl::event_y();
-	
 	BrushMove(source, target);
 
 }
