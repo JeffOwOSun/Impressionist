@@ -22,14 +22,14 @@
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
-ImpressionistDoc::ImpressionistDoc()
+ImpressionistDoc::ImpressionistDoc() :
+m_ucBitmap(NULL), m_ucPainting(NULL), m_ucIntensity(NULL),
+m_iGradientX(NULL), m_iGradientY(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
 
 	m_nWidth		= -1;
-	m_ucBitmap		= NULL;
-	m_ucPainting	= NULL;
 
 
 	// create one instance of each brush
@@ -137,8 +137,35 @@ int ImpressionistDoc::loadImage(char *iname)
 	// release old storage
 	if ( m_ucBitmap ) delete [] m_ucBitmap;
 	if ( m_ucPainting ) delete [] m_ucPainting;
+	if ( m_ucIntensity ) delete[] m_ucIntensity;
+	if ( m_iGradientX ) delete[] m_iGradientX;
+	if ( m_iGradientY ) delete[] m_iGradientY;
 
 	m_ucBitmap		= data;
+
+	// allocate and calculate the Intensity map of the original Image
+	m_ucIntensity = new unsigned char[width*height];
+	for (int i = 0; i < width; ++i)
+		for (int j = 0; j < height; ++j)
+			m_ucIntensity[j * width + i] = filterIntensity(m_ucBitmap + 3 * (j * width + i));
+
+	// allocate and calculate the gradient map of the original Image
+	// TODO: Wrap these filters in custom classes
+	m_iGradientX = new GLint[width*height];
+	m_iGradientY = new GLint[width*height];
+	GLint SobelX[9] =	  {	-1, 0, 1,
+						-2, 0, 2,
+						-1, 0, 1 }; //NOTE: Y from bottom to top
+	GLint SobelY[9] =   {	-1,-2,-1,
+						 0, 0, 0,
+						 1, 2, 1 };
+	for (int i = 0; i < width; ++i)
+		for (int j = 0; j < height; ++j)
+		{
+			m_iGradientX[j * width + i] = applyFilter(SobelX, 3, 3, m_ucIntensity, width, height, i, j);
+			m_iGradientY[j * width + i] = applyFilter(SobelY, 3, 3, m_ucIntensity, width, height, i, j);
+		}
+
 
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];

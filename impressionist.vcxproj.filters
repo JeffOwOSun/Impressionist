@@ -101,5 +101,8 @@
     <ClInclude Include="ScatteredCircleBrush.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="utility\Filter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
