@@ -38,7 +38,13 @@ public:
 	void	setWidth(int width);
 	void	setAngle(int angle);			// set the brush angle
 	char*	getImageName();					// get the current image name
-	
+
+	GLubyte GetIntensity(int x, int y);
+	GLint GetGradientX(int x, int y);
+	GLint GetGradientY(int x, int y);
+	GLubyte GetIntensity(Point point);
+	GLint GetGradientX(Point point);
+	GLint GetGradientY(Point point);
 
 // Attributes
 public:
@@ -72,7 +78,6 @@ public:
 	GLubyte* GetOriginalPixel( int x, int y );   
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );  
-
 
 private:
 	char			m_imageName[256];
