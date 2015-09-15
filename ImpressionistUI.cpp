@@ -480,7 +480,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_nWidth = 1;
 	m_nAngle = 0;
 	m_nStrokeDirection = DIR_SLIDER_OR_RIGHT_MOUSE;
-	m_nAlpha = 1.00;
+	m_nAlpha = 255;
 	 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
