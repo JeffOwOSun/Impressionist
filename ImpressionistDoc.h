@@ -32,6 +32,7 @@ public:
 	int		getSize();						// get the UI size
 	int		getWidth();
 	int		getAngle();						// get the brush angle
+	int		getAlpha();
 	
 	void	setStrokeDirectionType(int type); // called by the UI to set the brushType
 	void	setSize(int size);				// set the UI size
