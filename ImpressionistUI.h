@@ -15,6 +15,7 @@
 #include <FL/Fl_Choice.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Light_Button.H>
+#include <FL/Fl_Color_Chooser.H>
 
 #include "Impressionist.h"
 #include "OriginalView.h"
@@ -35,7 +36,9 @@ public:
 
 // for brush dialog
 	Fl_Window*			m_brushDialog;
+	Fl_Window*			m_colorWindow;
 	Fl_Choice*			m_BrushTypeChoice;
+	Fl_Color_Chooser*	m_colorChooser;
 
 	// implement four ways to contol the stroke direction
 	// 1. Use slider value to control angle of lines
@@ -73,6 +76,12 @@ public:
 	int					getAlpha();
 	void				setAlpha(int alpha);
 
+	double				getColorR();
+	void				setColorR(double R);
+	double				getColorG();
+	void				setColorG(double G);
+	double				getColorB();
+	void				setColorB(double B);
 	void				drawMarker(const Point& p);
 
 private:
@@ -84,6 +93,9 @@ private:
 	int		m_nWidth;
 	int		m_nAngle;
 	int		m_nAlpha;
+	double	m_nColorR;
+	double  m_nColorG;
+	double  m_nColorB;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -97,6 +109,8 @@ private:
 	static void	cb_load_image(Fl_Menu_* o, void* v);
 	static void	cb_save_image(Fl_Menu_* o, void* v);
 	static void	cb_brushes(Fl_Menu_* o, void* v);
+	static void cb_color_window(Fl_Menu_* o, void* v);
+	static void cb_color_chooser(Fl_Widget* o, void* v);
 	static void	cb_clear_canvas(Fl_Menu_* o, void* v);
 	static void	cb_exit(Fl_Menu_* o, void* v);
 	static void	cb_about(Fl_Menu_* o, void* v);
