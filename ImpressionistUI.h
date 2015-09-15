@@ -73,6 +73,8 @@ public:
 	int					getAlpha();
 	void				setAlpha(int alpha);
 
+	void				drawMarker(const Point& p);
+
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
 

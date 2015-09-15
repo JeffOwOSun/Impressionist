@@ -406,6 +406,10 @@ void ImpressionistUI::setAlpha(int alpha) {
 	m_nAlpha = alpha;
 }
 
+void ImpressionistUI::drawMarker(const Point& p) {
+	m_origView->setDrawMarker(p);
+}
+
 // Main menu definition
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },

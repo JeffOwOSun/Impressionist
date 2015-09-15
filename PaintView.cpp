@@ -172,6 +172,7 @@ void PaintView::draw()
 
 int PaintView::handle(int event)
 {
+
 	switch(event)
 	{
 	case FL_ENTER:
@@ -196,6 +197,8 @@ int PaintView::handle(int event)
 			eventToDo=LEFT_MOUSE_DRAG;
 		isAnEvent=1;
 		redraw();
+		// call draw Marker from mouse drag event
+		m_pUI->drawMarker(coord);
 		break;
 	case FL_RELEASE:
 		coord.x = Fl::event_x();
@@ -208,8 +211,11 @@ int PaintView::handle(int event)
 		redraw();
 		break;
 	case FL_MOVE:
+		//float_marker();
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
+		// call draw marker from Mouse move event
+		m_pUI->drawMarker(coord);
 		break;
 	default:
 		return 0;
