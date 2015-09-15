@@ -44,21 +44,30 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 void LineBrush::BrushMove(const Point source, const Point target)
 {
 	ImpressionistDoc* pDoc = GetDocument();
+
+	if (pDoc == NULL) {
+		printf("LineBrush::BrushMove document is NULL \n");
+		return;
+	}
+
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
 	int strokeDirection = pDoc->getStrokeDirectionType();
 	switch (strokeDirection)
 	{
 		case DIR_SLIDER_OR_RIGHT_MOUSE:
-
 			break;
 		case DIR_BRUSH_DIRECTION:
 		{
 			int diffX = target.x - prevPoint.x;
 			int diffY = target.y - prevPoint.y;
-			lineAngle = (int)(atan2(diffX, -diffY) / PI * 360); //rotate 90 degree counter clockwise
+			//cout << atan2(diffY, diffX) << endl;
+			lineAngle = (int)(atan2(diffY, diffX) / PI * 360); //rotate 90 degree counter clockwise
+			// cout << lineAngle << endl;
 			lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
 			lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
+			prevPoint.x = target.x;
+			prevPoint.y = target.y;
 			break;
 		}
 		case DIR_GRADIENT:
@@ -75,10 +84,7 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		}
 	}
 
-	if (pDoc == NULL) {
-		printf("LineBrush::BrushMove document is NULL \n");
-		return;
-	}
+	
 
 	//calculate the start and end point of the line to draw
 	int x1 = target.x - lineXProj / 2;
