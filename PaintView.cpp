@@ -73,6 +73,9 @@ void PaintView::draw()
 	drawWidth = min( m_nWindowWidth, m_pDoc->m_nPaintWidth );
 	drawHeight = min( m_nWindowHeight, m_pDoc->m_nPaintHeight );
 
+	//DEBUGONLY
+	printf("WindowW: %d WindowH: %d drawW: %d drawH: %d WidgetX: %d WidgetY: %d WidgetW: %d WidgetH: %d\n", m_nWindowWidth, m_nWindowHeight, m_nDrawWidth, m_nDrawHeight, x(), y(), w(), h());
+
 	int startrow = m_pDoc->m_nPaintHeight - (scrollpos.y + drawHeight);
 	if ( startrow < 0 ) startrow = 0;
 
