@@ -85,9 +85,13 @@ void OriginalView::refresh()
 	redraw();
 }
 
-void OriginalView::resizeWindow(int	width, 
-								int	height)
+void OriginalView::resizeWindow(int width, int height)
 {
-	resize(x(), y(), width, height);
+	Fl_Gl_Window::resize(x(), y(), width, height);
+}
+
+void OriginalView::resize(int x, int y, int width, int height)
+{
+	Fl_Gl_Window::resize(x, y, w(), h());
 }
 

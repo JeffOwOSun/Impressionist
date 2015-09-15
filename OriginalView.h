@@ -29,6 +29,7 @@ public:
 	void refresh();
 
 	void resizeWindow(int width, int height);
+	void resize(int x, int y, int w, int h);
 
 	ImpressionistDoc*	m_pDoc;
 
