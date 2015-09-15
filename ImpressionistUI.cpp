@@ -550,7 +550,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushAlphaSlider->minimum(0);
 		m_BrushAlphaSlider->maximum(1.00);
 		m_BrushAlphaSlider->step(0.01);
-		m_BrushAlphaSlider->value(m_nAlpha);
+		m_BrushAlphaSlider->value(1); //not m_nAlpha because scale difference
 		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
 		m_BrushAlphaSlider->callback(cb_alphaSlides);
 

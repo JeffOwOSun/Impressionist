@@ -111,6 +111,7 @@ void PaintView::draw()
 		/* printf("=====================\nsource: x-%d y-%d\ntarget: x-%d y-%d\nm_nStartRow: %d m_nEndRow: %d\nm_nStartCol: %d m_nEndCol: %d\n", 
 			   source.x, source.y, target.x, target.y, m_nStartRow, m_nEndRow, m_nStartCol, m_nEndCol);
 		*/
+		
 
 		// This is the event handler
 		switch (eventToDo) 
@@ -226,7 +227,12 @@ void PaintView::refresh()
 
 void PaintView::resizeWindow(int width, int height)
 {
-	resize(x(), y(), width, height);
+	Fl_Gl_Window::resize(x(), y(), width, height);
+}
+
+void PaintView::resize(int x, int y, int width, int height)
+{
+	Fl_Gl_Window::resize(x, y, w(), h());
 }
 
 void PaintView::SaveCurrentContent()
