@@ -482,6 +482,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_StrokeDirectionChoice->user_data((void*)(this)); // record self to be used by static callback functions
 		m_StrokeDirectionChoice->menu(strokeDirectionMenu);
 		m_StrokeDirectionChoice->callback(cb_strokeDirectionChoice);
+		m_StrokeDirectionChoice->deactivate();
 
 		// Add brush size slider to the dialog 
 		m_BrushSizeSlider = new Fl_Value_Slider(10, 80, 300, 20, "Size");
@@ -508,6 +509,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushLineWidthSlider->value(m_nWidth);
 		m_BrushLineWidthSlider->align(FL_ALIGN_RIGHT);
 		m_BrushLineWidthSlider->callback(cb_widthSlides);
+		m_BrushLineWidthSlider->deactivate();
 
 		// Add brush angle slider to the dialog
 		m_BrushLineAngleSlider = new Fl_Value_Slider(10, 140, 300, 20, "Line Angle");
@@ -521,6 +523,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushLineAngleSlider->value(m_nAngle);
 		m_BrushLineAngleSlider->align(FL_ALIGN_RIGHT);
 		m_BrushLineAngleSlider->callback(cb_angleSlides);
+		m_BrushLineAngleSlider->deactivate();
 
     m_brushDialog->end();	
 

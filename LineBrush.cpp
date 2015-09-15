@@ -22,14 +22,6 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg = pDoc->m_pUI;
 
-	// The following lines is a pseudo implementation.
-	// We should control the width of line brush here and the
-	// control panel should called "line width".
-	// Which means the actual implementation should be like
-	/*
-		int width = pDoc->getLineWidth();
-		glLineWidth((float)size);
-	*/
 	int width = pDoc->getWidth();
 	glLineWidth((float)width);
 
@@ -43,9 +35,10 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
 	lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 
+	cout << endl;
 	// If the option is ....
-	prevMouseX = Fl::event_x();
-	prevMouseY = Fl::event_y();
+	prevMouseX = target.x;
+	prevMouseY = target.y;
 
 	BrushMove(source, target);
 
@@ -60,23 +53,21 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	switch (strokeDirection)
 	{
 	case DIR_SLIDER_OR_RIGHT_MOUSE:
-
+		// Already setted parameter in PaintView::draw()
 		break;
 	case DIR_BRUSH_DIRECTION:
 	{
-		int curMouseX = Fl::event_x();
-		int curMouseY = Fl::event_y();
-		double diffX = curMouseX - prevMouseX;
-		if (diffX = 0) lineAngle = 0;
+		double moveAngle;
+		double diffX = target.x - prevMouseX;
+		if (diffX == 0) moveAngle = PI / 2.0;
 		else {
-			double diffY = curMouseY - prevMouseY;
-			double temp = atan(diffY / diffX);
-			cout << "aaaa " << diffY / diffX << endl;
-			lineAngle = atan(diffY / diffX);
-			cout << temp << endl;
+			double diffY = target.y - prevMouseY;
+			moveAngle = atan(diffY / diffX);
 		}
-		lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
-		lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
+		prevMouseX = target.x;
+		prevMouseY = target.y;
+		lineXProj = (int)lineLength * cos(double(moveAngle));
+		lineYProj = (int)lineLength * sin(double(moveAngle));
 		break;
 	}
 	case DIR_GRADIENT:
@@ -114,8 +105,6 @@ void LineBrush::BrushMove(const Point source, const Point target)
 		printf("Error: %1s (%i) in %1s.\n", gluErrorString(error_flag), error_flag, "method name");
 	}
 	glEnd();
-	prevMouseX = Fl::event_x();
-	prevMouseY = Fl::event_y();
 }
 
 void LineBrush::BrushEnd(const Point source, const Point target)
