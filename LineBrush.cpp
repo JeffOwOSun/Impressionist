@@ -35,10 +35,7 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
 	lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 
-	cout << endl;
-	// If the option is ....
-	prevMouseX = target.x;
-	prevMouseY = target.y;
+	prevPoint = Point(target);
 
 	BrushMove(source, target);
 
@@ -52,36 +49,30 @@ void LineBrush::BrushMove(const Point source, const Point target)
 	int strokeDirection = pDoc->getStrokeDirectionType();
 	switch (strokeDirection)
 	{
-	case DIR_SLIDER_OR_RIGHT_MOUSE:
-		// Already setted parameter in PaintView::draw()
-		break;
-	case DIR_BRUSH_DIRECTION:
-	{
-		double moveAngle;
-		double diffX = target.x - prevMouseX;
-		if (diffX == 0) moveAngle = PI / 2.0;
-		else {
-			double diffY = target.y - prevMouseY;
-			moveAngle = atan(diffY / diffX);
+		case DIR_SLIDER_OR_RIGHT_MOUSE:
+
+			break;
+		case DIR_BRUSH_DIRECTION:
+		{
+			int diffX = target.x - prevPoint.x;
+			int diffY = target.y - prevPoint.y;
+			lineAngle = (int)(atan2(diffX, -diffY) / PI * 360); //rotate 90 degree counter clockwise
+			lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+			lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
+			break;
 		}
-		prevMouseX = target.x;
-		prevMouseY = target.y;
-		lineXProj = (int)lineLength * cos(double(moveAngle));
-		lineYProj = (int)lineLength * sin(double(moveAngle));
-		break;
-	}
-	case DIR_GRADIENT:
-	{
-		//get the gradient at given source pixel
-		GLint gradientX = pDoc->GetGradientX(source);
-		GLint gradientY = pDoc->GetGradientY(source);
-		//calculate line Angle and projection
-		lineAngle = (int)(atan2(gradientX, -gradientY) / PI * 360); //rotate 90 degree counter clockwise
-		printf("gradientX: %d gradientY: %d lineAngle: %d\n", gradientX, gradientY, lineAngle);
-		lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
-		lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
-		break;
-	}
+		case DIR_GRADIENT:
+		{
+			//get the gradient at given source pixel
+			GLint gradientX = pDoc->GetGradientX(source);
+			GLint gradientY = pDoc->GetGradientY(source);
+			//calculate line Angle and projection
+			lineAngle = (int)(atan2(gradientX, -gradientY) / PI * 360); //rotate 90 degree counter clockwise
+			printf("gradientX: %d gradientY: %d lineAngle: %d\n", gradientX, gradientY, lineAngle);
+			lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+			lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
+			break;
+		}
 	}
 
 	if (pDoc == NULL) {

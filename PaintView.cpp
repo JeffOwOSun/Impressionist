@@ -60,6 +60,10 @@ void PaintView::draw()
 		ortho();
 
 		glClear( GL_COLOR_BUFFER_BIT );
+
+		// Enable Alpha
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	Point scrollpos;// = GetScrollPosition();
@@ -72,6 +76,9 @@ void PaintView::draw()
 	int drawWidth, drawHeight;
 	drawWidth = min( m_nWindowWidth, m_pDoc->m_nPaintWidth );
 	drawHeight = min( m_nWindowHeight, m_pDoc->m_nPaintHeight );
+
+	//DEBUGONLY
+	//printf("WindowW: %d WindowH: %d drawW: %d drawH: %d WidgetX: %d WidgetY: %d WidgetW: %d WidgetH: %d\n", m_nWindowWidth, m_nWindowHeight, m_nDrawWidth, m_nDrawHeight, x(), y(), w(), h());
 
 	int startrow = m_pDoc->m_nPaintHeight - (scrollpos.y + drawHeight);
 	if ( startrow < 0 ) startrow = 0;
@@ -86,9 +93,6 @@ void PaintView::draw()
 	m_nEndRow		= startrow + drawHeight;
 	m_nStartCol		= scrollpos.x;
 	m_nEndCol		= m_nStartCol + drawWidth;
-
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glEnable(GL_BLEND);
 
 	if ( m_pDoc->m_ucPainting && !isAnEvent) 
 	{
@@ -143,10 +147,6 @@ void PaintView::draw()
 			//Restorecontent to clear red line
 			RestoreContent();
 			//set the angle and line length, somehow
-			//PROBLEM: this paintview is owned by impressionistUI
-			//but it's not aware of the impressionistUI
-			//but then we cannot update the impressionistUI widgets
-			
 			//calculate the line length and angle
 			//use the calculated value to update UI elements
 			m_pUI->setSize(sqrt(pow(m_ptLastPoint.x - target.x, 2) + pow(m_ptLastPoint.y - target.y, 2)));
