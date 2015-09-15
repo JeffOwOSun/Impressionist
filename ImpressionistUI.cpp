@@ -297,6 +297,13 @@ void ImpressionistUI::cb_angleSlides(Fl_Widget* o, void* v)
 	((ImpressionistUI*)(o->user_data()))->m_nAngle = int(((Fl_Slider *)o)->value());
 }
 
+void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
+{
+	double value = ((Fl_Slider *)o)->value();
+	int res = (int)(value * 255);
+	((ImpressionistUI*)(o->user_data()))->m_nAlpha = res;
+}
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -360,6 +367,11 @@ int ImpressionistUI::getAngle()
 	return m_nAngle;
 }
 
+int ImpressionistUI::getAlpha()
+{
+	return m_nAlpha;
+}
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -388,6 +400,10 @@ void ImpressionistUI::setAngle(int angle)
 void ImpressionistUI::setStrokeDirection(int type)
 {
 	m_nStrokeDirection = type;
+}
+
+void ImpressionistUI::setAlpha(int alpha) {
+	m_nAlpha = alpha;
 }
 
 // Main menu definition
@@ -464,6 +480,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_nWidth = 1;
 	m_nAngle = 0;
 	m_nStrokeDirection = DIR_SLIDER_OR_RIGHT_MOUSE;
+	m_nAlpha = 1.00;
 	 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -524,6 +541,18 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushLineAngleSlider->align(FL_ALIGN_RIGHT);
 		m_BrushLineAngleSlider->callback(cb_angleSlides);
 		m_BrushLineAngleSlider->deactivate();
+
+		m_BrushAlphaSlider = new Fl_Value_Slider(10, 170, 300, 20, "Alpha");
+		m_BrushAlphaSlider->user_data((void*)(this));
+		m_BrushAlphaSlider->type(FL_HOR_NICE_SLIDER);
+		m_BrushAlphaSlider->labelfont(FL_COURIER);
+		m_BrushAlphaSlider->labelsize(12);
+		m_BrushAlphaSlider->minimum(0);
+		m_BrushAlphaSlider->maximum(1.00);
+		m_BrushAlphaSlider->step(0.01);
+		m_BrushAlphaSlider->value(m_nAlpha);
+		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
+		m_BrushAlphaSlider->callback(cb_alphaSlides);
 
     m_brushDialog->end();	
 
