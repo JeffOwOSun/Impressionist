@@ -17,7 +17,7 @@ OriginalView::OriginalView(int			x,
 						   int			w, 
 						   int			h, 
 						   const char*	l)
-							: Fl_Gl_Window(x,y,w,h,l)
+							: viewMode(ORIG_MODE), Fl_Gl_Window(x,y,w,h,l)
 {
 	m_nWindowWidth	= w;
 	m_nWindowHeight	= h;
@@ -65,15 +65,29 @@ void OriginalView::draw()
 		if ( startrow < 0 ) 
 			startrow = 0;
 
+		
 
-		bitstart = m_pDoc->m_ucBitmap + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+
+		
 
 		// just copy image to GLwindow conceptually
 		glRasterPos2i( 0, m_nWindowHeight - drawHeight );
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 		glPixelStorei( GL_UNPACK_ROW_LENGTH, m_pDoc->m_nWidth );
 		glDrawBuffer( GL_BACK );
-		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
+
+		// decide which image to use
+		switch (viewMode)
+		{
+		case ORIG_MODE:
+			bitstart = m_pDoc->m_ucBitmap +3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+			glDrawPixels(drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart);
+			break;
+		case EDGE_MODE:
+			bitstart = m_pDoc->m_ucEdge + ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+			glDrawPixels(drawWidth, drawHeight, GL_LUMINANCE, GL_UNSIGNED_BYTE, bitstart);
+		}
+		
 
 	}
 			

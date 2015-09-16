@@ -50,6 +50,8 @@ public:
 	Fl_Slider*			m_BrushAlphaSlider;
 	Fl_Button*          m_ClearCanvasButton;
 	Fl_Light_Button*	m_EdgeClipping;
+	Fl_Slider*			m_EdgeThreshold;
+	Fl_Button*			m_EdgeExtraction;
 
 	// Member functions
 	void				setDocument(ImpressionistDoc* doc);
@@ -77,6 +79,9 @@ public:
 	bool				getEdgeClipping();
 	void				setEdgeClipping(bool clipping);
 
+	int					getEdgeThreshold();
+	void				setEdgeThreshold(int edgeThreshold);
+
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
 
@@ -87,6 +92,7 @@ private:
 	int		m_nAngle;
 	int		m_nAlpha;
 	bool	m_bEdgeClipping;
+	int		m_nEdgeThreshold;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -111,6 +117,8 @@ private:
 	static void cb_alphaSlides(Fl_Widget* o, void* v);
 	static void cb_strokeDirectionChoice(Fl_Widget* o, void* v);
 	static void cb_EdgeClipping(Fl_Widget* o, void* v);
+	static void cb_EdgeThreshold(Fl_Widget* o, void* v);
+	static void cb_EdgeExtraction(Fl_Widget* o, void* v);
 };
 
 #endif

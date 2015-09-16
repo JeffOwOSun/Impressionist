@@ -24,7 +24,7 @@
 
 ImpressionistDoc::ImpressionistDoc() :
 m_ucBitmap(NULL), m_ucPainting(NULL), m_ucIntensity(NULL),
-m_iGradientX(NULL), m_iGradientY(NULL), m_uiGradientThreshold(20)
+m_iGradientX(NULL), m_iGradientY(NULL), m_iGradientMod(NULL), m_ucEdge(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
@@ -366,4 +366,20 @@ GLint ImpressionistDoc::GetGradientY(Point point)
 GLuint ImpressionistDoc::GetGradientMod(Point point)
 {
 	return GetGradientMod(point.x, point.y);
+}
+
+
+GLubyte* ImpressionistDoc::GetEdgeMap(int threshold)
+{
+	if (!m_ucEdge) return NULL;
+
+	int pos = 0;
+	for (int i = 0; i < m_nPaintWidth; ++i)
+		for (int j = 0; j < m_nPaintHeight; ++j)
+		{
+			pos = j * m_nPaintWidth + i;
+			m_ucEdge[pos] = (m_iGradientMod[pos] > threshold) ? 255 : 0;
+		}
+	//return the calculated Edge
+	return m_ucEdge;
 }

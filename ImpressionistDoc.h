@@ -68,7 +68,7 @@ public:
 	GLint * m_iGradientY;
 	// Gradient modulo
 	GLuint * m_iGradientMod;
-	GLuint m_uiGradientThreshold;
+	
 	// Edge map
 	GLubyte * m_ucEdge;
 
@@ -87,6 +87,8 @@ public:
 	GLubyte* GetOriginalPixel( int x, int y );   
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );  
+	// Calculate the edge map using gradient mod and threshold
+	GLubyte* GetEdgeMap(int EdgeThreshold);
 
 private:
 	char			m_imageName[256];

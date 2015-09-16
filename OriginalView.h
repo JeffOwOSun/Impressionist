@@ -33,6 +33,8 @@ public:
 
 	ImpressionistDoc*	m_pDoc;
 
+	enum ViewMode{ORIG_MODE, EDGE_MODE} viewMode;
+
 private:
 	int	m_nWindowWidth, 
 		m_nWindowHeight;
