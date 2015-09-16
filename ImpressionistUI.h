@@ -49,6 +49,7 @@ public:
 	Fl_Slider*			m_BrushLineAngleSlider;
 	Fl_Slider*			m_BrushAlphaSlider;
 	Fl_Button*          m_ClearCanvasButton;
+	Fl_Light_Button*	m_EdgeClipping;
 
 	// Member functions
 	void				setDocument(ImpressionistDoc* doc);
@@ -73,6 +74,9 @@ public:
 	int					getAlpha();
 	void				setAlpha(int alpha);
 
+	bool				getEdgeClipping();
+	void				setEdgeClipping(bool clipping);
+
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
 
@@ -82,6 +86,7 @@ private:
 	int		m_nWidth;
 	int		m_nAngle;
 	int		m_nAlpha;
+	bool	m_bEdgeClipping;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -105,6 +110,7 @@ private:
 	static void cb_angleSlides(Fl_Widget* o, void* v);
 	static void cb_alphaSlides(Fl_Widget* o, void* v);
 	static void cb_strokeDirectionChoice(Fl_Widget* o, void* v);
+	static void cb_EdgeClipping(Fl_Widget* o, void* v);
 };
 
 #endif

@@ -303,6 +303,14 @@ void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
 	int res = (int)(value * 255);
 	((ImpressionistUI*)(o->user_data()))->m_nAlpha = res;
 }
+//---The light button callback for edge clipping---------------------
+void ImpressionistUI::cb_EdgeClipping(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+
+	if (pUI->m_bEdgeClipping == TRUE) pUI->m_bEdgeClipping = FALSE;
+	else pUI->m_bEdgeClipping = TRUE;
+}
 
 //---------------------------------- per instance functions --------------------------------------
 
@@ -372,6 +380,11 @@ int ImpressionistUI::getAlpha()
 	return m_nAlpha;
 }
 
+bool ImpressionistUI::getEdgeClipping()
+{
+	return m_bEdgeClipping;
+}
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -404,6 +417,10 @@ void ImpressionistUI::setStrokeDirection(int type)
 
 void ImpressionistUI::setAlpha(int alpha) {
 	m_nAlpha = alpha;
+}
+
+void ImpressionistUI::setEdgeClipping(bool clipping) {
+	m_bEdgeClipping = clipping;
 }
 
 // Main menu definition
@@ -481,6 +498,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_nAngle = 0;
 	m_nStrokeDirection = DIR_SLIDER_OR_RIGHT_MOUSE;
 	m_nAlpha = 255;
+	m_bEdgeClipping = false;
 	 
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
@@ -553,6 +571,11 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushAlphaSlider->value(1); //not m_nAlpha because scale difference
 		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
 		m_BrushAlphaSlider->callback(cb_alphaSlides);
+
+		//---To install a light button for edge clipping---------------------
+		m_EdgeClipping = new Fl_Light_Button(10, 200, 150, 25, "Edge Clipping");
+		m_EdgeClipping->user_data((void*)(this));   // record self to be used by static callback functions
+		m_EdgeClipping->callback(cb_EdgeClipping);
 
     m_brushDialog->end();	
 
