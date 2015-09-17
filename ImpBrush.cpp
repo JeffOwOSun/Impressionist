@@ -52,16 +52,12 @@ void ImpBrush::SetColor (const Point source)
 	double chosen_R = pDoc->getColorR();
 	double chosen_G = pDoc->getColorG();
 	double chosen_B = pDoc->getColorB();
-	
-	int R = (int)(chosen_R * 255);
-	int G = (int)(chosen_G * 255);
-	int B = (int)(chosen_B * 255);
 
 	// std::cout << "a" << (int)color[0] << " " << (int)color[1] << " " << (int)color[2] << std::endl;
 	// std::cout << "RGB: " << pDoc->getColorR() << " " << G << " " << B << std::endl;
-	color[0] = ((int)color[0] * 0.7) + R * 0.3;
-	color[1] = ((int)color[1] * 0.7) + G * 0.3;
-	color[2] = ((int)color[2] * 0.7) + B * 0.3;
+	color[0] = (int)(color[0] * chosen_R);
+	color[1] = (int)(color[1] * chosen_G);
+	color[2] = (int)(color[2] * chosen_B);
 	// std::cout << (int)color[0] << " " << (int)color[1] << " " << (int)color[2] << std::endl;
 	color[3] = pDoc->getAlpha();
 	glColor4ubv(color);

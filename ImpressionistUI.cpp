@@ -628,15 +628,16 @@ ImpressionistUI::ImpressionistUI() {
 	m_nAngle = 0;
 	m_nStrokeDirection = DIR_SLIDER_OR_RIGHT_MOUSE;
 	m_nAlpha = 255;
-	m_nColorR = 0;
-	m_nColorG = 0;
-	m_nColorB = 0;
+	m_nColorR = 1.0;
+	m_nColorG = 1.0;
+	m_nColorB = 1.0;
 	m_bEdgeClipping = false;
 	m_nEdgeThreshold = 100;
 
 	m_colorWindow = new Fl_Window(400, 325, "Color Dialog");
 		m_colorChooser = new Fl_Color_Chooser(50, 20, 150, 150, "&Color Chooser");
 		m_colorChooser->user_data((void*)(this));
+		m_colorChooser->rgb(m_nColorR, m_nColorG, m_nColorB);
 		m_colorChooser->callback(cb_color_chooser);
 	m_colorWindow->end();
 	
