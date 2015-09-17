@@ -18,7 +18,9 @@ enum
 	BRUSH_SCATTERED_POINTS,
 	BRUSH_SCATTERED_LINES,
 	BRUSH_SCATTERED_CIRCLES,
-	NUM_BRUSH_TYPE // Make sure this stays at the end!
+	// Make sure the following stay at the end
+	BRUSH_BLUR_FILTER, 
+	NUM_BRUSH_TYPE
 };
 
 enum

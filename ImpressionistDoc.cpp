@@ -19,6 +19,7 @@
 #include "LineBrush.h"
 #include "ScatteredLineBrush.h"
 #include "ScatteredCircleBrush.h"
+#include "FilterBlurBrush.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
@@ -49,6 +50,8 @@ m_iGradientX(NULL), m_iGradientY(NULL), m_ucPainting_Undo(NULL), m_iGradientMod(
 		= new ScatteredLineBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
+	ImpBrush::c_pBrushes[BRUSH_BLUR_FILTER]
+		= new FilterBlurBrush(this, "Blur Filter");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];

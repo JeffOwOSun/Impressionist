@@ -69,6 +69,4 @@ inline GLint applyFilter(const filterType* filter, int filterW, int filterH, con
 	return result;
 }
 
-
-
 #endif //FILTER.H
