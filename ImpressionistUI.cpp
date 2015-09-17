@@ -284,6 +284,7 @@ void ImpressionistUI::cb_undo_canvas(Fl_Menu_* o, void* v)
 	pDoc->m_ucPainting = pDoc->m_ucPainting_Undo;
 	pDoc->m_ucPainting_Undo = m_tmp;
 	pDoc->m_pUI->m_paintView->refresh();
+	glFlush();
 }
 
 //------------------------------------------------------------
@@ -385,10 +386,8 @@ void ImpressionistUI::cb_orig_view(Fl_Menu_* o, void* v)
 void ImpressionistUI::cb_edge_view(Fl_Menu_* o, void* v)
 {
 	ImpressionistUI *pUI = whoami(o);
-	ImpressionistDoc *pDoc = whoami(o)->getDocument();
 
 	//calculate the edge map according to the threshold
-	pDoc->GetEdgeMap(pUI->m_nEdgeThreshold);
 	pUI->m_origView->viewMode = OriginalView::EDGE_MODE;
 	pUI->m_origView->refresh();
 }

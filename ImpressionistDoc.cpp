@@ -214,6 +214,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	// allocate space for edge
 	m_ucEdge = new GLubyte[width*height];
 	memset(m_ucEdge, 0, width*height);
+	GetEdgeMap(m_pUI->getEdgeThreshold());
 
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
