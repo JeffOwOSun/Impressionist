@@ -33,6 +33,9 @@ public:
 	int		getWidth();
 	int		getAngle();						// get the brush angle
 	int		getAlpha();
+	double	getColorR();
+	double	getColorG();
+	double	getColorB();
 	
 	void	setStrokeDirectionType(int type); // called by the UI to set the brushType
 	void	setSize(int size);				// set the UI size
@@ -58,6 +61,11 @@ public:
 	// Bitmaps for original image and painting.
 	GLubyte*	m_ucBitmap;
 	GLubyte*	m_ucPainting;
+	
+	// Store painting to these array
+	// Use unsigned char at now
+	unsigned char* m_ucPainting_Undo;
+	
 	// Bitmap for intensity of original image.
 	GLubyte*	m_ucIntensity;
 	// Gradient map for intensity of original image.

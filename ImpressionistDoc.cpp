@@ -24,7 +24,7 @@
 
 ImpressionistDoc::ImpressionistDoc() :
 m_ucBitmap(NULL), m_ucPainting(NULL), m_ucIntensity(NULL),
-m_iGradientX(NULL), m_iGradientY(NULL)
+m_iGradientX(NULL), m_iGradientY(NULL), m_ucPainting_Undo(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
@@ -125,6 +125,21 @@ int ImpressionistDoc::getAlpha()
 	return m_pUI->getAlpha();
 }
 
+double ImpressionistDoc::getColorR()
+{
+	return m_pUI->getColorR();
+}
+
+double ImpressionistDoc::getColorG()
+{
+	return m_pUI->getColorG();
+}
+
+double ImpressionistDoc::getColorB()
+{
+	return m_pUI->getColorB();
+}
+
 //---------------------------------------------------------
 // Load the specified image
 // This is called by the UI when the load image button is
@@ -152,6 +167,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	// release old storage
 	if ( m_ucBitmap ) delete [] m_ucBitmap;
 	if ( m_ucPainting ) delete [] m_ucPainting;
+	if ( m_ucPainting_Undo ) delete[] m_ucPainting_Undo;
 	if ( m_ucIntensity ) delete[] m_ucIntensity;
 	if ( m_iGradientX ) delete[] m_iGradientX;
 	if ( m_iGradientY ) delete[] m_iGradientY;
@@ -191,6 +207,9 @@ int ImpressionistDoc::loadImage(char *iname)
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
 	memset(m_ucPainting, 0, width*height*3);
+	// allocate space for undo painting
+	m_ucPainting_Undo = new unsigned char[width*height * 3];
+	memset(m_ucPainting_Undo, 0, width*height * 3);
 
 	m_pUI->m_mainWindow->resize(m_pUI->m_mainWindow->x(),
 								m_pUI->m_mainWindow->y(),

@@ -117,6 +117,8 @@ void PaintView::draw()
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
+
+			SaveUndoOnBrush();
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
 			break;
 		case LEFT_MOUSE_DRAG:
@@ -124,7 +126,6 @@ void PaintView::draw()
 			break;
 		case LEFT_MOUSE_UP:
 			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
-
 			SaveCurrentContent();
 			RestoreContent();
 			break;
@@ -172,6 +173,7 @@ void PaintView::draw()
 
 int PaintView::handle(int event)
 {
+
 	switch(event)
 	{
 	case FL_ENTER:
@@ -196,6 +198,8 @@ int PaintView::handle(int event)
 			eventToDo=LEFT_MOUSE_DRAG;
 		isAnEvent=1;
 		redraw();
+		// call draw Marker from mouse drag event
+		m_pUI->drawMarker(coord);
 		break;
 	case FL_RELEASE:
 		coord.x = Fl::event_x();
@@ -208,8 +212,11 @@ int PaintView::handle(int event)
 		redraw();
 		break;
 	case FL_MOVE:
+		//float_marker();
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
+		// call draw marker from Mouse move event
+		m_pUI->drawMarker(coord);
 		break;
 	default:
 		return 0;
@@ -237,6 +244,7 @@ void PaintView::resize(int x, int y, int width, int height)
 
 void PaintView::SaveCurrentContent()
 {
+	printf("Read buffer from front\n");
 	// Tell openGL to read from the front buffer when capturing
 	// out paint strokes
 	glReadBuffer(GL_FRONT);
@@ -270,4 +278,12 @@ void PaintView::RestoreContent()
 				  m_pPaintBitstart);
 
 //	glDrawBuffer(GL_FRONT);
+}
+
+void PaintView::SaveUndoOnBrush()
+{
+	int dimension = m_pDoc->m_nPaintHeight * m_pDoc->m_nPaintWidth * 3;
+	delete[] m_pDoc->m_ucPainting_Undo;
+	m_pDoc->m_ucPainting_Undo = new unsigned char[dimension];
+	memcpy(m_pDoc->m_ucPainting_Undo, m_pDoc->m_ucPainting, dimension);
 }

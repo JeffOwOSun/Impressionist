@@ -7,6 +7,7 @@
 #include "impressionist.h"
 #include "impressionistDoc.h"
 #include "originalview.h"
+#include <algorithm>
 
 #ifndef WIN32
 #define min(a, b)	( ( (a)<(b) ) ? (a) : (b) )
@@ -74,7 +75,7 @@ void OriginalView::draw()
 		glPixelStorei( GL_UNPACK_ROW_LENGTH, m_pDoc->m_nWidth );
 		glDrawBuffer( GL_BACK );
 		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
-
+		drawMarker();
 	}
 			
 	glFlush();
@@ -95,3 +96,19 @@ void OriginalView::resize(int x, int y, int width, int height)
 	Fl_Gl_Window::resize(x, y, w(), h());
 }
 
+void OriginalView::setDrawMarker(const Point& p)
+{
+	markerPoint = p;
+	redraw();
+}
+
+void OriginalView::drawMarker()
+{
+	glBegin(GL_LINES);
+	glColor3ub(255, 0, 0);
+	glVertex2d(markerPoint.x - 5, m_nWindowHeight - markerPoint.y);
+	glVertex2d(markerPoint.x + 5, m_nWindowHeight - markerPoint.y);
+	glVertex2d(markerPoint.x, m_nWindowHeight - markerPoint.y - 4);
+	glVertex2d(markerPoint.x, m_nWindowHeight - markerPoint.y + 6);
+	glEnd();
+}

@@ -6,8 +6,10 @@
 
 
 #include <FL/fl_ask.h>
+#include <FL/Fl_Color_Chooser.H>
 
 #include <math.h>
+#include <iostream>
 
 #include "impressionistUI.h"
 #include "impressionistDoc.h"
@@ -208,6 +210,16 @@ void ImpressionistUI::cb_brushes(Fl_Menu_* o, void* v)
 	whoami(o)->m_brushDialog->show();
 }
 
+//-------------------------------------------------------------
+// Brings up the color chooser dialog
+// This is called by the UI when the color chooser item
+// is chosen
+//-------------------------------------------------------------
+void ImpressionistUI::cb_color_window(Fl_Menu_* o, void* v)
+{
+	whoami(o)->m_colorWindow->show();
+}
+
 //------------------------------------------------------------
 // Clears the paintview canvas.
 // Called by the UI when the clear canvas menu item is chosen
@@ -265,6 +277,15 @@ void ImpressionistUI::cb_strokeDirectionChoice(Fl_Widget* o, void* v)
 	pDoc->setStrokeDirectionType(type);
 }
 
+void ImpressionistUI::cb_undo_canvas(Fl_Menu_* o, void* v)
+{
+	ImpressionistDoc* pDoc = whoami(o)->getDocument();
+	unsigned char* m_tmp = pDoc->m_ucPainting;
+	pDoc->m_ucPainting = pDoc->m_ucPainting_Undo;
+	pDoc->m_ucPainting_Undo = m_tmp;
+	pDoc->m_pUI->m_paintView->refresh();
+}
+
 //------------------------------------------------------------
 // Clears the paintview canvas.
 // Called by the UI when the clear canvas button is pushed
@@ -302,6 +323,16 @@ void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
 	double value = ((Fl_Slider *)o)->value();
 	int res = (int)(value * 255);
 	((ImpressionistUI*)(o->user_data()))->m_nAlpha = res;
+}
+
+void ImpressionistUI::cb_color_chooser(Fl_Widget* o, void* v)
+{	
+	std::cout << ((Fl_Color_Chooser*)o)->r() << std::endl;
+	std::cout << ((Fl_Color_Chooser*)o)->g() << std::endl;
+	std::cout << ((Fl_Color_Chooser*)o)->b() << std::endl;
+	((ImpressionistUI*)(o->user_data()))->m_nColorR = ((Fl_Color_Chooser*)o)->r();
+	((ImpressionistUI*)(o->user_data()))->m_nColorG = ((Fl_Color_Chooser*)o)->g();
+	((ImpressionistUI*)(o->user_data()))->m_nColorB = ((Fl_Color_Chooser*)o)->b();
 }
 
 //---------------------------------- per instance functions --------------------------------------
@@ -372,6 +403,22 @@ int ImpressionistUI::getAlpha()
 	return m_nAlpha;
 }
 
+double ImpressionistUI::getColorR()
+{
+	return m_nColorR;
+}
+
+double ImpressionistUI::getColorG()
+{
+	return m_nColorG;
+}
+
+double ImpressionistUI::getColorB()
+{
+	return m_nColorB;
+}
+
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -406,13 +453,34 @@ void ImpressionistUI::setAlpha(int alpha) {
 	m_nAlpha = alpha;
 }
 
+void ImpressionistUI::drawMarker(const Point& p) {
+	m_origView->setDrawMarker(p);
+}
+
+void ImpressionistUI::setColorR(double R)
+{
+	m_nColorR = R;
+}
+
+void ImpressionistUI::setColorG(double G)
+{
+	m_nColorG = G;
+}
+
+void ImpressionistUI::setColorB(double B)
+{
+	m_nColorB = B;
+}
+
 // Main menu definition
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
 		{ "&Load Image...",	FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_load_image },
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },
 		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes }, 
-		{ "&Clear Canvas", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
+		{ "&Clear Canvas",	FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
+		{ "&Undo", FL_ALT + 'z', (Fl_Callback *)ImpressionistUI::cb_undo_canvas},
+		{ "&Color palatte", FL_ALT + 'k', (Fl_Callback *)ImpressionistUI::cb_color_window, 0, FL_MENU_DIVIDER },
 		
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
@@ -481,7 +549,16 @@ ImpressionistUI::ImpressionistUI() {
 	m_nAngle = 0;
 	m_nStrokeDirection = DIR_SLIDER_OR_RIGHT_MOUSE;
 	m_nAlpha = 255;
-	 
+	m_nColorR = 0;
+	m_nColorG = 0;
+	m_nColorB = 0;
+
+	m_colorWindow = new Fl_Window(400, 325, "Color Dialog");
+		m_colorChooser = new Fl_Color_Chooser(50, 20, 150, 150, "&Color Chooser");
+		m_colorChooser->user_data((void*)(this));
+		m_colorChooser->callback(cb_color_chooser);
+	m_colorWindow->end();
+	
 	// brush dialog definition
 	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
 		// Add a brush type choice to the dialog
