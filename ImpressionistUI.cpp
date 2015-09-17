@@ -335,6 +335,29 @@ void ImpressionistUI::cb_EdgeExtraction(Fl_Widget* o, void* v)
 	pUI->m_origView->refresh();
 }
 
+//------------------------------------------------------------
+// Orig view
+// Called by the UI when the Original View button is pressed
+//------------------------------------------------------------
+void ImpressionistUI::cb_orig_view(Fl_Menu_* o, void* v)
+{
+	ImpressionistUI *pUI = whoami(o);
+
+	//display the orig image
+	pUI->m_origView->viewMode = OriginalView::ORIG_MODE;
+	pUI->m_origView->refresh();
+}
+
+void ImpressionistUI::cb_edge_view(Fl_Menu_* o, void* v)
+{
+	ImpressionistUI *pUI = whoami(o);
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	//calculate the edge map according to the threshold
+	pDoc->GetEdgeMap(pUI->m_nEdgeThreshold);
+	pUI->m_origView->viewMode = OriginalView::EDGE_MODE;
+	pUI->m_origView->refresh();
+}
 
 //---------------------------------- per instance functions --------------------------------------
 
@@ -468,7 +491,10 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
-
+	{ "&View", 0, 0, 0, FL_SUBMENU }, // change the view
+		{ "&Original View", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_orig_view },
+		{ "&Edge View", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_edge_view },
+		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
 		{ 0 },
