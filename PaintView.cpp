@@ -151,8 +151,12 @@ void PaintView::draw()
 			//set the angle and line length, somehow
 			//calculate the line length and angle
 			//use the calculated value to update UI elements
-			m_pUI->setSize(sqrt(pow(m_ptLastPoint.x - target.x, 2) + pow(m_ptLastPoint.y - target.y, 2)));
-			m_pUI->setAngle(atan2((double)target.y - m_ptLastPoint.y, (double)target.x - m_ptLastPoint.x) / PI * 360);
+			if (m_pDoc->m_pCurrentBrush == ImpBrush::c_pBrushes[BRUSH_LINES] ||
+				m_pDoc->m_pCurrentBrush == ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES])
+			{
+				m_pUI->setSize(sqrt(pow(m_ptLastPoint.x - target.x, 2) + pow(m_ptLastPoint.y - target.y, 2)));
+				m_pUI->setAngle(atan2((double)target.y - m_ptLastPoint.y, (double)target.x - m_ptLastPoint.x) / PI * 360);
+			}
 			break;
 
 		default:
