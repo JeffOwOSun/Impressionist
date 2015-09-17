@@ -121,6 +121,7 @@ private:
 	static void cb_angleSlides(Fl_Widget* o, void* v);
 	static void cb_alphaSlides(Fl_Widget* o, void* v);
 	static void cb_strokeDirectionChoice(Fl_Widget* o, void* v);
+	static void cb_undo_canvas(Fl_Menu_* o, void* v);
 };
 
 #endif

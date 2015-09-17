@@ -32,6 +32,8 @@ public:
 
 	void RestoreContent();
 
+	void SaveUndoOnBrush();
+
 	ImpressionistDoc	*m_pDoc;
 	ImpressionistUI		*m_pUI;
 

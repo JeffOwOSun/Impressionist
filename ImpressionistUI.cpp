@@ -277,6 +277,17 @@ void ImpressionistUI::cb_strokeDirectionChoice(Fl_Widget* o, void* v)
 	pDoc->setStrokeDirectionType(type);
 }
 
+void ImpressionistUI::cb_undo_canvas(Fl_Menu_* o, void* v)
+{
+	ImpressionistDoc* pDoc = whoami(o)->getDocument();
+	unsigned char* m_tmp = pDoc->m_ucPainting;
+	pDoc->m_ucPainting = pDoc->m_ucPainting_Undo;
+	pDoc->m_ucPainting_Undo = m_tmp;
+
+	pDoc->m_pUI->m_paintView->refresh();
+	pDoc->m_pUI->m_origView->refresh();
+}
+
 //------------------------------------------------------------
 // Clears the paintview canvas.
 // Called by the UI when the clear canvas button is pushed
@@ -470,7 +481,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },
 		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes }, 
 		{ "&Clear Canvas",	FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
-
+		{ "&Undo", FL_ALT + 'z', (Fl_Callback *)ImpressionistUI::cb_undo_canvas},
 		{ "&Color palatte", FL_ALT + 'k', (Fl_Callback *)ImpressionistUI::cb_color_window, 0, FL_MENU_DIVIDER },
 		
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
