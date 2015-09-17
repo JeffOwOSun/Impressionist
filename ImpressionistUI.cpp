@@ -283,9 +283,7 @@ void ImpressionistUI::cb_undo_canvas(Fl_Menu_* o, void* v)
 	unsigned char* m_tmp = pDoc->m_ucPainting;
 	pDoc->m_ucPainting = pDoc->m_ucPainting_Undo;
 	pDoc->m_ucPainting_Undo = m_tmp;
-
 	pDoc->m_pUI->m_paintView->refresh();
-	pDoc->m_pUI->m_origView->refresh();
 }
 
 //------------------------------------------------------------

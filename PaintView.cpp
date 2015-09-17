@@ -117,6 +117,7 @@ void PaintView::draw()
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
+
 			SaveUndoOnBrush();
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
 			break;
@@ -125,7 +126,6 @@ void PaintView::draw()
 			break;
 		case LEFT_MOUSE_UP:
 			m_pDoc->m_pCurrentBrush->BrushEnd( source, target );
-
 			SaveCurrentContent();
 			RestoreContent();
 			break;
@@ -244,6 +244,7 @@ void PaintView::resize(int x, int y, int width, int height)
 
 void PaintView::SaveCurrentContent()
 {
+	printf("Read buffer from front\n");
 	// Tell openGL to read from the front buffer when capturing
 	// out paint strokes
 	glReadBuffer(GL_FRONT);
@@ -285,5 +286,4 @@ void PaintView::SaveUndoOnBrush()
 	delete[] m_pDoc->m_ucPainting_Undo;
 	m_pDoc->m_ucPainting_Undo = new unsigned char[dimension];
 	memcpy(m_pDoc->m_ucPainting_Undo, m_pDoc->m_ucPainting, dimension);
-	printf("stored previous\n");
 }
