@@ -10,7 +10,7 @@
 #include "impressionist.h"
 #include "bitmap.h"
 #include "utility\Filter.h"
-//#include "utility\SaveMatrix.h"
+#include "utility\SaveMatrix.h"
 
 class ImpressionistUI;
 
@@ -36,6 +36,7 @@ public:
 	double	getColorR();
 	double	getColorG();
 	double	getColorB();
+	bool	getEdgeClipping();
 	
 	void	setStrokeDirectionType(int type); // called by the UI to set the brushType
 	void	setSize(int size);				// set the UI size
@@ -46,9 +47,13 @@ public:
 	GLubyte GetIntensity(int x, int y);
 	GLint GetGradientX(int x, int y);
 	GLint GetGradientY(int x, int y);
+	GLuint GetGradientMod(int x, int y);
+	GLboolean GetEdge(int x, int y);
 	GLubyte GetIntensity(Point point);
 	GLint GetGradientX(Point point);
 	GLint GetGradientY(Point point);
+	GLuint GetGradientMod(Point point);
+	GLboolean GetEdge(Point point);
 
 // Attributes
 public:
@@ -71,6 +76,11 @@ public:
 	// Gradient map for intensity of original image.
 	GLint * m_iGradientX;
 	GLint * m_iGradientY;
+	// Gradient modulo
+	GLuint * m_iGradientMod;
+	
+	// Edge map
+	GLubyte * m_ucEdge;
 
 
 	// The current active brush.
@@ -87,6 +97,8 @@ public:
 	GLubyte* GetOriginalPixel( int x, int y );   
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );  
+	// Calculate the edge map using gradient mod and threshold
+	GLubyte* GetEdgeMap(int EdgeThreshold);
 
 private:
 	char			m_imageName[256];
