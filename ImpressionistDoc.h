@@ -45,10 +45,12 @@ public:
 	GLint GetGradientX(int x, int y);
 	GLint GetGradientY(int x, int y);
 	GLuint GetGradientMod(int x, int y);
+	GLboolean GetEdge(int x, int y);
 	GLubyte GetIntensity(Point point);
 	GLint GetGradientX(Point point);
 	GLint GetGradientY(Point point);
 	GLuint GetGradientMod(Point point);
+	GLboolean GetEdge(Point point);
 
 // Attributes
 public:

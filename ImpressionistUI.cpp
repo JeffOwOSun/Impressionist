@@ -310,7 +310,11 @@ void ImpressionistUI::cb_EdgeClipping(Fl_Widget* o, void* v)
 	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
 
 	if (pUI->m_bEdgeClipping == TRUE) pUI->m_bEdgeClipping = FALSE;
-	else pUI->m_bEdgeClipping = TRUE;
+	else {
+		pUI->m_bEdgeClipping = TRUE;
+		ImpressionistDoc* pDoc = pUI->getDocument();
+		pDoc->GetEdgeMap(pUI->m_nEdgeThreshold);
+	}
 }
 //-----------------------------------------------------------
 // Called by UI to set the edge threshold when slider changed

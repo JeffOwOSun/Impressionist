@@ -354,6 +354,21 @@ GLuint ImpressionistDoc::GetGradientMod(int x, int y)
 
 	return m_iGradientMod[y*m_nWidth + x];
 }
+GLboolean ImpressionistDoc::GetEdge(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_ucEdge[y*m_nWidth + x] > 0 ? true: false;
+}
+
 
 GLint ImpressionistDoc::GetGradientX(Point point)
 {
@@ -366,6 +381,10 @@ GLint ImpressionistDoc::GetGradientY(Point point)
 GLuint ImpressionistDoc::GetGradientMod(Point point)
 {
 	return GetGradientMod(point.x, point.y);
+}
+GLboolean ImpressionistDoc::GetEdge(Point point)
+{
+	return GetEdge(point.x, point.y);
 }
 
 
