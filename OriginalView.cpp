@@ -105,7 +105,9 @@ void OriginalView::resizeWindow(int width, int height)
 
 void OriginalView::resize(int x, int y, int width, int height)
 {
-	Fl_Gl_Window::resize(x, y, w(), h());
+	width = min(width, m_pDoc->m_nPaintWidth);
+	height = min(height, m_pDoc->m_nPaintHeight);
+	Fl_Gl_Window::resize(x, y, width, height);
 }
 
 void OriginalView::setDrawMarker(const Point& p)

@@ -23,6 +23,7 @@
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
 ImpressionistDoc::ImpressionistDoc() :
+m_nPaintWidth(300), m_nPaintHeight(275),
 m_ucBitmap(NULL), m_ucPainting(NULL), m_ucIntensity(NULL),
 m_iGradientX(NULL), m_iGradientY(NULL), m_ucPainting_Undo(NULL), m_iGradientMod(NULL), m_ucEdge(NULL)
 {
