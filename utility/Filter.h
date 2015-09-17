@@ -10,6 +10,7 @@ using namespace std;
 extern GLint SobelX[9];
 extern GLint SobelY[9];
 extern GLdouble Gaussian[9];
+extern GLdouble Sharpen[9];
 
 /**
  * \brief Extract Pixel from a given source and index;
