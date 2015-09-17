@@ -2,8 +2,10 @@
 #define FILTER_H
 
 #include<cmath>
+#include<iostream>
 #include"FL/gl.h"
-
+#include"../ImpressionistDoc.h"
+using namespace std;
 //filters. Top line at bottom.
 extern GLint SobelX[9];
 extern GLint SobelY[9];
@@ -61,12 +63,12 @@ inline GLint applyFilter(const filterType* filter, int filterW, int filterH, con
 			//convert coordinate to index in 1D
 			int filterPos = j * filterW + i; //According to blue book, pixels are stored row-first
 			int sourcePos = y * sourceW + x;
-
 			result += filter[filterPos] * source[sourcePos];
 		}
 	}
 	return result;
 }
+
 
 
 #endif //FILTER.H
