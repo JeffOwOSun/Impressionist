@@ -137,6 +137,7 @@ private:
 	static void cb_EdgeExtraction(Fl_Widget* o, void* v);
 	static void cb_orig_view(Fl_Menu_* o, void* v);
 	static void cb_edge_view(Fl_Menu_* o, void* v);
+	static void cb_swap_view(Fl_Menu_* o, void* v);
 };
 
 #endif
