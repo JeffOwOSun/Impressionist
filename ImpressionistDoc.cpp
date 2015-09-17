@@ -24,7 +24,7 @@
 
 ImpressionistDoc::ImpressionistDoc() :
 m_ucBitmap(NULL), m_ucPainting(NULL), m_ucIntensity(NULL),
-m_iGradientX(NULL), m_iGradientY(NULL), m_ucPainting_Undo(NULL)
+m_iGradientX(NULL), m_iGradientY(NULL), m_ucPainting_Undo(NULL), m_iGradientMod(NULL), m_ucEdge(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
@@ -139,6 +139,10 @@ double ImpressionistDoc::getColorB()
 {
 	return m_pUI->getColorB();
 }
+bool ImpressionistDoc::getEdgeClipping()
+{
+	return m_pUI->getEdgeClipping();
+}
 
 //---------------------------------------------------------
 // Load the specified image
@@ -186,6 +190,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	// TODO: Wrap these filters in custom classes
 	m_iGradientX = new GLint[width*height];
 	m_iGradientY = new GLint[width*height];
+	m_iGradientMod = new GLuint[width*height];
 
 	//Apply gaussian filter
 	GLubyte* blurred = new GLubyte[width*height];
@@ -200,9 +205,16 @@ int ImpressionistDoc::loadImage(char *iname)
 		{
 			m_iGradientX[j * width + i] = applyFilter((GLint*)&SobelX, 3, 3, blurred, width, height, i, j);
 			m_iGradientY[j * width + i] = applyFilter((GLint*)&SobelY, 3, 3, blurred, width, height, i, j);
+			m_iGradientMod[j * width + i] = sqrt(pow(m_iGradientX[j * width + i], 2) + pow(m_iGradientY[j * width + i], 2));
 		}
-	//DEBUG//saveMatrix<int>("m_iGradientX.txt", m_iGradientX, width, height);
-	//DEBUG//saveMatrix<int>("m_iGradientY.txt", m_iGradientY, width, height);
+	//saveMatrix<int>("m_iGradientX.txt", m_iGradientX, width, height);
+	//saveMatrix<int>("m_iGradientY.txt", m_iGradientY, width, height);
+	//saveMatrix<unsigned int>("m_iGradientMod.txt", m_iGradientMod, width, height);
+
+	// allocate space for edge
+	m_ucEdge = new GLubyte[width*height];
+	memset(m_ucEdge, 0, width*height);
+	GetEdgeMap(m_pUI->getEdgeThreshold());
 
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
@@ -346,6 +358,37 @@ GLint ImpressionistDoc::GetGradientY(int x, int y)
 	return m_iGradientY[y*m_nWidth + x];
 }
 
+
+GLuint ImpressionistDoc::GetGradientMod(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_iGradientMod[y*m_nWidth + x];
+}
+GLboolean ImpressionistDoc::GetEdge(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_ucEdge[y*m_nWidth + x] > 0 ? true: false;
+}
+
+
 GLint ImpressionistDoc::GetGradientX(Point point)
 {
 	return GetGradientX(point.x, point.y);
@@ -354,4 +397,27 @@ GLint ImpressionistDoc::GetGradientY(Point point)
 {
 	return GetGradientY(point.x, point.y);
 }
+GLuint ImpressionistDoc::GetGradientMod(Point point)
+{
+	return GetGradientMod(point.x, point.y);
+}
+GLboolean ImpressionistDoc::GetEdge(Point point)
+{
+	return GetEdge(point.x, point.y);
+}
 
+
+GLubyte* ImpressionistDoc::GetEdgeMap(int threshold)
+{
+	if (!m_ucEdge) return NULL;
+
+	int pos = 0;
+	for (int i = 0; i < m_nPaintWidth; ++i)
+		for (int j = 0; j < m_nPaintHeight; ++j)
+		{
+			pos = j * m_nPaintWidth + i;
+			m_ucEdge[pos] = (m_iGradientMod[pos] > threshold) ? 255 : 0;
+		}
+	//return the calculated Edge
+	return m_ucEdge;
+}

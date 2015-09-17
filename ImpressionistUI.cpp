@@ -284,6 +284,7 @@ void ImpressionistUI::cb_undo_canvas(Fl_Menu_* o, void* v)
 	pDoc->m_ucPainting = pDoc->m_ucPainting_Undo;
 	pDoc->m_ucPainting_Undo = m_tmp;
 	pDoc->m_pUI->m_paintView->refresh();
+	glFlush();
 }
 
 //------------------------------------------------------------
@@ -326,13 +327,69 @@ void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
 }
 
 void ImpressionistUI::cb_color_chooser(Fl_Widget* o, void* v)
-{	
+{
 	std::cout << ((Fl_Color_Chooser*)o)->r() << std::endl;
 	std::cout << ((Fl_Color_Chooser*)o)->g() << std::endl;
 	std::cout << ((Fl_Color_Chooser*)o)->b() << std::endl;
 	((ImpressionistUI*)(o->user_data()))->m_nColorR = ((Fl_Color_Chooser*)o)->r();
 	((ImpressionistUI*)(o->user_data()))->m_nColorG = ((Fl_Color_Chooser*)o)->g();
 	((ImpressionistUI*)(o->user_data()))->m_nColorB = ((Fl_Color_Chooser*)o)->b();
+}
+//---The light button callback for edge clipping---------------------
+void ImpressionistUI::cb_EdgeClipping(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+
+	if (pUI->m_bEdgeClipping == TRUE) pUI->m_bEdgeClipping = FALSE;
+	else {
+		pUI->m_bEdgeClipping = TRUE;
+		ImpressionistDoc* pDoc = pUI->getDocument();
+		pDoc->GetEdgeMap(pUI->m_nEdgeThreshold);
+	}
+}
+//-----------------------------------------------------------
+// Called by UI to set the edge threshold when slider changed
+//-----------------------------------------------------------
+void ImpressionistUI::cb_EdgeThreshold(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nEdgeThreshold = int(((Fl_Slider *)o)->value());
+}
+
+//------------------------------------------------------------
+// Extract edge
+// Called by the UI when the EdgeExtraction button is pushed
+//------------------------------------------------------------
+void ImpressionistUI::cb_EdgeExtraction(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	ImpressionistDoc * pDoc = ((ImpressionistUI*)(o->user_data()))->getDocument();
+
+	//calculate the edge map according to the threshold
+	pDoc->GetEdgeMap(pUI->m_nEdgeThreshold);
+	pUI->m_origView->viewMode = OriginalView::EDGE_MODE;
+	pUI->m_origView->refresh();
+}
+
+//------------------------------------------------------------
+// Orig view
+// Called by the UI when the Original View button is pressed
+//------------------------------------------------------------
+void ImpressionistUI::cb_orig_view(Fl_Menu_* o, void* v)
+{
+	ImpressionistUI *pUI = whoami(o);
+
+	//display the orig image
+	pUI->m_origView->viewMode = OriginalView::ORIG_MODE;
+	pUI->m_origView->refresh();
+}
+
+void ImpressionistUI::cb_edge_view(Fl_Menu_* o, void* v)
+{
+	ImpressionistUI *pUI = whoami(o);
+
+	//calculate the edge map according to the threshold
+	pUI->m_origView->viewMode = OriginalView::EDGE_MODE;
+	pUI->m_origView->refresh();
 }
 
 //---------------------------------- per instance functions --------------------------------------
@@ -418,7 +475,15 @@ double ImpressionistUI::getColorB()
 	return m_nColorB;
 }
 
+bool ImpressionistUI::getEdgeClipping()
+{
+	return m_bEdgeClipping;
+}
 
+int ImpressionistUI::getEdgeThreshold()
+{
+	return m_nEdgeThreshold;
+}
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -472,6 +537,16 @@ void ImpressionistUI::setColorB(double B)
 	m_nColorB = B;
 }
 
+void ImpressionistUI::setEdgeClipping(bool clipping) 
+{
+	m_bEdgeClipping = clipping;
+}
+
+void ImpressionistUI::setEdgeThreshold(int threshold) 
+{
+	m_nEdgeThreshold = threshold;
+}
+
 // Main menu definition
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -484,7 +559,10 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
-
+	{ "&View", 0, 0, 0, FL_SUBMENU }, // change the view
+		{ "&Original View", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_orig_view },
+		{ "&Edge View", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_edge_view },
+		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
 		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
 		{ 0 },
@@ -549,13 +627,16 @@ ImpressionistUI::ImpressionistUI() {
 	m_nAngle = 0;
 	m_nStrokeDirection = DIR_SLIDER_OR_RIGHT_MOUSE;
 	m_nAlpha = 255;
-	m_nColorR = 0;
-	m_nColorG = 0;
-	m_nColorB = 0;
+	m_nColorR = 1.0;
+	m_nColorG = 1.0;
+	m_nColorB = 1.0;
+	m_bEdgeClipping = false;
+	m_nEdgeThreshold = 100;
 
 	m_colorWindow = new Fl_Window(400, 325, "Color Dialog");
 		m_colorChooser = new Fl_Color_Chooser(50, 20, 150, 150, "&Color Chooser");
 		m_colorChooser->user_data((void*)(this));
+		m_colorChooser->rgb(m_nColorR, m_nColorG, m_nColorB);
 		m_colorChooser->callback(cb_color_chooser);
 	m_colorWindow->end();
 	
@@ -630,6 +711,29 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushAlphaSlider->value(1); //not m_nAlpha because scale difference
 		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
 		m_BrushAlphaSlider->callback(cb_alphaSlides);
+
+		//---To install a light button for edge clipping---------------------
+		m_EdgeClipping = new Fl_Light_Button(10, 200, 150, 25, "Edge Clipping");
+		m_EdgeClipping->user_data((void*)(this));   // record self to be used by static callback functions
+		m_EdgeClipping->callback(cb_EdgeClipping);
+
+		//Slider for edge Threshold
+		m_BrushAlphaSlider = new Fl_Value_Slider(10, 280, 200, 20, "Edge Threshold");
+		m_BrushAlphaSlider->user_data((void*)(this));
+		m_BrushAlphaSlider->type(FL_HOR_NICE_SLIDER);
+		m_BrushAlphaSlider->labelfont(FL_COURIER);
+		m_BrushAlphaSlider->labelsize(12);
+		m_BrushAlphaSlider->minimum(0);
+		m_BrushAlphaSlider->maximum(500);
+		m_BrushAlphaSlider->step(1);
+		m_BrushAlphaSlider->value(m_nEdgeThreshold); //not m_nAlpha because scale difference
+		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
+		m_BrushAlphaSlider->callback(cb_EdgeThreshold);
+
+		//Button for extrating edge
+		m_ClearCanvasButton = new Fl_Button(320, 280, 60, 20, "Do it!");
+		m_ClearCanvasButton->user_data((void*)(this));
+		m_ClearCanvasButton->callback(cb_EdgeExtraction);
 
     m_brushDialog->end();	
 
