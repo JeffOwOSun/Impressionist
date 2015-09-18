@@ -176,6 +176,8 @@ int ImpressionistDoc::loadImage(char *iname)
 	if ( m_ucIntensity ) delete[] m_ucIntensity;
 	if ( m_iGradientX ) delete[] m_iGradientX;
 	if ( m_iGradientY ) delete[] m_iGradientY;
+	if (m_iGradientMod) delete[] m_iGradientMod;
+	if (m_ucEdge) delete[] m_ucEdge;
 
 	m_ucBitmap		= data;
 
@@ -213,8 +215,8 @@ int ImpressionistDoc::loadImage(char *iname)
 	//saveMatrix<unsigned int>("m_iGradientMod.txt", m_iGradientMod, width, height);
 
 	// allocate space for edge
-	m_ucEdge = new GLubyte[width*height];
-	memset(m_ucEdge, 0, width*height);
+	m_ucEdge = new GLubyte[3*width*height];
+	memset(m_ucEdge, 0, 3*width*height);
 	GetEdgeMap(m_pUI->getEdgeThreshold());
 
 	// allocate space for draw view
@@ -241,6 +243,40 @@ int ImpressionistDoc::loadImage(char *iname)
 	return 1;
 }
 
+//----------------------------------------------------------------
+// Load edge image
+//----------------------------------------------------------------
+int ImpressionistDoc::loadEdgeImage(char* iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width,
+		height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	//reject different dimension
+	if (width != m_nPaintWidth || height != m_nPaintHeight)
+	{
+		fl_alert("The dimension of edge image doesn't match source image");
+		return 0;
+	}
+	
+	//load the edge map
+	if (m_ucEdge) delete[] m_ucEdge;
+	m_ucEdge = data;
+
+	//update original view if it's displaying edge
+	if (m_pUI->m_origView->viewMode == OriginalView::EDGE_MODE)
+		m_pUI->m_origView->refresh();
+
+	return 1;
+}
+
 
 //----------------------------------------------------------------
 // Save the specified image
@@ -251,6 +287,19 @@ int ImpressionistDoc::saveImage(char *iname)
 {
 
 	writeBMP(iname, m_nPaintWidth, m_nPaintHeight, m_ucPainting);
+
+	return 1;
+}
+
+//----------------------------------------------------------------
+// Save the edge image
+// This is called by the UI when the save edge image menu button is
+// pressed.
+//----------------------------------------------------------------
+int ImpressionistDoc::saveEdgeImage(char *iname)
+{
+
+	writeBMP(iname, m_nPaintWidth, m_nPaintHeight, m_ucEdge);
 
 	return 1;
 }
@@ -386,7 +435,7 @@ GLboolean ImpressionistDoc::GetEdge(int x, int y)
 	else if (y >= m_nHeight)
 		y = m_nHeight - 1;
 
-	return m_ucEdge[y*m_nWidth + x] > 0 ? true: false;
+	return m_ucEdge[3*(y*m_nWidth + x)] > 0 ? true: false;
 }
 
 
@@ -407,7 +456,7 @@ GLboolean ImpressionistDoc::GetEdge(Point point)
 	return GetEdge(point.x, point.y);
 }
 
-
+// Calculate edge with given threshold, and store it.
 GLubyte* ImpressionistDoc::GetEdgeMap(int threshold)
 {
 	if (!m_ucEdge) return NULL;
@@ -416,8 +465,8 @@ GLubyte* ImpressionistDoc::GetEdgeMap(int threshold)
 	for (int i = 0; i < m_nPaintWidth; ++i)
 		for (int j = 0; j < m_nPaintHeight; ++j)
 		{
-			pos = j * m_nPaintWidth + i;
-			m_ucEdge[pos] = (m_iGradientMod[pos] > threshold) ? 255 : 0;
+			pos = (j * m_nPaintWidth + i);
+			m_ucEdge[3*pos] = m_ucEdge[3*pos+1] = m_ucEdge[3*pos+2] = m_iGradientMod[pos] > threshold ? 255 : 0;
 		}
 	//return the calculated Edge
 	return m_ucEdge;

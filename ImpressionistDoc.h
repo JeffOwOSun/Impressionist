@@ -23,7 +23,8 @@ public:
 
 	int		loadImage(char *iname);			// called by the UI to load image
 	int		saveImage(char *iname);			// called by the UI to save image
-
+	int		loadEdgeImage(char* iname);		// called by the UI to load Edge Image
+	int		saveEdgeImage(char* iname);		// called by the UI to save Edge Image
 
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
 	void	setBrushType(int type);			// called by the UI to set the brushType
