@@ -16,6 +16,8 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Int_Input.H>
+#include <vector>
 
 #include "Impressionist.h"
 #include "OriginalView.h"
@@ -37,6 +39,12 @@ public:
 // for brush dialog
 	Fl_Window*			m_brushDialog;
 	Fl_Window*			m_colorWindow;
+	Fl_Window*			m_filterSizeWindow;
+	Fl_Window*			m_filterEntryWindow;
+	Fl_Int_Input*		m_filterWidth;
+	Fl_Int_Input*		m_filterHeight;
+	Fl_Button*			m_filterSizeApply;
+
 	Fl_Choice*			m_BrushTypeChoice;
 	Fl_Color_Chooser*	m_colorChooser;
 
@@ -55,6 +63,7 @@ public:
 	Fl_Light_Button*	m_EdgeClipping;
 	Fl_Slider*			m_EdgeThreshold;
 	Fl_Button*			m_EdgeExtraction;
+	std::vector<Fl_Int_Input*> m_EntryInputs;
 
 	// Member functions
 	void				setDocument(ImpressionistDoc* doc);
@@ -91,6 +100,8 @@ public:
 
 	int					getEdgeThreshold();
 	void				setEdgeThreshold(int edgeThreshold);
+
+	void				ShowFilterEntry(int w, int h);
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -138,6 +149,8 @@ private:
 	static void cb_orig_view(Fl_Menu_* o, void* v);
 	static void cb_edge_view(Fl_Menu_* o, void* v);
 	static void cb_swap_view(Fl_Menu_* o, void* v);
+	static void cb_filter_size(Fl_Menu_* o, void* v);
+	static void cb_filter_size_check(Fl_Widget* o, void* v);
 };
 
 #endif

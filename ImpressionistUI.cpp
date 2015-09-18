@@ -10,6 +10,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <stdlib.h>
 
 #include "impressionistUI.h"
 #include "impressionistDoc.h"
@@ -403,6 +404,43 @@ void ImpressionistUI::cb_swap_view(Fl_Menu_* o, void* v)
 	whoami(o)->m_paintView->refresh();
 }
 
+void ImpressionistUI::cb_filter_size(Fl_Menu_* o, void* v)
+{
+	whoami(o)->m_filterSizeWindow->show();
+}
+
+void ImpressionistUI::cb_filter_size_check(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* db = (ImpressionistUI*)o->user_data();
+	int w = atoi((db->m_filterWidth->value()));
+	int h = atoi((db->m_filterHeight->value()));
+	w = w > 1 ? w : 1;
+	h = h > 1 ? h : 1;
+	db->ShowFilterEntry(w, h);
+	db->m_filterSizeWindow->hide();
+}
+
+void ImpressionistUI::ShowFilterEntry(int w, int h)
+{
+	int dialogWidth = w * 30 + (w + 1) * 10;
+	int dialogHeight = h * 20 + (h + 1) * 10;
+	m_filterEntryWindow = new Fl_Window(dialogWidth, dialogHeight, "Filter Kernel Entry");
+	m_filterEntryWindow->user_data((void*)(this));
+	for (int i = 1; i <= h; ++i)
+	{
+		for (int j = 1; j <= w; ++j)
+		{
+			Fl_Int_Input *input = new Fl_Int_Input(j * 10 + (j-1) * 30, i* 10 + (i - 1) * 20, 30, 20, "");
+			input->value("1");
+			m_EntryInputs.push_back(input);
+		}
+	}
+	m_filterEntryWindow->end();
+	m_filterEntryWindow->show();
+
+}
+
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -568,7 +606,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Swap Views", FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_swap_view},
 		{ "&Undo", FL_ALT + 'z', (Fl_Callback *)ImpressionistUI::cb_undo_canvas},
 		{ "&Color palatte", FL_ALT + 'k', (Fl_Callback *)ImpressionistUI::cb_color_window, 0, FL_MENU_DIVIDER },
-		
+		{ "&Define Filter", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_filter_size, 0, FL_MENU_DIVIDER},
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
 	{ "&View", 0, 0, 0, FL_SUBMENU }, // change the view
@@ -750,5 +788,20 @@ ImpressionistUI::ImpressionistUI() {
 		m_ClearCanvasButton->callback(cb_EdgeExtraction);
 
     m_brushDialog->end();	
+
+
+	m_filterSizeWindow = new Fl_Window(200, 80, "Filter Size");
+		m_filterWidth = new Fl_Int_Input(20, 20, 50, 20, "Width");
+			m_filterWidth->labelfont(FL_COURIER);
+			m_filterWidth->labelsize(12);
+			m_filterWidth->value("1");
+		m_filterHeight = new Fl_Int_Input(100, 10, 60, 20, "Height");
+			m_filterWidth->labelfont(FL_COURIER);
+			m_filterWidth->labelsize(12);
+			m_filterWidth->value("1");
+		m_filterSizeApply = new Fl_Button(160, 40, 80, 20, "&OK");
+			m_filterSizeApply->user_data((void*)(this));
+			m_filterSizeApply->callback(cb_filter_size_check);
+	m_filterSizeWindow->end();
 
 }
