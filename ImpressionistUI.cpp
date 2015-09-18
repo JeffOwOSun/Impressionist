@@ -420,10 +420,27 @@ void ImpressionistUI::cb_filter_size_check(Fl_Widget* o, void* v)
 	db->m_filterSizeWindow->hide();
 }
 
+void ImpressionistUI::cb_applyFilter(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* db = (ImpressionistUI*)o->user_data();
+	double* kernel = new double[db->m_nKernelH * db->m_nKernelW];
+	for (int i = 0; i < db->m_nKernelH; ++i)
+	{
+		for (int j = 0; j < db->m_nKernelW; ++j)
+		{
+			int pixel = i * db->m_nKernelW + j;
+			int weight = atoi(db->m_EntryInputs[pixel]->value());
+			kernel[pixel] = weight;
+		}
+	}
+
+	/////////////////////////////// TODO
+}
+
 void ImpressionistUI::ShowFilterEntry(int w, int h)
 {
 	int dialogWidth = w * 30 + (w + 1) * 10;
-	int dialogHeight = h * 20 + (h + 1) * 10;
+	int dialogHeight = h * 20 + (h + 1) * 10 + 40;
 	m_filterEntryWindow = new Fl_Window(dialogWidth, dialogHeight, "Filter Kernel Entry");
 	m_filterEntryWindow->user_data((void*)(this));
 	for (int i = 1; i <= h; ++i)
@@ -436,8 +453,14 @@ void ImpressionistUI::ShowFilterEntry(int w, int h)
 		}
 	}
 	m_filterEntryWindow->end();
-	m_filterEntryWindow->show();
 
+	m_filterEntryApply = new Fl_Button(dialogWidth / 2, dialogHeight - 30, 20, 20, "Apply");
+	m_filterEntryApply->user_data((void*)(this));
+	m_filterEntryApply->callback(cb_applyFilter);
+
+	m_filterEntryWindow->show();
+	m_nKernelH = h;
+	m_nKernelW = w;
 }
 
 

@@ -44,6 +44,7 @@ public:
 	Fl_Int_Input*		m_filterWidth;
 	Fl_Int_Input*		m_filterHeight;
 	Fl_Button*			m_filterSizeApply;
+	Fl_Button*			m_filterEntryApply;
 
 	Fl_Choice*			m_BrushTypeChoice;
 	Fl_Color_Chooser*	m_colorChooser;
@@ -117,6 +118,8 @@ private:
 	double  m_nColorB;
 	bool	m_bEdgeClipping;
 	int		m_nEdgeThreshold;
+	int		m_nKernelH;
+	int		m_nKernelW;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -151,6 +154,7 @@ private:
 	static void cb_swap_view(Fl_Menu_* o, void* v);
 	static void cb_filter_size(Fl_Menu_* o, void* v);
 	static void cb_filter_size_check(Fl_Widget* o, void* v);
+	static void cb_applyFilter(Fl_Widget* o, void* v);
 };
 
 #endif
