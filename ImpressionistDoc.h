@@ -25,6 +25,7 @@ public:
 	int		saveImage(char *iname);			// called by the UI to save image
 	int		loadEdgeImage(char* iname);		// called by the UI to load Edge Image
 	int		saveEdgeImage(char* iname);		// called by the UI to save Edge Image
+	int		loadMuralImage(char *iname);	// called by the UI to load mural image
 
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
 	void	setBrushType(int type);			// called by the UI to set the brushType
@@ -99,7 +100,9 @@ public:
 	// Get the color of the original picture at the specified point	
 	GLubyte* GetOriginalPixel( const Point p );  
 	// Calculate the edge map using gradient mod and threshold
-	GLubyte* GetEdgeMap(int EdgeThreshold);
+	GLubyte* CalculateEdgeMap(int EdgeThreshold);
+	// calculate the gradient
+	void CalculateGradient();
 
 private:
 	char			m_imageName[256];

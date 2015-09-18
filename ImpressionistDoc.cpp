@@ -181,47 +181,26 @@ int ImpressionistDoc::loadImage(char *iname)
 
 	m_ucBitmap		= data;
 
-	// allocate and calculate the Intensity map of the original Image
+	// allocate the Intensity map of the original Image
 	m_ucIntensity = new GLubyte[width*height];
-	for (int i = 0; i < width; ++i)
-		for (int j = 0; j < height; ++j)
-			m_ucIntensity[j * width + i] = filterIntensity(m_ucBitmap + 3 * (j * width + i));
 
-	//DEBUG//saveMatrix<unsigned char>("m_ucIntensity.txt", m_ucIntensity, width, height);
-
-	// allocate and calculate the gradient map of the original Image
+	// allocate the gradient map of the original Image
 	// TODO: Wrap these filters in custom classes
 	m_iGradientX = new GLint[width*height];
 	m_iGradientY = new GLint[width*height];
 	m_iGradientMod = new GLuint[width*height];
 
-	//Apply gaussian filter
-	GLubyte* blurred = new GLubyte[width*height];
-	for (int i = 0; i < width; ++i)
-		for (int j = 0; j < height; ++j)
-		{
-			blurred[j * width + i] = applyFilter((GLdouble*)&Gaussian, 3, 3, m_ucIntensity, width, height, i, j);
-		}
-	//DEBUG//saveMatrix<unsigned char>("m_blurred.txt", blurred, width, height);
-	for (int i = 0; i < width; ++i)
-		for (int j = 0; j < height; ++j)
-		{
-			m_iGradientX[j * width + i] = applyFilter((GLint*)&SobelX, 3, 3, blurred, width, height, i, j);
-			m_iGradientY[j * width + i] = applyFilter((GLint*)&SobelY, 3, 3, blurred, width, height, i, j);
-			m_iGradientMod[j * width + i] = sqrt(pow(m_iGradientX[j * width + i], 2) + pow(m_iGradientY[j * width + i], 2));
-		}
-	//saveMatrix<int>("m_iGradientX.txt", m_iGradientX, width, height);
-	//saveMatrix<int>("m_iGradientY.txt", m_iGradientY, width, height);
-	//saveMatrix<unsigned int>("m_iGradientMod.txt", m_iGradientMod, width, height);
+	//c calculate Gradient
+	CalculateGradient();
 
 	// allocate space for edge
 	m_ucEdge = new GLubyte[3*width*height];
-	memset(m_ucEdge, 0, 3*width*height);
-	GetEdgeMap(m_pUI->getEdgeThreshold());
+	CalculateEdgeMap(m_pUI->getEdgeThreshold());
 
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
 	memset(m_ucPainting, 0, width*height*3);
+
 	// allocate space for undo painting
 	m_ucPainting_Undo = new unsigned char[width*height * 3];
 	memset(m_ucPainting_Undo, 0, width*height * 3);
@@ -275,6 +254,75 @@ int ImpressionistDoc::loadEdgeImage(char* iname)
 		m_pUI->m_origView->refresh();
 
 	return 1;
+}
+
+//----------------------------------------------------------------
+// Load mural image
+//----------------------------------------------------------------
+int ImpressionistDoc::loadMuralImage(char* iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width,
+		height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	//reject different dimension
+	if (width != m_nPaintWidth || height != m_nPaintHeight)
+	{
+		fl_alert("The dimension of edge image doesn't match source image");
+		return 0;
+	}
+
+	//load the bit map
+	if (m_ucBitmap) delete[] m_ucBitmap;
+	m_ucBitmap = data;
+
+	//calculate gradient
+	CalculateGradient();
+
+	//calculate new edge
+	CalculateEdgeMap(m_pUI->getEdgeThreshold());
+
+	//refresh display
+	m_pUI->m_origView->refresh();
+
+	return 1;
+}
+
+//----------------------------------------------------------------
+//Calculate gradients
+//----------------------------------------------------------------
+void ImpressionistDoc::CalculateGradient()
+{
+	int width = m_nPaintWidth, height = m_nPaintHeight;
+
+	//calculate the intensity
+	for (int i = 0; i < width; ++i)
+		for (int j = 0; j < height; ++j)
+			m_ucIntensity[j * width + i] = filterIntensity(m_ucBitmap + 3 * (j * width + i));
+
+	//Apply gaussian filter
+	GLubyte* blurred = new GLubyte[width*height];
+	for (int i = 0; i < width; ++i)
+		for (int j = 0; j < height; ++j)
+		{
+			blurred[j * width + i] = applyFilter((GLdouble*)&Gaussian, 3, 3, m_ucIntensity, width, height, i, j);
+		}
+
+	for (int i = 0; i < width; ++i)
+		for (int j = 0; j < height; ++j)
+		{
+			m_iGradientX[j * width + i] = applyFilter((GLint*)&SobelX, 3, 3, blurred, width, height, i, j);
+			m_iGradientY[j * width + i] = applyFilter((GLint*)&SobelY, 3, 3, blurred, width, height, i, j);
+			m_iGradientMod[j * width + i] = sqrt(pow(m_iGradientX[j * width + i], 2) + pow(m_iGradientY[j * width + i], 2));
+		}
+
 }
 
 
@@ -457,7 +505,7 @@ GLboolean ImpressionistDoc::GetEdge(Point point)
 }
 
 // Calculate edge with given threshold, and store it.
-GLubyte* ImpressionistDoc::GetEdgeMap(int threshold)
+GLubyte* ImpressionistDoc::CalculateEdgeMap(int threshold)
 {
 	if (!m_ucEdge) return NULL;
 

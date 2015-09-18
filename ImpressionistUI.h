@@ -139,6 +139,7 @@ private:
 	static void cb_edge_view(Fl_Menu_* o, void* v);
 	static void cb_load_edge_image(Fl_Menu_ * o, void * v);
 	static void cb_save_edge_image(Fl_Menu_ * o, void * v);
+	static void cb_load_mural_image(Fl_Menu_ * o, void * v);
 };
 
 #endif
