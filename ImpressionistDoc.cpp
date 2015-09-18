@@ -211,7 +211,7 @@ int ImpressionistDoc::loadImage(char *iname)
 		{
 			m_iGradientX[j * width + i] = applyFilter((GLint*)&SobelX, 3, 3, blurred, width, height, i, j);
 			m_iGradientY[j * width + i] = applyFilter((GLint*)&SobelY, 3, 3, blurred, width, height, i, j);
-			m_iGradientMod[j * width + i] = sqrt(pow(m_iGradientX[j * width + i], 2) + pow(m_iGradientY[j * width + i], 2));
+			m_iGradientMod[j * width + i] = (GLuint)sqrt(pow(m_iGradientX[j * width + i], 2) + pow(m_iGradientY[j * width + i], 2));
 		}
 	//saveMatrix<int>("m_iGradientX.txt", m_iGradientX, width, height);
 	//saveMatrix<int>("m_iGradientY.txt", m_iGradientY, width, height);
@@ -422,7 +422,7 @@ GLubyte* ImpressionistDoc::GetEdgeMap(int threshold)
 		for (int j = 0; j < m_nPaintHeight; ++j)
 		{
 			pos = j * m_nPaintWidth + i;
-			m_ucEdge[pos] = (m_iGradientMod[pos] > threshold) ? 255 : 0;
+			m_ucEdge[pos] = (m_iGradientMod[pos] > (unsigned int)threshold) ? 255 : 0;
 		}
 	//return the calculated Edge
 	return m_ucEdge;
