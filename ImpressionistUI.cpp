@@ -186,6 +186,34 @@ void ImpressionistUI::cb_load_image(Fl_Menu_* o, void* v)
 	}
 }
 
+//------------------------------------------------------------------
+// Brings up a file chooser and then loads the chosen edge image
+// This is called by the UI when the load edge image menu item is chosen
+//------------------------------------------------------------------
+void ImpressionistUI::cb_load_edge_image(Fl_Menu_ * o, void * v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
+	if (newfile != NULL) {
+		pDoc->loadEdgeImage(newfile);
+	}
+}
+
+//------------------------------------------------------------------
+// Brings up a file chooser and then loads the chosen image
+// This is called by the UI when the load mural image menu item is chosen
+//------------------------------------------------------------------
+void ImpressionistUI::cb_load_mural_image(Fl_Menu_* o, void* v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
+	if (newfile != NULL) {
+		pDoc->loadMuralImage(newfile);
+	}
+}
+
 
 //------------------------------------------------------------------
 // Brings up a file chooser and then saves the painted image
@@ -198,6 +226,20 @@ void ImpressionistUI::cb_save_image(Fl_Menu_* o, void* v)
 	char* newfile = fl_file_chooser("Save File?", "*.bmp", "save.bmp" );
 	if (newfile != NULL) {
 		pDoc->saveImage(newfile);
+	}
+}
+
+//------------------------------------------------------------------
+// Brings up a file chooser and then saves the chosen edge image
+// This is called by the UI when the save edge image menu item is chosen
+//------------------------------------------------------------------
+void ImpressionistUI::cb_save_edge_image(Fl_Menu_ * o, void * v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
+	if (newfile != NULL) {
+		pDoc->saveEdgeImage(newfile);
 	}
 }
 
@@ -345,7 +387,7 @@ void ImpressionistUI::cb_EdgeClipping(Fl_Widget* o, void* v)
 	else {
 		pUI->m_bEdgeClipping = TRUE;
 		ImpressionistDoc* pDoc = pUI->getDocument();
-		pDoc->GetEdgeMap(pUI->m_nEdgeThreshold);
+		pDoc->CalculateEdgeMap(pUI->m_nEdgeThreshold);
 	}
 }
 //-----------------------------------------------------------
@@ -366,7 +408,7 @@ void ImpressionistUI::cb_EdgeExtraction(Fl_Widget* o, void* v)
 	ImpressionistDoc * pDoc = ((ImpressionistUI*)(o->user_data()))->getDocument();
 
 	//calculate the edge map according to the threshold
-	pDoc->GetEdgeMap(pUI->m_nEdgeThreshold);
+	pDoc->CalculateEdgeMap(pUI->m_nEdgeThreshold);
 	pUI->m_origView->viewMode = OriginalView::EDGE_MODE;
 	pUI->m_origView->refresh();
 }
@@ -632,6 +674,9 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Undo", FL_ALT + 'z', (Fl_Callback *)ImpressionistUI::cb_undo_canvas},
 		{ "&Color palatte", FL_ALT + 'k', (Fl_Callback *)ImpressionistUI::cb_color_window, 0, FL_MENU_DIVIDER },
 		{ "&Define Filter", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_filter_size, 0, FL_MENU_DIVIDER},
+		{ "Load Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_edge_image },
+		{ "Save Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_save_edge_image, 0, FL_MENU_DIVIDER },
+		{ "Load Mural Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_mural_image, 0, FL_MENU_DIVIDER },
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
 	{ "&View", 0, 0, 0, FL_SUBMENU }, // change the view

@@ -156,6 +156,9 @@ private:
 	static void cb_filter_size(Fl_Menu_* o, void* v);
 	static void cb_filter_size_check(Fl_Widget* o, void* v);
 	static void cb_applyFilter(Fl_Widget* o, void* v);
+	static void cb_load_edge_image(Fl_Menu_ * o, void * v);
+	static void cb_save_edge_image(Fl_Menu_ * o, void * v);
+	static void cb_load_mural_image(Fl_Menu_ * o, void * v);
 };
 
 #endif
