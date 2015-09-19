@@ -24,8 +24,9 @@
 
 ImpressionistDoc::ImpressionistDoc() :
 m_nPaintWidth(300), m_nPaintHeight(275),
-m_ucBitmap(NULL), m_ucPainting(NULL), m_ucIntensity(NULL),
-m_iGradientX(NULL), m_iGradientY(NULL), m_ucPainting_Undo(NULL), m_iGradientMod(NULL), m_ucEdge(NULL)
+m_ucBitmap(NULL), m_ucPainting(NULL), 
+m_iGradient(NULL), m_ucPainting_Undo(NULL), m_uiGradientMod(NULL), m_ucEdge(NULL),
+m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
@@ -169,29 +170,35 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_nHeight		= height;
 	m_nPaintHeight	= height;
 
-	// release old storage
+	// assuming resolution changed. release old storage
 	if ( m_ucBitmap ) delete [] m_ucBitmap;
 	if ( m_ucPainting ) delete [] m_ucPainting;
 	if ( m_ucPainting_Undo ) delete[] m_ucPainting_Undo;
-	if ( m_ucIntensity ) delete[] m_ucIntensity;
-	if ( m_iGradientX ) delete[] m_iGradientX;
-	if ( m_iGradientY ) delete[] m_iGradientY;
-	if (m_iGradientMod) delete[] m_iGradientMod;
-	if (m_ucEdge) delete[] m_ucEdge;
+	if ( m_iGradient) delete[] m_iGradient;
+	if ( m_uiGradientMod) delete[] m_uiGradientMod;
+	if ( m_ucEdge) delete[] m_ucEdge;
+	if (m_ucAnother) {
+		delete[] m_ucAnother;
+		m_ucAnother = NULL;
+	}
+	if (m_iReferenceGradient) {
+		delete[] m_iReferenceGradient;
+		m_iReferenceGradient = NULL;
+	}
+	if (m_uiReferenceGradientMod) {
+		delete[] m_uiReferenceGradientMod;
+		m_uiReferenceGradientMod = NULL;
+	}
 
 	m_ucBitmap		= data;
 
-	// allocate the Intensity map of the original Image
-	m_ucIntensity = new GLubyte[width*height];
-
 	// allocate the gradient map of the original Image
 	// TODO: Wrap these filters in custom classes
-	m_iGradientX = new GLint[width*height];
-	m_iGradientY = new GLint[width*height];
-	m_iGradientMod = new GLuint[width*height];
+	m_iGradient = new GLint[2*width*height];
+	m_uiGradientMod = new GLuint[width*height];
 
-	//c calculate Gradient
-	CalculateGradient();
+	//calculate gradient
+	CalculateGradient(m_ucBitmap, m_iGradient, m_uiGradientMod);
 
 	// allocate space for edge
 	m_ucEdge = new GLubyte[3*width*height];
@@ -284,7 +291,7 @@ int ImpressionistDoc::loadMuralImage(char* iname)
 	m_ucBitmap = data;
 
 	//calculate gradient
-	CalculateGradient();
+	CalculateGradient(m_ucBitmap, m_iGradient, m_uiGradientMod);
 
 	//calculate new edge
 	CalculateEdgeMap(m_pUI->getEdgeThreshold());
@@ -296,33 +303,77 @@ int ImpressionistDoc::loadMuralImage(char* iname)
 }
 
 //----------------------------------------------------------------
+// Load another image
+//----------------------------------------------------------------
+int ImpressionistDoc::loadAnother(char* iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width,
+		height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	//reject different dimension
+	if (width != m_nPaintWidth || height != m_nPaintHeight)
+	{
+		fl_alert("The dimension of edge image doesn't match source image");
+		return 0;
+	}
+
+	//load the bit map
+	if (m_ucAnother) delete[] m_ucAnother;
+	m_ucAnother = data;
+
+	if (!m_iReferenceGradient) //if never loaded another image before
+	{
+		//allocate gradient space
+		m_iReferenceGradient = new GLint[2 * width*height];
+		m_uiReferenceGradientMod = new GLuint[width*height];
+	}
+	//calculate gradient
+	CalculateGradient(m_ucAnother, m_iReferenceGradient, m_uiReferenceGradientMod);
+
+	//refresh display
+	m_pUI->m_origView->refresh();
+
+	return 1;
+}
+
+//----------------------------------------------------------------
 //Calculate gradients
 //----------------------------------------------------------------
-void ImpressionistDoc::CalculateGradient()
+void ImpressionistDoc::CalculateGradient(const GLubyte *const source, GLint * const targetGradient, GLuint * const targetMod)
 {
 	int width = m_nPaintWidth, height = m_nPaintHeight;
 
 	//calculate the intensity
+	GLubyte * intensity = new GLubyte[width * height];
 	for (int i = 0; i < width; ++i)
 		for (int j = 0; j < height; ++j)
-			m_ucIntensity[j * width + i] = filterIntensity(m_ucBitmap + 3 * (j * width + i));
+			intensity[j * width + i] = filterIntensity(source + 3 * (j * width + i));
 
 	//Apply gaussian filter
 	GLubyte* blurred = new GLubyte[width*height];
 	for (int i = 0; i < width; ++i)
 		for (int j = 0; j < height; ++j)
 		{
-			blurred[j * width + i] = applyFilter((GLdouble*)&Gaussian, 3, 3, m_ucIntensity, width, height, i, j);
+			blurred[j * width + i] = applyFilter((GLdouble*)&Gaussian, 3, 3, intensity, width, height, i, j);
 		}
-
+	
+	//Calculate the gradient
 	for (int i = 0; i < width; ++i)
 		for (int j = 0; j < height; ++j)
 		{
-			m_iGradientX[j * width + i] = applyFilter((GLint*)&SobelX, 3, 3, blurred, width, height, i, j);
-			m_iGradientY[j * width + i] = applyFilter((GLint*)&SobelY, 3, 3, blurred, width, height, i, j);
-			m_iGradientMod[j * width + i] = sqrt(pow(m_iGradientX[j * width + i], 2) + pow(m_iGradientY[j * width + i], 2));
+			int pos = j * width + i;
+			targetGradient[2 * pos] = applyFilter((GLint*)&SobelX, 3, 3, blurred, width, height, i, j);
+			targetGradient[2 * pos + 1] = applyFilter((GLint*)&SobelY, 3, 3, blurred, width, height, i, j);
+			targetMod[pos] = sqrt(pow(targetGradient[2 * pos], 2) + pow(targetGradient[2 * pos + 1], 2));
 		}
-
 }
 
 
@@ -402,6 +453,7 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 	return GetOriginalPixel( p.x, p.y );
 }
 
+/*
 //------------------------------------------------------------------
 // Get the Intensity of original image coord x and y
 //------------------------------------------------------------------
@@ -423,6 +475,8 @@ GLubyte ImpressionistDoc::GetIntensity(Point point)
 {
 	return GetIntensity(point.x, point.y);
 }
+*/
+
 //------------------------------------------------------------------
 // Get the Gradient of original image coord x and y
 //------------------------------------------------------------------
@@ -438,7 +492,7 @@ GLint ImpressionistDoc::GetGradientX(int x, int y)
 	else if (y >= m_nHeight)
 		y = m_nHeight - 1;
 
-	return m_iGradientX[y*m_nWidth + x];
+	return m_iGradient[2*(y*m_nWidth + x)];
 }
 
 GLint ImpressionistDoc::GetGradientY(int x, int y)
@@ -453,9 +507,38 @@ GLint ImpressionistDoc::GetGradientY(int x, int y)
 	else if (y >= m_nHeight)
 		y = m_nHeight - 1;
 
-	return m_iGradientY[y*m_nWidth + x];
+	return m_iGradient[2 * (y*m_nWidth + x) + 1];
 }
 
+GLint ImpressionistDoc::GetReferenceGradientX(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_iReferenceGradient[2 * (y*m_nWidth + x)];
+}
+
+GLint ImpressionistDoc::GetReferenceGradientY(int x, int y)
+{
+	if (x < 0)
+		x = 0;
+	else if (x >= m_nWidth)
+		x = m_nWidth - 1;
+
+	if (y < 0)
+		y = 0;
+	else if (y >= m_nHeight)
+		y = m_nHeight - 1;
+
+	return m_iReferenceGradient[2 * (y*m_nWidth + x) + 1];
+}
 
 GLuint ImpressionistDoc::GetGradientMod(int x, int y)
 {
@@ -469,7 +552,7 @@ GLuint ImpressionistDoc::GetGradientMod(int x, int y)
 	else if (y >= m_nHeight)
 		y = m_nHeight - 1;
 
-	return m_iGradientMod[y*m_nWidth + x];
+	return m_uiGradientMod[y*m_nWidth + x];
 }
 GLboolean ImpressionistDoc::GetEdge(int x, int y)
 {
@@ -499,6 +582,14 @@ GLuint ImpressionistDoc::GetGradientMod(Point point)
 {
 	return GetGradientMod(point.x, point.y);
 }
+GLint ImpressionistDoc::GetReferenceGradientX(Point point)
+{
+	return GetReferenceGradientX(point.x, point.y);
+}
+GLint ImpressionistDoc::GetReferenceGradientY(Point point)
+{
+	return GetReferenceGradientY(point.x, point.y);
+}
 GLboolean ImpressionistDoc::GetEdge(Point point)
 {
 	return GetEdge(point.x, point.y);
@@ -514,7 +605,7 @@ GLubyte* ImpressionistDoc::CalculateEdgeMap(int threshold)
 		for (int j = 0; j < m_nPaintHeight; ++j)
 		{
 			pos = (j * m_nPaintWidth + i);
-			m_ucEdge[3*pos] = m_ucEdge[3*pos+1] = m_ucEdge[3*pos+2] = m_iGradientMod[pos] > threshold ? 255 : 0;
+			m_ucEdge[3*pos] = m_ucEdge[3*pos+1] = m_ucEdge[3*pos+2] = m_uiGradientMod[pos] > threshold ? 255 : 0;
 		}
 	//return the calculated Edge
 	return m_ucEdge;
