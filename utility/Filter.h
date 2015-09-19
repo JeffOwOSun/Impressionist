@@ -29,7 +29,7 @@ inline GLubyte filterIntensity(double r, double g, double b)
 	return (result > 255) ? 255 : (GLubyte) result; //cap the value to prevent overflow
 }
 
-inline GLubyte filterIntensity(GLubyte* pixel, int num_channel=3)
+inline GLubyte filterIntensity(const GLubyte* const pixel, int num_channel=3)
 {
 	return filterIntensity(pixel[0], pixel[1], pixel[2]);
 }
