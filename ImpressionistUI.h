@@ -105,6 +105,7 @@ public:
 	void				drawMarker(const Point& p);
 	bool				getEdgeClipping();
 	void				setEdgeClipping(bool clipping);
+	int					getAutoPaintSpace();
 
 	int					getEdgeThreshold();
 	void				setEdgeThreshold(int edgeThreshold);
@@ -128,6 +129,7 @@ private:
 	int		m_nKernelH;
 	int		m_nKernelW;
 	int		m_nAutoSpace;
+	bool	m_bAutoSizeVary;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -167,6 +169,8 @@ private:
 	static void cb_save_edge_image(Fl_Menu_ * o, void * v);
 	static void cb_load_mural_image(Fl_Menu_ * o, void * v);
 	static void cb_autoPaintSlides(Fl_Widget* o, void* v);
+	static void cb_autoPaintSize(Fl_Widget*o, void* v);
+	static void cb_autoPaintApply(Fl_Widget* o, void* v);
 };
 
 #endif

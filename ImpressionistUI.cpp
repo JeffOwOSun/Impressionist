@@ -371,9 +371,6 @@ void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
 
 void ImpressionistUI::cb_color_chooser(Fl_Widget* o, void* v)
 {
-	//std::cout << ((Fl_Color_Chooser*)o)->r() << std::endl;
-	//std::cout << ((Fl_Color_Chooser*)o)->g() << std::endl;
-	//std::cout << ((Fl_Color_Chooser*)o)->b() << std::endl;
 	((ImpressionistUI*)(o->user_data()))->m_nColorR = ((Fl_Color_Chooser*)o)->r();
 	((ImpressionistUI*)(o->user_data()))->m_nColorG = ((Fl_Color_Chooser*)o)->g();
 	((ImpressionistUI*)(o->user_data()))->m_nColorB = ((Fl_Color_Chooser*)o)->b();
@@ -511,9 +508,21 @@ void ImpressionistUI::ShowFilterEntry(int w, int h)
 void ImpressionistUI::cb_autoPaintSlides(Fl_Widget* o, void* v)
 {
 	((ImpressionistUI*)(o->user_data()))->m_nAutoSpace = int(((Fl_Slider *)o)->value());
-	cout << int(((Fl_Slider *)o)->value()) << endl;
+	//cout << int(((Fl_Slider *)o)->value()) << endl;
 }
 
+void ImpressionistUI::cb_autoPaintSize(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	pUI->m_bAutoSizeVary = bool(((Fl_Light_Button *)o)->value());
+}
+
+void ImpressionistUI::cb_autoPaintApply(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	ImpressionistDoc *pDoc = pUI->getDocument();
+	pDoc->applyAutoPaint(pDoc->m_pCurrentBrush, pUI->m_nAutoSpace, pUI->m_bAutoSizeVary);
+}
 
 //---------------------------------- per instance functions --------------------------------------
 
@@ -606,6 +615,11 @@ bool ImpressionistUI::getEdgeClipping()
 int ImpressionistUI::getEdgeThreshold()
 {
 	return m_nEdgeThreshold;
+}
+
+int ImpressionistUI::getAutoPaintSpace()
+{
+	return m_nAutoSpace;
 }
 //-------------------------------------------------
 // Set the brush size
@@ -847,7 +861,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_autoPaintSpaceSlider->type(FL_HOR_NICE_SLIDER);
 		m_autoPaintSpaceSlider->labelfont(FL_COURIER);
 		m_autoPaintSpaceSlider->labelsize(12);
-		m_autoPaintSpaceSlider->minimum(0);
+		m_autoPaintSpaceSlider->minimum(1);
 		m_autoPaintSpaceSlider->maximum(15);
 		m_autoPaintSpaceSlider->step(1);
 		m_autoPaintSpaceSlider->value(1);
@@ -855,11 +869,17 @@ ImpressionistUI::ImpressionistUI() {
 		m_autoPaintSpaceSlider->callback(cb_autoPaintSlides);
 
 
-		m_EdgeClipping = new Fl_Light_Button(220, 230, 100, 20, "Vary Size");
-		m_EdgeClipping->user_data((void*)(this));   // record self to be used by static callback functions
-		m_EdgeClipping->callback(cb_EdgeClipping);
+		m_autoPaintRandSize = new Fl_Light_Button(220, 230, 100, 20, "Vary Size");
+		m_autoPaintRandSize->user_data((void*)(this));   // record self to be used by static callback functions
+		m_autoPaintRandSize->callback(cb_autoPaintSize);
+
+		m_autoPaintApply = new Fl_Button(320, 230, 60, 20, "Paint");
+		m_autoPaintApply->user_data((void*)(this));
+		m_autoPaintApply->callback(cb_autoPaintApply);
 
 		//------
+
+
 		//---To install a light button for edge clipping---------------------
 		m_EdgeClipping = new Fl_Light_Button(10, 200, 150, 25, "Edge Clipping");
 		m_EdgeClipping->user_data((void*)(this));   // record self to be used by static callback functions

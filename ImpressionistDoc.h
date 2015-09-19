@@ -57,6 +57,7 @@ public:
 	GLuint GetGradientMod(Point point);
 	GLboolean GetEdge(Point point);
 	void applyCustomFilter(double* kernel, int w, int h);
+	void applyAutoPaint(ImpBrush* brush, int space, bool vary);
 
 // Attributes
 public:

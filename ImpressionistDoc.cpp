@@ -512,6 +512,7 @@ GLboolean ImpressionistDoc::GetEdge(Point point)
 	return GetEdge(point.x, point.y);
 }
 
+
 // Calculate edge with given threshold, and store it.
 GLubyte* ImpressionistDoc::CalculateEdgeMap(int threshold)
 {
@@ -539,10 +540,31 @@ void ImpressionistDoc::applyCustomFilter(double* kernel, int w, int h)
 		for (int j = 0; j < m_nWidth; ++j)
 		{
 			int pixelPos = (i * m_nWidth + j) * 3;
-			tar[pixelPos] = customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 0);
-			tar[pixelPos + 1] = customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 1);
-			tar[pixelPos + 2] = customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 2);
+			tar[pixelPos] = (GLubyte)customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 0);
+			tar[pixelPos + 1] = (GLubyte)customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 1);
+			tar[pixelPos + 2] = (GLubyte)customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 2);
 		}
 	}
 	m_ucPainting = tar;
+}
+
+void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
+{
+	for (int j = 0; j < m_nHeight; j+=130)
+	{
+		for (int i = 0; i < m_nWidth; i+=130)
+		{
+			Point mySource(i, j);
+			Point myTarget(i, j);
+			
+			brush->BrushBegin(mySource, myTarget);
+			//m_pUI->m_paintView->SaveCurrentContent();
+			//m_pUI->m_paintView->RestoreContent();
+			m_pUI->m_paintView->SaveCurrentContent();
+		}
+	}
+	glFlush();
+	m_pUI->m_paintView->refresh();
+	m_pUI->m_paintView->SaveCurrentContent();
+	cout << "finish" << endl;
 }

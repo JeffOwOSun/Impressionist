@@ -117,7 +117,6 @@ void PaintView::draw()
 		switch (eventToDo) 
 		{
 		case LEFT_MOUSE_DOWN:
-
 			SaveUndoOnBrush();
 			m_pDoc->m_pCurrentBrush->BrushBegin( source, target );
 			break;
@@ -248,7 +247,7 @@ void PaintView::resize(int x, int y, int width, int height)
 
 void PaintView::SaveCurrentContent()
 {
-	printf("Read buffer from front\n");
+	//printf("Read buffer from front\n");
 	// Tell openGL to read from the front buffer when capturing
 	// out paint strokes
 	glReadBuffer(GL_FRONT);
