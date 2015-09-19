@@ -329,9 +329,9 @@ void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
 
 void ImpressionistUI::cb_color_chooser(Fl_Widget* o, void* v)
 {
-	std::cout << ((Fl_Color_Chooser*)o)->r() << std::endl;
-	std::cout << ((Fl_Color_Chooser*)o)->g() << std::endl;
-	std::cout << ((Fl_Color_Chooser*)o)->b() << std::endl;
+	//std::cout << ((Fl_Color_Chooser*)o)->r() << std::endl;
+	//std::cout << ((Fl_Color_Chooser*)o)->g() << std::endl;
+	//std::cout << ((Fl_Color_Chooser*)o)->b() << std::endl;
 	((ImpressionistUI*)(o->user_data()))->m_nColorR = ((Fl_Color_Chooser*)o)->r();
 	((ImpressionistUI*)(o->user_data()))->m_nColorG = ((Fl_Color_Chooser*)o)->g();
 	((ImpressionistUI*)(o->user_data()))->m_nColorB = ((Fl_Color_Chooser*)o)->b();
@@ -429,17 +429,19 @@ void ImpressionistUI::cb_applyFilter(Fl_Widget* o, void* v)
 		for (int j = 0; j < db->m_nKernelW; ++j)
 		{
 			int pixel = i * db->m_nKernelW + j;
-			int weight = atoi(db->m_EntryInputs[pixel]->value());
+			double weight = atof(db->m_EntryInputs[pixel]->value());
+			//cout << weight << endl;
 			kernel[pixel] = weight;
 		}
 	}
-
-	/////////////////////////////// TODO
+	
+	db->getDocument()->applyCustomFilter(kernel, db->m_nKernelW, db->m_nKernelH);
+	db->m_paintView->refresh();
 }
 
 void ImpressionistUI::ShowFilterEntry(int w, int h)
 {
-	int dialogWidth = w * 30 + (w + 1) * 10;
+	int dialogWidth = w * 30 + (w + 1) * 10 + 20;
 	int dialogHeight = h * 20 + (h + 1) * 10 + 40;
 	m_filterEntryWindow = new Fl_Window(dialogWidth, dialogHeight, "Filter Kernel Entry");
 	m_filterEntryWindow->user_data((void*)(this));
@@ -447,17 +449,17 @@ void ImpressionistUI::ShowFilterEntry(int w, int h)
 	{
 		for (int j = 1; j <= w; ++j)
 		{
-			Fl_Int_Input *input = new Fl_Int_Input(j * 10 + (j-1) * 30, i* 10 + (i - 1) * 20, 30, 20, "");
-			input->value("1");
+			Fl_Float_Input *input = new Fl_Float_Input(j * 10 + (j - 1) * 30, i * 10 + (i - 1) * 20, 30, 20, "");
+			input->value("1.0");
 			m_EntryInputs.push_back(input);
 		}
 	}
-	m_filterEntryWindow->end();
+	
 
-	m_filterEntryApply = new Fl_Button(dialogWidth / 2, dialogHeight - 30, 20, 20, "Apply");
+	m_filterEntryApply = new Fl_Button(dialogWidth / 2 - 30, dialogHeight - 30, 40, 20, "Apply");
 	m_filterEntryApply->user_data((void*)(this));
 	m_filterEntryApply->callback(cb_applyFilter);
-
+	m_filterEntryWindow->end();
 	m_filterEntryWindow->show();
 	m_nKernelH = h;
 	m_nKernelW = w;
@@ -813,16 +815,16 @@ ImpressionistUI::ImpressionistUI() {
     m_brushDialog->end();	
 
 
-	m_filterSizeWindow = new Fl_Window(200, 80, "Filter Size");
-		m_filterWidth = new Fl_Int_Input(20, 20, 50, 20, "Width");
+	m_filterSizeWindow = new Fl_Window(300, 80, "Filter Size");
+		m_filterWidth = new Fl_Int_Input(80, 10, 50, 20, "Width");
 			m_filterWidth->labelfont(FL_COURIER);
 			m_filterWidth->labelsize(12);
 			m_filterWidth->value("1");
-		m_filterHeight = new Fl_Int_Input(100, 10, 60, 20, "Height");
-			m_filterWidth->labelfont(FL_COURIER);
-			m_filterWidth->labelsize(12);
-			m_filterWidth->value("1");
-		m_filterSizeApply = new Fl_Button(160, 40, 80, 20, "&OK");
+		m_filterHeight = new Fl_Int_Input(180, 10, 60, 20, "Height");
+			m_filterHeight->labelfont(FL_COURIER);
+			m_filterHeight->labelsize(12);
+			m_filterHeight->value("1");
+		m_filterSizeApply = new Fl_Button(120, 40, 80, 20, "&OK");
 			m_filterSizeApply->user_data((void*)(this));
 			m_filterSizeApply->callback(cb_filter_size_check);
 	m_filterSizeWindow->end();

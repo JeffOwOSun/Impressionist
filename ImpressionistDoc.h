@@ -54,6 +54,7 @@ public:
 	GLint GetGradientY(Point point);
 	GLuint GetGradientMod(Point point);
 	GLboolean GetEdge(Point point);
+	void applyCustomFilter(double* kernel, int w, int h);
 
 // Attributes
 public:

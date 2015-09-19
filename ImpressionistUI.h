@@ -17,6 +17,7 @@
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Color_Chooser.H>
 #include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Float_Input.H>
 #include <vector>
 
 #include "Impressionist.h"
@@ -64,7 +65,7 @@ public:
 	Fl_Light_Button*	m_EdgeClipping;
 	Fl_Slider*			m_EdgeThreshold;
 	Fl_Button*			m_EdgeExtraction;
-	std::vector<Fl_Int_Input*> m_EntryInputs;
+	std::vector<Fl_Float_Input*> m_EntryInputs;
 
 	// Member functions
 	void				setDocument(ImpressionistDoc* doc);

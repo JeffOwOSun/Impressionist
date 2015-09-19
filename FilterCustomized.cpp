@@ -17,11 +17,11 @@ FilterCustomized::~FilterCustomized()
 	delete[] m_kernel;
 }
 
-double FilterCustomized::applyCustomizedFilter(const int* image, const int x, const int y, const int img_w, const int img_h, int channel)
+double FilterCustomized::applyCustomizedFilter(GLubyte* image, const int x, const int y, const int img_w, const int img_h, int channel)
 {
 	// Paint from left lower corner
-	int startX = x - m_kernel_h / 2;
-	int startY = y - m_kernel_w / 2;
+	int startX = x - m_kernel_w / 2;
+	int startY = y - m_kernel_h / 2;
 	double res = 0.0;
 	double sum_weight = 0.0;
 	for (int i = 0; i < m_kernel_h; ++i)
@@ -33,16 +33,14 @@ double FilterCustomized::applyCustomizedFilter(const int* image, const int x, co
 		{
 			const int currentX = j + startX;
 			if (currentX < 0 || currentX >= img_w) continue;
-
-			res += image[(currentY*img_w + currentX) * 3 + channel] * m_kernel[i*m_kernel_w + j];
+			res += (double)(image[(currentY*img_w + currentX) * 3 + channel]) * m_kernel[i*m_kernel_w + j];
 			sum_weight += m_kernel[i*m_kernel_w + j];
+			//cout << "So result is " << res << "And sum weight is " << sum_weight << endl;
 		}
 	}
 
 	if (sum_weight == 0) sum_weight = 1;
 	if (sum_weight < 0) sum_weight = -sum_weight;
 
-	res = res / sum_weight > 255 ? 255 : res / sum_weight;
-	res = res / sum_weight < 0 ? 0 : res / sum_weight;
-	return res;
+	return (res/sum_weight);
 }

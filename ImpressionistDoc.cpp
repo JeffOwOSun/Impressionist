@@ -6,6 +6,7 @@
 //
 
 #include <FL/fl_ask.H>
+#include <string.h>
 
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
@@ -21,6 +22,7 @@
 #include "ScatteredCircleBrush.h"
 #include "FilterBlurBrush.h"
 #include "FilterSharpenBrush.h"
+#include "FilterCustomized.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
@@ -426,4 +428,23 @@ GLubyte* ImpressionistDoc::GetEdgeMap(int threshold)
 		}
 	//return the calculated Edge
 	return m_ucEdge;
+}
+
+void ImpressionistDoc::applyCustomFilter(double* kernel, int w, int h)
+{
+	m_pUI->m_paintView->refresh();
+	FilterCustomized customizedFilter(kernel, w, h);
+	GLubyte* tar = new GLubyte[m_nWidth * m_nHeight * 3];
+	memset(tar, 0, sizeof(tar));
+	for (int i = 0; i < m_nHeight; ++i)
+	{
+		for (int j = 0; j < m_nWidth; ++j)
+		{
+			int pixelPos = (i * m_nWidth + j) * 3;
+			tar[pixelPos] = customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 0);
+			tar[pixelPos + 1] = customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 1);
+			tar[pixelPos + 2] = customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 2);
+		}
+	}
+	m_ucPainting = tar;
 }
