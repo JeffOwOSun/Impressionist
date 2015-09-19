@@ -508,6 +508,13 @@ void ImpressionistUI::ShowFilterEntry(int w, int h)
 }
 
 
+void ImpressionistUI::cb_autoPaintSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nAutoSpace = int(((Fl_Slider *)o)->value());
+	cout << int(((Fl_Slider *)o)->value()) << endl;
+}
+
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -834,6 +841,25 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
 		m_BrushAlphaSlider->callback(cb_alphaSlides);
 
+		//------Button for auto painting
+		m_autoPaintSpaceSlider = new Fl_Value_Slider(10, 230, 120, 20, "Space Size");
+		m_autoPaintSpaceSlider->user_data((void*)(this));
+		m_autoPaintSpaceSlider->type(FL_HOR_NICE_SLIDER);
+		m_autoPaintSpaceSlider->labelfont(FL_COURIER);
+		m_autoPaintSpaceSlider->labelsize(12);
+		m_autoPaintSpaceSlider->minimum(0);
+		m_autoPaintSpaceSlider->maximum(15);
+		m_autoPaintSpaceSlider->step(1);
+		m_autoPaintSpaceSlider->value(1);
+		m_autoPaintSpaceSlider->align(FL_ALIGN_RIGHT);
+		m_autoPaintSpaceSlider->callback(cb_autoPaintSlides);
+
+
+		m_EdgeClipping = new Fl_Light_Button(220, 230, 100, 20, "Vary Size");
+		m_EdgeClipping->user_data((void*)(this));   // record self to be used by static callback functions
+		m_EdgeClipping->callback(cb_EdgeClipping);
+
+		//------
 		//---To install a light button for edge clipping---------------------
 		m_EdgeClipping = new Fl_Light_Button(10, 200, 150, 25, "Edge Clipping");
 		m_EdgeClipping->user_data((void*)(this));   // record self to be used by static callback functions

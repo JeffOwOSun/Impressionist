@@ -47,6 +47,12 @@ public:
 	Fl_Button*			m_filterSizeApply;
 	Fl_Button*			m_filterEntryApply;
 
+	// ------ For auto painting
+	Fl_Slider*			m_autoPaintSpaceSlider;
+	Fl_Light_Button*	m_autoPaintRandSize;
+	Fl_Button*			m_autoPaintApply;
+	// ------
+
 	Fl_Choice*			m_BrushTypeChoice;
 	Fl_Color_Chooser*	m_colorChooser;
 
@@ -121,6 +127,7 @@ private:
 	int		m_nEdgeThreshold;
 	int		m_nKernelH;
 	int		m_nKernelW;
+	int		m_nAutoSpace;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -159,6 +166,7 @@ private:
 	static void cb_load_edge_image(Fl_Menu_ * o, void * v);
 	static void cb_save_edge_image(Fl_Menu_ * o, void * v);
 	static void cb_load_mural_image(Fl_Menu_ * o, void * v);
+	static void cb_autoPaintSlides(Fl_Widget* o, void* v);
 };
 
 #endif
