@@ -521,14 +521,20 @@ void ImpressionistUI::cb_autoPaintApply(Fl_Widget* o, void* v)
 {
 	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
 	ImpressionistDoc *pDoc = pUI->getDocument();
-	pDoc->applyAutoPaint(pDoc->m_pCurrentBrush, pUI->m_nAutoSpace, pUI->m_bAutoSizeVary);
+	pUI->m_paintView->TriggerAutoPaint();
 }
+
 
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
 // Return the ImpressionistDoc used
 //------------------------------------------------
+bool ImpressionistUI::getAutoVary()
+{
+	return m_bAutoSizeVary;
+}
+
 ImpressionistDoc* ImpressionistUI::getDocument()
 {
 	return m_pDoc;
@@ -775,6 +781,8 @@ ImpressionistUI::ImpressionistUI() {
 	m_nColorB = 1.0;
 	m_bEdgeClipping = false;
 	m_nEdgeThreshold = 100;
+	m_bAutoSizeVary = 0;
+	m_nAutoSpace = 4;
 
 	m_colorWindow = new Fl_Window(400, 325, "Color Dialog");
 		m_colorChooser = new Fl_Color_Chooser(50, 20, 150, 150, "&Color Chooser");
@@ -856,7 +864,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushAlphaSlider->callback(cb_alphaSlides);
 
 		//------Button for auto painting
-		m_autoPaintSpaceSlider = new Fl_Value_Slider(10, 230, 120, 20, "Space Size");
+		m_autoPaintSpaceSlider = new Fl_Value_Slider(10, 240, 120, 20, "Space Size");
 		m_autoPaintSpaceSlider->user_data((void*)(this));
 		m_autoPaintSpaceSlider->type(FL_HOR_NICE_SLIDER);
 		m_autoPaintSpaceSlider->labelfont(FL_COURIER);
@@ -864,16 +872,16 @@ ImpressionistUI::ImpressionistUI() {
 		m_autoPaintSpaceSlider->minimum(1);
 		m_autoPaintSpaceSlider->maximum(15);
 		m_autoPaintSpaceSlider->step(1);
-		m_autoPaintSpaceSlider->value(1);
+		m_autoPaintSpaceSlider->value(4);
 		m_autoPaintSpaceSlider->align(FL_ALIGN_RIGHT);
 		m_autoPaintSpaceSlider->callback(cb_autoPaintSlides);
 
 
-		m_autoPaintRandSize = new Fl_Light_Button(220, 230, 100, 20, "Vary Size");
+		m_autoPaintRandSize = new Fl_Light_Button(210, 240, 100, 20, "Randomly");
 		m_autoPaintRandSize->user_data((void*)(this));   // record self to be used by static callback functions
 		m_autoPaintRandSize->callback(cb_autoPaintSize);
 
-		m_autoPaintApply = new Fl_Button(320, 230, 60, 20, "Paint");
+		m_autoPaintApply = new Fl_Button(320, 240, 60, 20, "Paint");
 		m_autoPaintApply->user_data((void*)(this));
 		m_autoPaintApply->callback(cb_autoPaintApply);
 
@@ -886,17 +894,17 @@ ImpressionistUI::ImpressionistUI() {
 		m_EdgeClipping->callback(cb_EdgeClipping);
 
 		//Slider for edge Threshold
-		m_BrushAlphaSlider = new Fl_Value_Slider(10, 280, 200, 20, "Edge Threshold");
-		m_BrushAlphaSlider->user_data((void*)(this));
-		m_BrushAlphaSlider->type(FL_HOR_NICE_SLIDER);
-		m_BrushAlphaSlider->labelfont(FL_COURIER);
-		m_BrushAlphaSlider->labelsize(12);
-		m_BrushAlphaSlider->minimum(0);
-		m_BrushAlphaSlider->maximum(500);
-		m_BrushAlphaSlider->step(1);
-		m_BrushAlphaSlider->value(m_nEdgeThreshold); //not m_nAlpha because scale difference
-		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
-		m_BrushAlphaSlider->callback(cb_EdgeThreshold);
+		m_EdgeThreshold = new Fl_Value_Slider(10, 280, 200, 20, "Edge Threshold");
+		m_EdgeThreshold->user_data((void*)(this));
+		m_EdgeThreshold->type(FL_HOR_NICE_SLIDER);
+		m_EdgeThreshold->labelfont(FL_COURIER);
+		m_EdgeThreshold->labelsize(12);
+		m_EdgeThreshold->minimum(0);
+		m_EdgeThreshold->maximum(500);
+		m_EdgeThreshold->step(1);
+		m_EdgeThreshold->value(m_nEdgeThreshold); //not m_nAlpha because scale difference
+		m_EdgeThreshold->align(FL_ALIGN_RIGHT);
+		m_EdgeThreshold->callback(cb_EdgeThreshold);
 
 		//Button for extrating edge
 		m_ClearCanvasButton = new Fl_Button(320, 280, 60, 20, "Do it!");

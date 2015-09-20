@@ -7,6 +7,7 @@
 
 #include <FL/fl_ask.H>
 #include <string.h>
+#include <algorithm>
 
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
@@ -98,6 +99,17 @@ void ImpressionistDoc::setBrushType(int type)
 		m_pUI->m_BrushLineWidthSlider->activate();
 		m_pUI->m_BrushLineAngleSlider->activate();
 	}
+	if (type == BRUSH_BLUR_FILTER || type == BRUSH_SHARPEN_FILTER)
+	{
+		m_pUI->m_BrushSizeSlider->deactivate();
+		m_pUI->m_BrushAlphaSlider->deactivate();
+	} 
+	else
+	{
+		m_pUI->m_BrushSizeSlider->activate();
+		m_pUI->m_BrushAlphaSlider->activate();
+	}
+	
 }
 
 void ImpressionistDoc::setStrokeDirectionType(int type)
@@ -550,21 +562,40 @@ void ImpressionistDoc::applyCustomFilter(double* kernel, int w, int h)
 
 void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 {
-	for (int j = 0; j < m_nHeight; j+=130)
+	if (!vary)
 	{
-		for (int i = 0; i < m_nWidth; i+=130)
+		for (int j = 0; j < m_nHeight; j += space)
 		{
-			Point mySource(i, j);
-			Point myTarget(i, j);
-			
-			brush->BrushBegin(mySource, myTarget);
-			//m_pUI->m_paintView->SaveCurrentContent();
-			//m_pUI->m_paintView->RestoreContent();
-			m_pUI->m_paintView->SaveCurrentContent();
+			for (int i = 0; i < m_nWidth; i += space)
+			{
+				Point p(i, j);
+				brush->BrushBegin(p, p);
+			}
 		}
+	} 
+	else
+	{
+		std::vector<Point> order;
+		int range = (int)((m_pUI->getSize()));
+		for (int j = 0; j < m_nHeight; j += space)
+		{
+			for (int i = 0; i < m_nWidth; i += space)
+			{
+				int randomPos = (rand() % range) - (range / 2);
+				int randomPos2 = (rand() % range) - (range / 2);
+				Point p(i+randomPos, j+randomPos2);
+				order.push_back(p);
+			}
+		}
+		std::random_shuffle(order.begin(), order.end());
+		for (int i = 0; i < order.size(); ++i)
+		{
+			brush->BrushBegin(order[i], order[i]);
+		}
+		cout << "finish" << endl;
 	}
-	glFlush();
+	/*glFlush();
+	m_pUI->m_origView->refresh();
 	m_pUI->m_paintView->refresh();
-	m_pUI->m_paintView->SaveCurrentContent();
-	cout << "finish" << endl;
+	m_pUI->m_paintView->SaveCurrentContent();*/
 }

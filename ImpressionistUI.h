@@ -106,6 +106,7 @@ public:
 	bool				getEdgeClipping();
 	void				setEdgeClipping(bool clipping);
 	int					getAutoPaintSpace();
+	bool				getAutoVary();
 
 	int					getEdgeThreshold();
 	void				setEdgeThreshold(int edgeThreshold);

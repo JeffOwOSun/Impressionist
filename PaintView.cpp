@@ -19,6 +19,7 @@
 #define RIGHT_MOUSE_DOWN	4
 #define RIGHT_MOUSE_DRAG	5
 #define RIGHT_MOUSE_UP		6
+#define AUTO_DRAW			7
 
 
 #ifndef WIN32
@@ -157,7 +158,11 @@ void PaintView::draw()
 				m_pUI->setAngle((int)(atan2((double)target.y - m_ptLastPoint.y, (double)target.x - m_ptLastPoint.x) / PI * 360));
 			}
 			break;
-
+		case AUTO_DRAW:
+			m_pDoc->applyAutoPaint(m_pDoc->m_pCurrentBrush, m_pUI->getAutoPaintSpace(), m_pUI->getAutoVary());
+			SaveCurrentContent();
+			RestoreContent();
+			break;
 		default:
 			printf("Unknown event!!\n");		
 			break;
@@ -289,4 +294,11 @@ void PaintView::SaveUndoOnBrush()
 	delete[] m_pDoc->m_ucPainting_Undo;
 	m_pDoc->m_ucPainting_Undo = new unsigned char[dimension];
 	memcpy(m_pDoc->m_ucPainting_Undo, m_pDoc->m_ucPainting, dimension);
+}
+
+void PaintView::TriggerAutoPaint()
+{
+	isAnEvent = 1;
+	eventToDo = AUTO_DRAW;
+	redraw();
 }
