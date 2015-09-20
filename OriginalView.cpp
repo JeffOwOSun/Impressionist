@@ -86,6 +86,11 @@ void OriginalView::draw()
 		case EDGE_MODE:
 			bitstart = m_pDoc->m_ucEdge + 3*((m_pDoc->m_nWidth * startrow) + scrollpos.x);
 			glDrawPixels(drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart);
+			break;
+		case ANOTHER_MODE:
+			bitstart = m_pDoc->m_ucAnother + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+			glDrawPixels(drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart);
+			break;
 		}
 		drawMarker();
 	}

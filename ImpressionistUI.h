@@ -172,6 +172,11 @@ private:
 	static void cb_autoPaintSlides(Fl_Widget* o, void* v);
 	static void cb_autoPaintSize(Fl_Widget*o, void* v);
 	static void cb_autoPaintApply(Fl_Widget* o, void* v);
+	static void cb_another_view(Fl_Menu_* o, void* v);
+	static void cb_load_edge_image(Fl_Menu_ * o, void * v);
+	static void cb_save_edge_image(Fl_Menu_ * o, void * v);
+	static void cb_load_mural_image(Fl_Menu_ * o, void * v);
+	static void cb_load_another(Fl_Menu_ *o, void * v);
 };
 
 #endif
