@@ -175,6 +175,7 @@ private:
 	static void cb_another_view(Fl_Menu_* o, void* v);
 	static void cb_load_another(Fl_Menu_ *o, void * v);
 	static void cb_load_dissolve(Fl_Menu_ *o, void* v);
+	static void cb_load_alpha_brush(Fl_Menu_ *o, void * v);
 };
 
 #endif

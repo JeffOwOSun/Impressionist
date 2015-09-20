@@ -20,7 +20,8 @@ enum
 	BRUSH_SCATTERED_CIRCLES,
 	BRUSH_BLUR_FILTER, 
 	BRUSH_SHARPEN_FILTER,
-	NUM_BRUSH_TYPE
+	BRUSH_ALPHA_MAPPED,
+	NUM_BRUSH_TYPE // Make sure this stays at the end!
 };
 
 enum
@@ -56,7 +57,8 @@ public:
 	virtual void BrushEnd( const Point source, const Point target ) = 0;
 
 	// according to the source image and the position, determine the draw color
-	void SetColor( const Point source );
+	void SetColor(const Point source);
+	void SetColor(const Point source, int alpha);
 
 	// get Doc to communicate with it
 	ImpressionistDoc* GetDocument( void );

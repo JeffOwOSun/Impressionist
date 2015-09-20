@@ -24,6 +24,7 @@
 #include "FilterBlurBrush.h"
 #include "FilterSharpenBrush.h"
 #include "FilterCustomized.h"
+#include "AlphaMappedBrush.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
@@ -32,7 +33,8 @@ m_nPaintWidth(300), m_nPaintHeight(275),
 m_ucBitmap(NULL), m_ucPainting(NULL),
 m_iGradient(NULL), m_ucPainting_Undo(NULL), m_uiGradientMod(NULL), m_ucEdge(NULL),
 m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL),
-m_ucDissolve(NULL)
+m_ucDissolve(NULL),
+m_ucAlphaBrush(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
@@ -61,6 +63,8 @@ m_ucDissolve(NULL)
 		= new FilterBlurBrush(this, "Blur Filter");
 	ImpBrush::c_pBrushes[BRUSH_SHARPEN_FILTER]
 		= new FilterSharpenBrush(this, "Sharpen Filter");
+	ImpBrush::c_pBrushes[BRUSH_ALPHA_MAPPED]
+		= new AlphaMappedBrush(this, "Alpha Mapped");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -408,6 +412,31 @@ int ImpressionistDoc::loadDissolveImage(char* iname)
 	return 1;
 }
 
+//----------------------------------------------------------------
+// Load alpha brush
+//----------------------------------------------------------------
+int ImpressionistDoc::loadAlphaBrush(char* iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width,
+		height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	m_nAlphaBrushWidth = width;
+	m_nAlphaBrushHeight = height;
+
+	//load the bit map
+	if (m_ucAlphaBrush) delete[] m_ucAlphaBrush;
+	m_ucAlphaBrush = data;
+
+	return 1;
+}
 //----------------------------------------------------------------
 //Calculate gradients
 //----------------------------------------------------------------

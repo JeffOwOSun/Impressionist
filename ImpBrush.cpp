@@ -42,7 +42,7 @@ char* ImpBrush::BrushName(void)
 // which is the coord at the original window to sample
 // the color from
 //----------------------------------------------------
-void ImpBrush::SetColor (const Point source)
+void ImpBrush::SetColor (const Point source, int alpha)
 {
 	ImpressionistDoc* pDoc = GetDocument();
 
@@ -59,6 +59,12 @@ void ImpBrush::SetColor (const Point source)
 	color[1] = (int)(color[1] * chosen_G);
 	color[2] = (int)(color[2] * chosen_B);
 	// std::cout << (int)color[0] << " " << (int)color[1] << " " << (int)color[2] << std::endl;
-	color[3] = pDoc->getAlpha();
+	color[3] = alpha;
 	glColor4ubv(color);
+}
+
+void ImpBrush::SetColor(const Point source)
+{
+	ImpressionistDoc* pDoc = GetDocument();
+	SetColor(source, pDoc->getAlpha());
 }
