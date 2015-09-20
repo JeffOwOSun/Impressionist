@@ -6,6 +6,8 @@
 //
 
 #include <FL/fl_ask.H>
+#include <string.h>
+#include <algorithm>
 
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
@@ -19,14 +21,18 @@
 #include "LineBrush.h"
 #include "ScatteredLineBrush.h"
 #include "ScatteredCircleBrush.h"
+#include "FilterBlurBrush.h"
+#include "FilterSharpenBrush.h"
+#include "FilterCustomized.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
 ImpressionistDoc::ImpressionistDoc() :
 m_nPaintWidth(300), m_nPaintHeight(275),
-m_ucBitmap(NULL), m_ucPainting(NULL), 
+m_ucBitmap(NULL), m_ucPainting(NULL),
 m_iGradient(NULL), m_ucPainting_Undo(NULL), m_uiGradientMod(NULL), m_ucEdge(NULL),
-m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL)
+m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL),
+m_ucDissolve(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
@@ -51,6 +57,10 @@ m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL)
 		= new ScatteredLineBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
+	ImpBrush::c_pBrushes[BRUSH_BLUR_FILTER]
+		= new FilterBlurBrush(this, "Blur Filter");
+	ImpBrush::c_pBrushes[BRUSH_SHARPEN_FILTER]
+		= new FilterSharpenBrush(this, "Sharpen Filter");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -91,6 +101,17 @@ void ImpressionistDoc::setBrushType(int type)
 		m_pUI->m_BrushLineWidthSlider->activate();
 		m_pUI->m_BrushLineAngleSlider->activate();
 	}
+	if (type == BRUSH_BLUR_FILTER || type == BRUSH_SHARPEN_FILTER)
+	{
+		m_pUI->m_BrushSizeSlider->deactivate();
+		m_pUI->m_BrushAlphaSlider->deactivate();
+	} 
+	else
+	{
+		m_pUI->m_BrushSizeSlider->activate();
+		m_pUI->m_BrushAlphaSlider->activate();
+	}
+	
 }
 
 void ImpressionistDoc::setStrokeDirectionType(int type)
@@ -177,6 +198,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	if ( m_iGradient) delete[] m_iGradient;
 	if ( m_uiGradientMod) delete[] m_uiGradientMod;
 	if ( m_ucEdge) delete[] m_ucEdge;
+	if (m_ucDissolve) delete[] m_ucDissolve;
 	if (m_ucAnother) {
 		delete[] m_ucAnother;
 		m_ucAnother = NULL;
@@ -337,6 +359,48 @@ int ImpressionistDoc::loadAnother(char* iname)
 	}
 	//calculate gradient
 	CalculateGradient(m_ucAnother, m_iReferenceGradient, m_uiReferenceGradientMod);
+
+	//refresh display
+	m_pUI->m_origView->refresh();
+
+	return 1;
+}
+
+
+int ImpressionistDoc::loadDissolveImage(char* iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width, height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	//reject different dimension
+	if (width != m_nPaintWidth || height != m_nPaintHeight)
+	{
+		fl_alert("The dimension of edge image doesn't match source image");
+		return 0;
+	}
+
+	if (m_ucDissolve) delete[] m_ucDissolve;
+	m_ucDissolve = data;
+	
+	double dissolveRate = 0.5;
+	for (int row = 0; row < height; ++row)
+	{
+		for (int col = 0; col < width; ++col)
+		{
+			for (int channel = 0; channel < 3; ++channel)
+			{
+				int pixel = (row*width + col) * 3 + channel;
+				m_ucBitmap[pixel] = ((double)m_ucBitmap[pixel] * (1 - dissolveRate)) + ((double)m_ucDissolve[pixel] * dissolveRate);
+			}
+		}
+	}
 
 	//refresh display
 	m_pUI->m_origView->refresh();
@@ -595,6 +659,7 @@ GLboolean ImpressionistDoc::GetEdge(Point point)
 	return GetEdge(point.x, point.y);
 }
 
+
 // Calculate edge with given threshold, and store it.
 GLubyte* ImpressionistDoc::CalculateEdgeMap(int threshold)
 {
@@ -609,4 +674,58 @@ GLubyte* ImpressionistDoc::CalculateEdgeMap(int threshold)
 		}
 	//return the calculated Edge
 	return m_ucEdge;
+}
+
+void ImpressionistDoc::applyCustomFilter(double* kernel, int w, int h)
+{
+	m_pUI->m_paintView->refresh();
+	FilterCustomized customizedFilter(kernel, w, h);
+	GLubyte* tar = new GLubyte[m_nWidth * m_nHeight * 3];
+	memset(tar, 0, sizeof(tar));
+	for (int i = 0; i < m_nHeight; ++i)
+	{
+		for (int j = 0; j < m_nWidth; ++j)
+		{
+			int pixelPos = (i * m_nWidth + j) * 3;
+			tar[pixelPos] = (GLubyte)customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 0);
+			tar[pixelPos + 1] = (GLubyte)customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 1);
+			tar[pixelPos + 2] = (GLubyte)customizedFilter.applyCustomizedFilter(m_ucBitmap, j, i, m_nWidth, m_nHeight, 2);
+		}
+	}
+	m_ucPainting = tar;
+}
+
+void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
+{
+	if (!vary)
+	{
+		for (int j = 0; j < m_nHeight; j += space)
+		{
+			for (int i = 0; i < m_nWidth; i += space)
+			{
+				Point p(i, j);
+				brush->BrushBegin(p, p);
+			}
+		}
+	} 
+	else
+	{
+		std::vector<Point> order;
+		int range = (int)((m_pUI->getSize()));
+		for (int j = 0; j < m_nHeight; j += space)
+		{
+			for (int i = 0; i < m_nWidth; i += space)
+			{
+				int randomPos = (rand() % range) - (range / 2);
+				int randomPos2 = (rand() % range) - (range / 2);
+				Point p(i+randomPos, j+randomPos2);
+				order.push_back(p);
+			}
+		}
+		std::random_shuffle(order.begin(), order.end());
+		for (int i = 0; i < order.size(); ++i)
+		{
+			brush->BrushBegin(order[i], order[i]);
+		}
+	}
 }

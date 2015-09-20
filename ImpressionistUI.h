@@ -16,6 +16,9 @@
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Light_Button.H>
 #include <FL/Fl_Color_Chooser.H>
+#include <FL/Fl_Int_Input.H>
+#include <FL/Fl_Float_Input.H>
+#include <vector>
 
 #include "Impressionist.h"
 #include "OriginalView.h"
@@ -37,6 +40,19 @@ public:
 // for brush dialog
 	Fl_Window*			m_brushDialog;
 	Fl_Window*			m_colorWindow;
+	Fl_Window*			m_filterSizeWindow;
+	Fl_Window*			m_filterEntryWindow;
+	Fl_Int_Input*		m_filterWidth;
+	Fl_Int_Input*		m_filterHeight;
+	Fl_Button*			m_filterSizeApply;
+	Fl_Button*			m_filterEntryApply;
+
+	// ------ For auto painting
+	Fl_Slider*			m_autoPaintSpaceSlider;
+	Fl_Light_Button*	m_autoPaintRandSize;
+	Fl_Button*			m_autoPaintApply;
+	// ------
+
 	Fl_Choice*			m_BrushTypeChoice;
 	Fl_Color_Chooser*	m_colorChooser;
 
@@ -55,6 +71,7 @@ public:
 	Fl_Light_Button*	m_EdgeClipping;
 	Fl_Slider*			m_EdgeThreshold;
 	Fl_Button*			m_EdgeExtraction;
+	std::vector<Fl_Float_Input*> m_EntryInputs;
 
 	// Member functions
 	void				setDocument(ImpressionistDoc* doc);
@@ -88,9 +105,13 @@ public:
 	void				drawMarker(const Point& p);
 	bool				getEdgeClipping();
 	void				setEdgeClipping(bool clipping);
+	int					getAutoPaintSpace();
+	bool				getAutoVary();
 
 	int					getEdgeThreshold();
 	void				setEdgeThreshold(int edgeThreshold);
+
+	void				ShowFilterEntry(int w, int h);
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -106,6 +127,10 @@ private:
 	double  m_nColorB;
 	bool	m_bEdgeClipping;
 	int		m_nEdgeThreshold;
+	int		m_nKernelH;
+	int		m_nKernelW;
+	int		m_nAutoSpace;
+	bool	m_bAutoSizeVary;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -137,11 +162,19 @@ private:
 	static void cb_EdgeExtraction(Fl_Widget* o, void* v);
 	static void cb_orig_view(Fl_Menu_* o, void* v);
 	static void cb_edge_view(Fl_Menu_* o, void* v);
-	static void cb_another_view(Fl_Menu_* o, void* v);
+	static void cb_swap_view(Fl_Menu_* o, void* v);
+	static void cb_filter_size(Fl_Menu_* o, void* v);
+	static void cb_filter_size_check(Fl_Widget* o, void* v);
+	static void cb_applyFilter(Fl_Widget* o, void* v);
 	static void cb_load_edge_image(Fl_Menu_ * o, void * v);
 	static void cb_save_edge_image(Fl_Menu_ * o, void * v);
 	static void cb_load_mural_image(Fl_Menu_ * o, void * v);
+	static void cb_autoPaintSlides(Fl_Widget* o, void* v);
+	static void cb_autoPaintSize(Fl_Widget*o, void* v);
+	static void cb_autoPaintApply(Fl_Widget* o, void* v);
+	static void cb_another_view(Fl_Menu_* o, void* v);
 	static void cb_load_another(Fl_Menu_ *o, void * v);
+	static void cb_load_dissolve(Fl_Menu_ *o, void* v);
 };
 
 #endif

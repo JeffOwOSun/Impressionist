@@ -34,6 +34,8 @@ public:
 
 	void SaveUndoOnBrush();
 
+	void TriggerAutoPaint();
+
 	ImpressionistDoc	*m_pDoc;
 	ImpressionistUI		*m_pUI;
 

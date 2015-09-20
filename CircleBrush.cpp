@@ -51,9 +51,9 @@ void CircleBrush::BrushEnd( const Point source, const Point target )
  */
 void CircleBrush::DrawCircle(Point source, Point target, float r) {
 	//The brush is moved to a new place. I need to draw a filled circle there
-	int num_segments = 10 * sqrtf(r);//change the 10 to a smaller/bigger number as needed
+	int num_segments = (int)(10 * sqrtf(r));//change the 10 to a smaller/bigger number as needed
 
-	float theta = 2 * 3.1415926 / float(num_segments);
+	float theta = (float)(2 * 3.1415926) / float(num_segments);
 	float tangetial_factor = tanf(theta);//calculate the tangential factor
 
 	float radial_factor = cosf(theta);//calculate the radial factor
@@ -66,7 +66,7 @@ void CircleBrush::DrawCircle(Point source, Point target, float r) {
 	//set color
 	SetColor(source);
 	//first point is the center point
-	glVertex2f(target.x, target.y);
+	glVertex2f((GLfloat)target.x, (GLfloat)target.y);
 	//then loop to add the bounding points to the vertex map
 	for (int ii = 0; ii < num_segments; ii++)
 	{
@@ -91,6 +91,6 @@ void CircleBrush::DrawCircle(Point source, Point target, float r) {
 	}
 	//last point should return to the first bounding point,
 	//for GL_TRIANGLE_FAN doesn't close the loop altomatically
-	glVertex2f(target.x + r, target.y);
+	glVertex2f((GLfloat)(target.x + r), (GLfloat)target.y);
 	glEnd();
 }

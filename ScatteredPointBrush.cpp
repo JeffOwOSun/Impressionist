@@ -24,7 +24,7 @@ void ScatteredPointBrush::BrushBegin( const Point source, const Point target )
 	//set the point size to 1
 	glPointSize((float)1);
 
-	srand(time(0));
+	srand((unsigned int)time(0));
 	BrushMove( source, target );
 }
 

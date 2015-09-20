@@ -26,7 +26,8 @@ public:
 	int		loadEdgeImage(char* iname);		// called by the UI to load Edge Image
 	int		saveEdgeImage(char* iname);		// called by the UI to save Edge Image
 	int		loadMuralImage(char *iname);	// called by the UI to load mural image
-	int		loadAnother(char *iname);	// called by the UI to load gradient reference
+	int		loadAnother(char *iname);		// called by the UI to load gradient reference
+	int		loadDissolveImage(char* iname);  // called by the UI to load dissolved image
 
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
 	void	setBrushType(int type);			// called by the UI to set the brushType
@@ -61,6 +62,8 @@ public:
 	GLint GetReferenceGradientX(Point point);
 	GLint GetReferenceGradientY(Point point);
 	GLboolean GetEdge(Point point);
+	void applyCustomFilter(double* kernel, int w, int h);
+	void applyAutoPaint(ImpBrush* brush, int space, bool vary);
 
 // Attributes
 public:
@@ -92,6 +95,7 @@ public:
 	
 	// Edge map
 	GLubyte * m_ucEdge;
+	GLubyte * m_ucDissolve;
 
 
 	// The current active brush.

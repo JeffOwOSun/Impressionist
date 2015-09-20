@@ -24,7 +24,7 @@ void ScatteredCircleBrush::BrushBegin( const Point source, const Point target )
   size = pDoc->getSize();
   //fix the point nubmer to be 3
   num_points = 3;
-	srand(time(0));
+	srand((unsigned int)(time(0)));
 	BrushMove( source, target );
 }
 
@@ -42,7 +42,7 @@ void ScatteredCircleBrush::BrushMove( const Point source, const Point target )
 		int x = rand() % size - size / 2;
 		int y = rand() % size - size / 2;
 		Point paintPoint = Point((target.x + x), (target.y + y));
-		DrawCircle(paintPoint, paintPoint, size / 2);
+		DrawCircle(paintPoint, paintPoint, (float)size / (float)2.0);
 	}
 }
 
