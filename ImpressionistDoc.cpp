@@ -389,7 +389,7 @@ int ImpressionistDoc::loadDissolveImage(char* iname)
 	if (m_ucDissolve) delete[] m_ucDissolve;
 	m_ucDissolve = data;
 	
-	double dissolveRate = 0.5;
+	/*double dissolveRate = 0.5;
 	for (int row = 0; row < height; ++row)
 	{
 		for (int col = 0; col < width; ++col)
@@ -399,6 +399,23 @@ int ImpressionistDoc::loadDissolveImage(char* iname)
 				int pixel = (row*width + col) * 3 + channel;
 				m_ucBitmap[pixel] = ((double)m_ucBitmap[pixel] * (1 - dissolveRate)) + ((double)m_ucDissolve[pixel] * dissolveRate);
 			}
+		}
+	}*/
+
+
+	for (int row = 0; row < height; ++row)
+	{
+		for (int col = 0; col < width; ++col)
+		{
+			int p = rand() % 10;
+			int pixel = (row*width + col) * 3;
+			if (p > 5)
+			{
+				m_ucBitmap[pixel] = m_ucDissolve[pixel];
+				m_ucBitmap[pixel + 1] = m_ucDissolve[pixel + 1];
+				m_ucBitmap[pixel + 2] = m_ucDissolve[pixel + 2];
+			}
+
 		}
 	}
 
