@@ -36,9 +36,6 @@
     <ClCompile Include="PaintView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utility\BrushPaint.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="PointBrush.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,9 +87,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PaintView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="utility\BrushPaint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PointBrush.h">
