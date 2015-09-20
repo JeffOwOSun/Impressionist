@@ -9,6 +9,9 @@
 #include "impressionistUI.h"
 #include "pointbrush.h"
 
+#include <iostream>
+using namespace std;
+
 extern float frand();
 
 PointBrush::PointBrush( ImpressionistDoc* pDoc, char* name ) :
@@ -32,17 +35,15 @@ void PointBrush::BrushMove( const Point source, const Point target )
 {
 	ImpressionistDoc* pDoc = GetDocument();
 	ImpressionistUI* dlg=pDoc->m_pUI;
-
 	if ( pDoc == NULL ) {
 		printf( "PointBrush::BrushMove  document is NULL\n" );
 		return;
 	}
 
+
 	glBegin( GL_POINTS );
 		SetColor( source );
-
 		glVertex2d( target.x, target.y );
-
 	glEnd();
 }
 
@@ -50,4 +51,3 @@ void PointBrush::BrushEnd( const Point source, const Point target )
 {
 	// do nothing so far
 }
-

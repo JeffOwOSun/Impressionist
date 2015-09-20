@@ -10,6 +10,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <stdlib.h>
 
 #include "impressionistUI.h"
 #include "impressionistDoc.h"
@@ -384,9 +385,6 @@ void ImpressionistUI::cb_alphaSlides(Fl_Widget* o, void* v)
 
 void ImpressionistUI::cb_color_chooser(Fl_Widget* o, void* v)
 {
-	std::cout << ((Fl_Color_Chooser*)o)->r() << std::endl;
-	std::cout << ((Fl_Color_Chooser*)o)->g() << std::endl;
-	std::cout << ((Fl_Color_Chooser*)o)->b() << std::endl;
 	((ImpressionistUI*)(o->user_data()))->m_nColorR = ((Fl_Color_Chooser*)o)->r();
 	((ImpressionistUI*)(o->user_data()))->m_nColorG = ((Fl_Color_Chooser*)o)->g();
 	((ImpressionistUI*)(o->user_data()))->m_nColorB = ((Fl_Color_Chooser*)o)->b();
@@ -447,6 +445,99 @@ void ImpressionistUI::cb_edge_view(Fl_Menu_* o, void* v)
 	pUI->m_origView->refresh();
 }
 
+void ImpressionistUI::cb_swap_view(Fl_Menu_* o, void* v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+	unsigned char* tmp = pDoc->m_ucBitmap;
+	pDoc->m_ucBitmap = pDoc->m_ucPainting;
+	pDoc->m_ucPainting = tmp;
+
+	whoami(o)->m_origView->refresh();
+	whoami(o)->m_paintView->refresh();
+}
+
+void ImpressionistUI::cb_filter_size(Fl_Menu_* o, void* v)
+{
+	whoami(o)->m_filterSizeWindow->show();
+}
+
+void ImpressionistUI::cb_filter_size_check(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* db = (ImpressionistUI*)o->user_data();
+	int w = atoi((db->m_filterWidth->value()));
+	int h = atoi((db->m_filterHeight->value()));
+	w = w > 1 ? w : 1;
+	h = h > 1 ? h : 1;
+	db->ShowFilterEntry(w, h);
+	db->m_filterSizeWindow->hide();
+}
+
+void ImpressionistUI::cb_applyFilter(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* db = (ImpressionistUI*)o->user_data();
+	double* kernel = new double[db->m_nKernelH * db->m_nKernelW];
+	for (int i = 0; i < db->m_nKernelH; ++i)
+	{
+		for (int j = 0; j < db->m_nKernelW; ++j)
+		{
+			int pixel = i * db->m_nKernelW + j;
+			double weight = atof(db->m_EntryInputs[pixel]->value());
+			//cout << weight << endl;
+			kernel[pixel] = weight;
+		}
+	}
+	
+	db->getDocument()->applyCustomFilter(kernel, db->m_nKernelW, db->m_nKernelH);
+	db->m_paintView->refresh();
+}
+
+void ImpressionistUI::ShowFilterEntry(int w, int h)
+{
+	int dialogWidth = w * 30 + (w + 1) * 10 + 20;
+	int dialogHeight = h * 20 + (h + 1) * 10 + 40;
+	m_filterEntryWindow = new Fl_Window(dialogWidth, dialogHeight, "Filter Kernel Entry");
+	m_filterEntryWindow->user_data((void*)(this));
+	for (int i = 1; i <= h; ++i)
+	{
+		for (int j = 1; j <= w; ++j)
+		{
+			Fl_Float_Input *input = new Fl_Float_Input(j * 10 + (j - 1) * 30, i * 10 + (i - 1) * 20, 30, 20, "");
+			input->value("1.0");
+			m_EntryInputs.push_back(input);
+		}
+	}
+	
+
+	m_filterEntryApply = new Fl_Button(dialogWidth / 2 - 30, dialogHeight - 30, 40, 20, "Apply");
+	m_filterEntryApply->user_data((void*)(this));
+	m_filterEntryApply->callback(cb_applyFilter);
+	m_filterEntryWindow->end();
+	m_filterEntryWindow->show();
+	m_nKernelH = h;
+	m_nKernelW = w;
+}
+
+
+void ImpressionistUI::cb_autoPaintSlides(Fl_Widget* o, void* v)
+{
+	((ImpressionistUI*)(o->user_data()))->m_nAutoSpace = int(((Fl_Slider *)o)->value());
+	//cout << int(((Fl_Slider *)o)->value()) << endl;
+}
+
+void ImpressionistUI::cb_autoPaintSize(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	pUI->m_bAutoSizeVary = bool(((Fl_Light_Button *)o)->value());
+}
+
+void ImpressionistUI::cb_autoPaintApply(Fl_Widget* o, void* v)
+{
+	ImpressionistUI *pUI = ((ImpressionistUI*)(o->user_data()));
+	ImpressionistDoc *pDoc = pUI->getDocument();
+	pUI->m_paintView->TriggerAutoPaint();
+}
+
+
 void ImpressionistUI::cb_another_view(Fl_Menu_* o, void* v)
 {
 	ImpressionistUI *pUI = whoami(o);
@@ -461,6 +552,11 @@ void ImpressionistUI::cb_another_view(Fl_Menu_* o, void* v)
 //------------------------------------------------
 // Return the ImpressionistDoc used
 //------------------------------------------------
+bool ImpressionistUI::getAutoVary()
+{
+	return m_bAutoSizeVary;
+}
+
 ImpressionistDoc* ImpressionistUI::getDocument()
 {
 	return m_pDoc;
@@ -548,6 +644,11 @@ int ImpressionistUI::getEdgeThreshold()
 {
 	return m_nEdgeThreshold;
 }
+
+int ImpressionistUI::getAutoPaintSpace()
+{
+	return m_nAutoSpace;
+}
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------
@@ -618,8 +719,10 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Save Image...",	FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_save_image },
 		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_brushes }, 
 		{ "&Clear Canvas",	FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
+		{ "&Swap Views", FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_swap_view},
 		{ "&Undo", FL_ALT + 'z', (Fl_Callback *)ImpressionistUI::cb_undo_canvas},
 		{ "&Color palatte", FL_ALT + 'k', (Fl_Callback *)ImpressionistUI::cb_color_window, 0, FL_MENU_DIVIDER },
+		{ "&Define Filter", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_filter_size, 0, FL_MENU_DIVIDER},
 		{ "Load Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_edge_image },
 		{ "Save Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_save_edge_image, 0, FL_MENU_DIVIDER },
 		{ "Load Mural Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_mural_image, 0, FL_MENU_DIVIDER },
@@ -646,6 +749,8 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Scattered Points",	FL_ALT+'q', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_POINTS},
   {"Scattered Lines",	FL_ALT+'m', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_LINES},
   {"Scattered Circles",	FL_ALT+'d', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_CIRCLES},
+  {"Blur Filter", FL_ALT+'b', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_BLUR_FILTER},
+  {"Sharpen Filter", FL_ALT+'s', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SHARPEN_FILTER},
   {0}
 };
 
@@ -701,6 +806,8 @@ ImpressionistUI::ImpressionistUI() {
 	m_nColorB = 1.0;
 	m_bEdgeClipping = false;
 	m_nEdgeThreshold = 100;
+	m_bAutoSizeVary = 0;
+	m_nAutoSpace = 4;
 
 	m_colorWindow = new Fl_Window(400, 325, "Color Dialog");
 		m_colorChooser = new Fl_Color_Chooser(50, 20, 150, 150, "&Color Chooser");
@@ -781,23 +888,48 @@ ImpressionistUI::ImpressionistUI() {
 		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
 		m_BrushAlphaSlider->callback(cb_alphaSlides);
 
+		//------Button for auto painting
+		m_autoPaintSpaceSlider = new Fl_Value_Slider(10, 240, 120, 20, "Space Size");
+		m_autoPaintSpaceSlider->user_data((void*)(this));
+		m_autoPaintSpaceSlider->type(FL_HOR_NICE_SLIDER);
+		m_autoPaintSpaceSlider->labelfont(FL_COURIER);
+		m_autoPaintSpaceSlider->labelsize(12);
+		m_autoPaintSpaceSlider->minimum(1);
+		m_autoPaintSpaceSlider->maximum(15);
+		m_autoPaintSpaceSlider->step(1);
+		m_autoPaintSpaceSlider->value(4);
+		m_autoPaintSpaceSlider->align(FL_ALIGN_RIGHT);
+		m_autoPaintSpaceSlider->callback(cb_autoPaintSlides);
+
+
+		m_autoPaintRandSize = new Fl_Light_Button(210, 240, 100, 20, "Randomly");
+		m_autoPaintRandSize->user_data((void*)(this));   // record self to be used by static callback functions
+		m_autoPaintRandSize->callback(cb_autoPaintSize);
+
+		m_autoPaintApply = new Fl_Button(320, 240, 60, 20, "Paint");
+		m_autoPaintApply->user_data((void*)(this));
+		m_autoPaintApply->callback(cb_autoPaintApply);
+
+		//------
+
+
 		//---To install a light button for edge clipping---------------------
 		m_EdgeClipping = new Fl_Light_Button(10, 200, 150, 25, "Edge Clipping");
 		m_EdgeClipping->user_data((void*)(this));   // record self to be used by static callback functions
 		m_EdgeClipping->callback(cb_EdgeClipping);
 
 		//Slider for edge Threshold
-		m_BrushAlphaSlider = new Fl_Value_Slider(10, 280, 200, 20, "Edge Threshold");
-		m_BrushAlphaSlider->user_data((void*)(this));
-		m_BrushAlphaSlider->type(FL_HOR_NICE_SLIDER);
-		m_BrushAlphaSlider->labelfont(FL_COURIER);
-		m_BrushAlphaSlider->labelsize(12);
-		m_BrushAlphaSlider->minimum(0);
-		m_BrushAlphaSlider->maximum(500);
-		m_BrushAlphaSlider->step(1);
-		m_BrushAlphaSlider->value(m_nEdgeThreshold); //not m_nAlpha because scale difference
-		m_BrushAlphaSlider->align(FL_ALIGN_RIGHT);
-		m_BrushAlphaSlider->callback(cb_EdgeThreshold);
+		m_EdgeThreshold = new Fl_Value_Slider(10, 280, 200, 20, "Edge Threshold");
+		m_EdgeThreshold->user_data((void*)(this));
+		m_EdgeThreshold->type(FL_HOR_NICE_SLIDER);
+		m_EdgeThreshold->labelfont(FL_COURIER);
+		m_EdgeThreshold->labelsize(12);
+		m_EdgeThreshold->minimum(0);
+		m_EdgeThreshold->maximum(500);
+		m_EdgeThreshold->step(1);
+		m_EdgeThreshold->value(m_nEdgeThreshold); //not m_nAlpha because scale difference
+		m_EdgeThreshold->align(FL_ALIGN_RIGHT);
+		m_EdgeThreshold->callback(cb_EdgeThreshold);
 
 		//Button for extrating edge
 		m_ClearCanvasButton = new Fl_Button(320, 280, 60, 20, "Do it!");
@@ -805,5 +937,20 @@ ImpressionistUI::ImpressionistUI() {
 		m_ClearCanvasButton->callback(cb_EdgeExtraction);
 
     m_brushDialog->end();	
+
+
+	m_filterSizeWindow = new Fl_Window(300, 80, "Filter Size");
+		m_filterWidth = new Fl_Int_Input(80, 10, 50, 20, "Width");
+			m_filterWidth->labelfont(FL_COURIER);
+			m_filterWidth->labelsize(12);
+			m_filterWidth->value("1");
+		m_filterHeight = new Fl_Int_Input(180, 10, 60, 20, "Height");
+			m_filterHeight->labelfont(FL_COURIER);
+			m_filterHeight->labelsize(12);
+			m_filterHeight->value("1");
+		m_filterSizeApply = new Fl_Button(120, 40, 80, 20, "&OK");
+			m_filterSizeApply->user_data((void*)(this));
+			m_filterSizeApply->callback(cb_filter_size_check);
+	m_filterSizeWindow->end();
 
 }
