@@ -214,6 +214,20 @@ void ImpressionistUI::cb_load_mural_image(Fl_Menu_* o, void* v)
 	}
 }
 
+//------------------------------------------------------------------
+// Brings up a file chooser and then loads the chosen image
+// This is called by the UI when the load gradient reference menu item is chosen
+//------------------------------------------------------------------
+void ImpressionistUI::cb_load_another(Fl_Menu_* o, void* v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
+	if (newfile != NULL) {
+		pDoc->loadAnother(newfile);
+	}
+}
+
 
 //------------------------------------------------------------------
 // Brings up a file chooser and then saves the painted image
@@ -427,7 +441,6 @@ void ImpressionistUI::cb_edge_view(Fl_Menu_* o, void* v)
 {
 	ImpressionistUI *pUI = whoami(o);
 
-	//calculate the edge map according to the threshold
 	pUI->m_origView->viewMode = OriginalView::EDGE_MODE;
 	pUI->m_origView->refresh();
 }
@@ -524,6 +537,15 @@ void ImpressionistUI::cb_autoPaintApply(Fl_Widget* o, void* v)
 	pUI->m_paintView->TriggerAutoPaint();
 }
 
+
+void ImpressionistUI::cb_another_view(Fl_Menu_* o, void* v)
+{
+	ImpressionistUI *pUI = whoami(o);
+	ImpressionistDoc *pDoc = pUI->getDocument();
+	if (pDoc->m_ucAnother)
+		pUI->m_origView->viewMode = OriginalView::ANOTHER_MODE;
+	pUI->m_origView->refresh();
+}
 
 //---------------------------------- per instance functions --------------------------------------
 
@@ -704,14 +726,16 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "Load Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_edge_image },
 		{ "Save Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_save_edge_image, 0, FL_MENU_DIVIDER },
 		{ "Load Mural Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_mural_image, 0, FL_MENU_DIVIDER },
+		{ "Load Another Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_another, 0, FL_MENU_DIVIDER },
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
 	{ "&View", 0, 0, 0, FL_SUBMENU }, // change the view
 		{ "&Original View", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_orig_view },
 		{ "&Edge View", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_edge_view },
+		{ "&Another View", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_another_view },
 		{ 0 },
 	{ "&Help",		0, 0, 0, FL_SUBMENU },
-		{ "&About",	FL_ALT + 'a', (Fl_Callback *)ImpressionistUI::cb_about },
+		{ "About", 0, (Fl_Callback *)ImpressionistUI::cb_about },
 		{ 0 },
 
 	{ 0 }
@@ -731,9 +755,10 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
 };
 
 Fl_Menu_Item ImpressionistUI::strokeDirectionMenu[NUM_STROKE_DIR + 1] = {
-		{ "Slider/Right Mouse", FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_strokeDirectionChoice, (void*)DIR_SLIDER_OR_RIGHT_MOUSE },
-		{ "Gradient", FL_ALT+'g', (Fl_Callback*)ImpressionistUI::cb_strokeDirectionChoice, (void*)DIR_GRADIENT},
-		{ "Brush Direction", FL_ALT + 'b', (Fl_Callback*)ImpressionistUI::cb_strokeDirectionChoice, (void*)DIR_BRUSH_DIRECTION },
+		{ "&Slider/Right Mouse", FL_ALT + 's', (Fl_Callback *)ImpressionistUI::cb_strokeDirectionChoice, (void*)DIR_SLIDER_OR_RIGHT_MOUSE },
+		{ "&Gradient", FL_ALT+'g', (Fl_Callback*)ImpressionistUI::cb_strokeDirectionChoice, (void*)DIR_GRADIENT},
+		{ "&Another Gradient", FL_ALT + 'a', (Fl_Callback*)ImpressionistUI::cb_strokeDirectionChoice, (void*)DIR_ANOTHER_GRADIENT },
+		{ "&Brush Direction", FL_ALT + 'b', (Fl_Callback*)ImpressionistUI::cb_strokeDirectionChoice, (void*)DIR_BRUSH_DIRECTION },
 		{0}
 };
 

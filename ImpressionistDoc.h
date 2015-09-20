@@ -26,6 +26,7 @@ public:
 	int		loadEdgeImage(char* iname);		// called by the UI to load Edge Image
 	int		saveEdgeImage(char* iname);		// called by the UI to save Edge Image
 	int		loadMuralImage(char *iname);	// called by the UI to load mural image
+	int		loadAnother(char *iname);	// called by the UI to load gradient reference
 
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
 	void	setBrushType(int type);			// called by the UI to set the brushType
@@ -46,15 +47,19 @@ public:
 	void	setAngle(int angle);			// set the brush angle
 	char*	getImageName();					// get the current image name
 
-	GLubyte GetIntensity(int x, int y);
+	//GLubyte GetIntensity(int x, int y);
 	GLint GetGradientX(int x, int y);
 	GLint GetGradientY(int x, int y);
 	GLuint GetGradientMod(int x, int y);
+	GLint GetReferenceGradientX(int x, int y);
+	GLint GetReferenceGradientY(int x, int y);
 	GLboolean GetEdge(int x, int y);
-	GLubyte GetIntensity(Point point);
+	//GLubyte GetIntensity(Point point);
 	GLint GetGradientX(Point point);
 	GLint GetGradientY(Point point);
 	GLuint GetGradientMod(Point point);
+	GLint GetReferenceGradientX(Point point);
+	GLint GetReferenceGradientY(Point point);
 	GLboolean GetEdge(Point point);
 	void applyCustomFilter(double* kernel, int w, int h);
 	void applyAutoPaint(ImpBrush* brush, int space, bool vary);
@@ -70,18 +75,22 @@ public:
 	// Bitmaps for original image and painting.
 	GLubyte*	m_ucBitmap;
 	GLubyte*	m_ucPainting;
+	// Gradient Reference
+	GLubyte *	m_ucAnother;
 	
 	// Store painting to these array
 	// Use unsigned char at now
 	unsigned char* m_ucPainting_Undo;
 	
-	// Bitmap for intensity of original image.
-	GLubyte*	m_ucIntensity;
 	// Gradient map for intensity of original image.
-	GLint * m_iGradientX;
-	GLint * m_iGradientY;
+	GLint *		m_iGradient;
 	// Gradient modulo
-	GLuint * m_iGradientMod;
+	GLuint *	m_uiGradientMod;
+
+	// Gradient map for intensity of reference image.
+	GLint *		m_iReferenceGradient;
+	// Gradient modulo
+	GLuint *	m_uiReferenceGradientMod;
 	
 	// Edge map
 	GLubyte * m_ucEdge;
@@ -104,7 +113,7 @@ public:
 	// Calculate the edge map using gradient mod and threshold
 	GLubyte* CalculateEdgeMap(int EdgeThreshold);
 	// calculate the gradient
-	void CalculateGradient();
+	void CalculateGradient(const GLubyte * const source, GLint * const targetGradient, GLuint* const targetMod);
 
 private:
 	char			m_imageName[256];
