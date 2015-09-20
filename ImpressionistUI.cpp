@@ -194,6 +194,11 @@ void ImpressionistUI::cb_load_edge_image(Fl_Menu_ * o, void * v)
 {
 	ImpressionistDoc *pDoc = whoami(o)->getDocument();
 
+	if (!pDoc->m_ucBitmap) {
+		fl_alert("Please load a background image first.");
+		return;
+	}
+
 	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
 	if (newfile != NULL) {
 		pDoc->loadEdgeImage(newfile);
@@ -207,6 +212,11 @@ void ImpressionistUI::cb_load_edge_image(Fl_Menu_ * o, void * v)
 void ImpressionistUI::cb_load_mural_image(Fl_Menu_* o, void* v)
 {
 	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+
+	if (!pDoc->m_ucBitmap) {
+		fl_alert("Please load a background image first.");
+		return;
+	}
 
 	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
 	if (newfile != NULL) {
@@ -222,9 +232,28 @@ void ImpressionistUI::cb_load_another(Fl_Menu_* o, void* v)
 {
 	ImpressionistDoc *pDoc = whoami(o)->getDocument();
 
+	if (!pDoc->m_ucBitmap) {
+		fl_alert("Please load a background image first.");
+		return;
+	}
+
 	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
 	if (newfile != NULL) {
 		pDoc->loadAnother(newfile);
+	}
+}
+
+
+void ImpressionistUI::cb_load_dissolve(Fl_Menu_* o, void* v)
+{
+	ImpressionistDoc *pDoc = whoami(o)->getDocument();
+	if (!pDoc->m_ucBitmap) {
+		fl_alert("Please load a background image first.");
+		return;
+	}
+	char* newfile = fl_file_chooser("Open File?", "*.bmp", pDoc->getImageName());
+	if (newfile != NULL) {
+		pDoc->loadDissolveImage(newfile);
 	}
 }
 
@@ -547,6 +576,7 @@ void ImpressionistUI::cb_another_view(Fl_Menu_* o, void* v)
 	pUI->m_origView->refresh();
 }
 
+
 //---------------------------------- per instance functions --------------------------------------
 
 //------------------------------------------------
@@ -727,6 +757,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "Save Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_save_edge_image, 0, FL_MENU_DIVIDER },
 		{ "Load Mural Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_mural_image, 0, FL_MENU_DIVIDER },
 		{ "Load Another Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_another, 0, FL_MENU_DIVIDER },
+		{ "Load Dissolve Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_dissolve, 0, FL_MENU_DIVIDER},
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
 	{ "&View", 0, 0, 0, FL_SUBMENU }, // change the view

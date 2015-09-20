@@ -29,9 +29,10 @@
 
 ImpressionistDoc::ImpressionistDoc() :
 m_nPaintWidth(300), m_nPaintHeight(275),
-m_ucBitmap(NULL), m_ucPainting(NULL), 
+m_ucBitmap(NULL), m_ucPainting(NULL),
 m_iGradient(NULL), m_ucPainting_Undo(NULL), m_uiGradientMod(NULL), m_ucEdge(NULL),
-m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL)
+m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL),
+m_ucDissolve(NULL)
 {
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
@@ -197,6 +198,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	if ( m_iGradient) delete[] m_iGradient;
 	if ( m_uiGradientMod) delete[] m_uiGradientMod;
 	if ( m_ucEdge) delete[] m_ucEdge;
+	if (m_ucDissolve) delete[] m_ucDissolve;
 	if (m_ucAnother) {
 		delete[] m_ucAnother;
 		m_ucAnother = NULL;
@@ -357,6 +359,48 @@ int ImpressionistDoc::loadAnother(char* iname)
 	}
 	//calculate gradient
 	CalculateGradient(m_ucAnother, m_iReferenceGradient, m_uiReferenceGradientMod);
+
+	//refresh display
+	m_pUI->m_origView->refresh();
+
+	return 1;
+}
+
+
+int ImpressionistDoc::loadDissolveImage(char* iname)
+{
+	// try to open the image to read
+	unsigned char*	data;
+	int				width, height;
+
+	if ((data = readBMP(iname, width, height)) == NULL)
+	{
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+
+	//reject different dimension
+	if (width != m_nPaintWidth || height != m_nPaintHeight)
+	{
+		fl_alert("The dimension of edge image doesn't match source image");
+		return 0;
+	}
+
+	if (m_ucDissolve) delete[] m_ucDissolve;
+	m_ucDissolve = data;
+	
+	double dissolveRate = 0.5;
+	for (int row = 0; row < height; ++row)
+	{
+		for (int col = 0; col < width; ++col)
+		{
+			for (int channel = 0; channel < 3; ++channel)
+			{
+				int pixel = (row*width + col) * 3 + channel;
+				m_ucBitmap[pixel] = ((double)m_ucBitmap[pixel] * (1 - dissolveRate)) + ((double)m_ucDissolve[pixel] * dissolveRate);
+			}
+		}
+	}
 
 	//refresh display
 	m_pUI->m_origView->refresh();
@@ -683,10 +727,5 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 		{
 			brush->BrushBegin(order[i], order[i]);
 		}
-		cout << "finish" << endl;
 	}
-	/*glFlush();
-	m_pUI->m_origView->refresh();
-	m_pUI->m_paintView->refresh();
-	m_pUI->m_paintView->SaveCurrentContent();*/
 }
