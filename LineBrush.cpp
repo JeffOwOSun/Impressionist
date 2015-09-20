@@ -32,8 +32,8 @@ void LineBrush::BrushBegin(const Point source, const Point target)
 	lineAngle = pDoc->getAngle();
 
 	//calculate the x and y projection of line length
-	lineXProj = (int)lineLength * (int)cos(((double)lineAngle) * PI / 360);
-	lineYProj = (int)lineLength * (int)sin(((double)lineAngle) * PI / 360);
+	lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+	lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 
 	prevPoint = Point(target);
 
@@ -70,8 +70,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 			//cout << atan2(diffY, diffX) << endl;
 			lineAngle = (int)(atan2(diffY, diffX) / PI * 360); //rotate 90 degree counter clockwise
 			// cout << lineAngle << endl;
-			lineXProj = (int)lineLength * (int)cos(((double)lineAngle) * PI / 360);
-			lineYProj = (int)lineLength * (int)sin(((double)lineAngle) * PI / 360);
+			lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+			lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 			prevPoint.x = target.x;
 			prevPoint.y = target.y;
 			break;
@@ -84,8 +84,8 @@ void LineBrush::BrushMove(const Point source, const Point target)
 			//calculate line Angle and projection
 			lineAngle = (int)(atan2(gradientX, -gradientY) / PI * 360); //rotate 90 degree counter clockwise
 			printf("gradientX: %d gradientY: %d lineAngle: %d\n", gradientX, gradientY, lineAngle);
-			lineXProj = (int)lineLength *(int)cos(((double)lineAngle) * PI / 360);
-			lineYProj = (int)lineLength * (int)sin(((double)lineAngle) * PI / 360);
+			lineXProj = (int)lineLength * cos(((double)lineAngle) * PI / 360);
+			lineYProj = (int)lineLength * sin(((double)lineAngle) * PI / 360);
 			break;
 		}
 		case DIR_ANOTHER_GRADIENT:

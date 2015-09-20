@@ -27,7 +27,8 @@ public:
 	int		saveEdgeImage(char* iname);		// called by the UI to save Edge Image
 	int		loadMuralImage(char *iname);	// called by the UI to load mural image
 	int		loadAnother(char *iname);		// called by the UI to load gradient reference
-	int		loadDissolveImage(char* iname);  // called by the UI to load dissolved image
+	int		loadDissolveImage(char* iname); // called by the UI to load dissolved image
+	int		loadAlphaBrush(char *iname);	// called by the UI to load alpha Brush
 
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
 	void	setBrushType(int type);			// called by the UI to set the brushType
@@ -73,11 +74,16 @@ public:
 	// Dimensions of the paint window.
 	int				m_nPaintWidth, 
 					m_nPaintHeight;	
+	// Dimensions of the alpha mapped brush
+	int				m_nAlphaBrushWidth,
+					m_nAlphaBrushHeight;
 	// Bitmaps for original image and painting.
 	GLubyte*	m_ucBitmap;
 	GLubyte*	m_ucPainting;
-	// Gradient Reference
+	// Another Image
 	GLubyte *	m_ucAnother;
+	// Alpha Brush
+	GLubyte*	m_ucAlphaBrush;
 	
 	// Store painting to these array
 	// Use unsigned char at now

@@ -252,10 +252,10 @@ void PaintView::resize(int x, int y, int width, int height)
 
 void PaintView::SaveCurrentContent()
 {
-	//printf("Read buffer from front\n");
+	//printf("Saving\n");
 	// Tell openGL to read from the front buffer when capturing
 	// out paint strokes
-	glReadBuffer(GL_FRONT);
+	glReadBuffer(GL_FRONT_AND_BACK);
 
 	glPixelStorei( GL_PACK_ALIGNMENT, 1 );
 	glPixelStorei( GL_PACK_ROW_LENGTH, m_pDoc->m_nPaintWidth );
@@ -272,6 +272,7 @@ void PaintView::SaveCurrentContent()
 
 void PaintView::RestoreContent()
 {
+	//printf("Restoring\n");
 	glDrawBuffer(GL_BACK);
 
 	glClear( GL_COLOR_BUFFER_BIT );

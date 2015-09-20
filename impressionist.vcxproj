@@ -136,6 +136,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AlphaMappedBrush.cpp" />
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="CircleBrush.cpp" />
     <ClCompile Include="FilterBlurBrush.cpp" />
@@ -155,6 +156,7 @@
     <ClCompile Include="utility\Filter.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlphaMappedBrush.h" />
     <ClInclude Include="bitmap.h" />
     <ClInclude Include="CircleBrush.h" />
     <ClInclude Include="FilterBlurBrush.h" />
