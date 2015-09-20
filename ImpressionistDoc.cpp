@@ -733,8 +733,13 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 			for (int i = 0; i < m_nWidth; i += space)
 			{
 				Point p(i, j);
-				brush->BrushBegin(p, p);
+				if (i == 0 && j == 0)
+					brush->BrushBegin(p, p);
+				else
+					brush->BrushMove(p, p);
 			}
+			Point p(m_nWidth, m_nHeight);
+			brush->BrushEnd(p, p);
 		}
 	} 
 	else
@@ -752,9 +757,12 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 			}
 		}
 		std::random_shuffle(order.begin(), order.end());
-		for (int i = 0; i < order.size(); ++i)
+
+		brush->BrushBegin(order[0], order[0]);
+		for (int i = 1; i < order.size(); ++i)
 		{
-			brush->BrushBegin(order[i], order[i]);
+			brush->BrushMove(order[i], order[i]);
 		}
+		brush->BrushEnd(order.back(), order.back());
 	}
 }

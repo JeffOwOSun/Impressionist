@@ -17,6 +17,7 @@ ImpBrush(pDoc, name)
 
 void AlphaMappedBrush::BrushBegin(const Point source, const Point target)
 {
+	glPointSize(1);
 	BrushMove(source, target);
 }
 
@@ -42,6 +43,7 @@ void AlphaMappedBrush::BrushMove(const Point source, const Point target)
 	{
 		for (int j = 0; j < pDoc->m_nAlphaBrushHeight; ++j)
 		{
+			
 			//get alpha value of the brush
 			int alpha = pDoc->m_ucAlphaBrush[3 * (j * pDoc->m_nAlphaBrushWidth + i)];
 			//set the color
@@ -51,6 +53,7 @@ void AlphaMappedBrush::BrushMove(const Point source, const Point target)
 		}
 	}
 	glEnd();
+	glFlush();
 }
 
 void AlphaMappedBrush::BrushEnd(const Point source, const Point target)

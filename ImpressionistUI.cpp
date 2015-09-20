@@ -255,6 +255,11 @@ void ImpressionistUI::cb_load_alpha_brush(Fl_Menu_* o, void* v)
 	if (newfile != NULL) {
 		pDoc->loadAlphaBrush(newfile);
 	}
+	for (int i = 0; i < NUM_BRUSH_TYPE; ++i)
+	{
+		if (brushTypeMenu[i].label() == "Alpha Mapped")
+			brushTypeMenu[i].activate();
+	}
 }
 
 
@@ -797,7 +802,7 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Scattered Circles",	FL_ALT+'d', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_CIRCLES},
   {"Blur Filter", FL_ALT+'b', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_BLUR_FILTER},
   {"Sharpen Filter", FL_ALT+'s', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SHARPEN_FILTER},
-  { "Alpha Mapped", 0, (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_ALPHA_MAPPED },
+  { "Alpha Mapped", 0, (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_ALPHA_MAPPED, FL_MENU_INACTIVE},
   {0}
 };
 
