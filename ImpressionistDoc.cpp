@@ -772,8 +772,11 @@ void ImpressionistDoc::StartCollage()
 {
 	const int numPatchHeight = ceil((double)m_nPaintHeight / 32.0);
 	const int numPatchWidth = ceil((double)m_nPaintWidth / 32.0);
-	//1. browse the directory, get the file names
-	string fileNames[] = {
+	const int patchHeight = 32;
+	const int patchWidth = 32;
+	const int channelSize = 1024;
+	const int numFiles = 6;
+	const string fileNames[] = {
 		"data_batch_1.bin",
 		"data_batch_2.bin",
 		"data_batch_3.bin",
@@ -781,115 +784,100 @@ void ImpressionistDoc::StartCollage()
 		"data_batch_5.bin",
 		"test_batch.bin",
 	};
-	for (int i = 0; i < 6; ++i)
+	const int imageSize = 3073; //1 class byte (useless here) + 3 * 1024 bytes for each channel
+	const int imageOffset = 1;
+	struct Patch {
+		GLubyte* data;
+		int startX;
+		int startY;
+		int distance;
+		Patch(GLubyte* data = NULL, int x = 0, int y = 0): distance(INT_MAX), data(data), startX(x), startY(y){}
+	};
+
+	//1. slice the original image
+	//printf("slicing original image\n");
+	vector<Patch> originalPatches = vector<Patch>();
+	for (int y = 0; y < m_nPaintHeight; y += patchHeight)
 	{
-		string fileName = fileNames[i];
+		for (int x = 0; x < m_nPaintWidth; x += patchWidth)
+		{
+			// array to store pixels of this patch. First 1024 bytes R, second G, third B.
+			GLubyte* thisPatch = new GLubyte[patchWidth * patchHeight * 3];
+			//copy this 32*32 patch out to the vector
+#pragma loop(hint_parallel(8))
+			for (int j = 0; j < patchHeight; ++j)
+				for (int i = 0; i < patchWidth; ++i)
+				{
+					const GLubyte* origPixel = GetOriginalPixel(x + i, y + j);
+					int pos = j * patchWidth + i;
+					//shuffle the RGB format
+					thisPatch[pos] = origPixel[0]; //R
+					thisPatch[pos + channelSize] = origPixel[1]; //G
+					thisPatch[pos + 2 * channelSize] = origPixel[2]; //B
+				}
+
+			originalPatches.push_back(Patch(thisPatch, x, y));
+		}
+	}
+
+	
+	//count of thumbnails
+	int count = 0;
+	//for each bin file
+	for (int fileIdx = 0; fileIdx < numFiles; ++fileIdx)
+	{
+		//open the file
+		string fileName = fileNames[fileIdx];
 
 		ifstream inFile(fileName, ios::in | ios::binary);
-		//2. slice the original image
-		//printf("slicing original image\n");
-		vector<GLdouble*> originalPatches = vector<GLdouble*>();
-		for (int y = 0; y < m_nPaintHeight; y += 32)
-		{
-			for (int x = 0; x < m_nPaintWidth; x += 32)
-			{
-				// array to store pixels of this patch. First 1024 bytes R, second G, third B.
-				GLdouble* thisPatch = new GLdouble[32 * 32 * 3];
-				//copy this 32*32 patch out to the vector
-#pragma loop(hint_parallel(8))
-				for (int j = 0; j < 32; ++j)
-					for (int i = 0; i < 32; ++i)
-					{
-						const GLubyte* origPixel = GetOriginalPixel(x + i, y + j);
-						int pos = j * 32 + i;
-						//dividing by 1024 to pre average the result after applying filter
-						thisPatch[pos] = (double)origPixel[0] / 1024.0; //R
-						thisPatch[pos + 1024] = (double)origPixel[1] / 1024.0; //G
-						thisPatch[pos + 2048] = (double)origPixel[2] / 1024.0; //B
-					}
-#pragma loop(hint_parallel(8))
-				for (int offset = 0; offset < 3072; offset += 1024)
-				{
-					GLdouble avg = 0;
-					for (int i = offset; i < offset + 1024; ++i)
-					{
-						avg += thisPatch[i];
-					}
-					avg /= 1024;
-					for (int i = offset; i < offset + 1024; ++i)
-					{
-						thisPatch[i] -= avg;
-					}
-				}
-				originalPatches.push_back(thisPatch);
-			}
-		}
-		//3. Do convolution onto the cifar image
-		//Vector to store the match score of currently adopted images
-		vector<GLint> patchMatchScore = vector<GLint>(originalPatches.size(), INT_MIN);
-		//1 class byte (useless here) + 3 * 1024 bytes for each channel
-		const int imageSize = 3073;
-		GLubyte buffer[imageSize];
-		GLubyte reverseBuffer[imageSize];
-		GLdouble normalizedBuffer[imageSize];
-		int count = 0;
+
+		//buffer contains an external image
+		GLubyte buffer[imageSize-imageOffset]; //for the real image
+		GLubyte reverseBuffer[imageSize]; //the image read directly
+		
 		while (inFile.read((char*)reverseBuffer, imageSize))
 		{
 			++count;
-			if (count % 100 == 0) printf("processing thumbnail %d\n", count);
-			//buffer contains an external image
-			//reverse buffer sequence
+			if (count % 1000 == 0) printf("processing thumbnail %d\n", count);
+			//reverse row sequence in the buffer and remove the first byte
 #pragma loop(hint_parallel(8))
-			for (int i = 0; i < 32; ++i){
-				memcpy(1 + buffer + i * 32, 1 + reverseBuffer + (31 - i) * 32, 32);
-				memcpy(1025 + buffer + i * 32, 1025 + reverseBuffer + (31 - i) * 32, 32);
-				memcpy(2049 + buffer + i * 32, 2049 + reverseBuffer + (31 - i) * 32, 32);
+			for (int i = 0; i < patchHeight; ++i){
+				memcpy(buffer + i * patchWidth, imageOffset + reverseBuffer + (patchHeight - 1 - i) * patchWidth, patchWidth);
+				memcpy(buffer + channelSize + i * patchWidth, imageOffset + channelSize + reverseBuffer + (patchHeight - 1 - i) * patchWidth, patchWidth);
+				memcpy(buffer + channelSize * 2 + i * patchWidth, imageOffset + channelSize * 2 + reverseBuffer + (patchHeight - 1 - i) * patchWidth, patchWidth);
 			}
-			//Normalize the thumbnail
+
+			//for every image patch
+			for (vector<Patch>::iterator patch = originalPatches.begin(); patch != originalPatches.end(); ++patch)
+			{
+				// distance of the patch to the thumbnail
+				int distance = 0;
 #pragma loop(hint_parallel(8))
-			for (int offset = 1; offset < 3073; offset += 1024)
-			{
-				GLdouble avg = 0.0;
-				for (int i = offset; i < offset + 1024; ++i)
-				{
-					avg += buffer[i];
-				}
-				avg /= 1024;
-				for (int i = offset; i < offset + 1024; ++i)
-				{
-					normalizedBuffer[i] = buffer[i] - avg;
-				}
-			}
-			//1. apply all the filters to it.
-			//for every filter
-			for (int i = 0; i < originalPatches.size(); ++i)
-			{
-				double scoreR = applyFilter<GLdouble, GLubyte>(originalPatches[i], 32, 32, buffer + 1, 32, 32, 16, 16);
-				double scoreG = applyFilter<GLdouble, GLubyte>(originalPatches[i], 32, 32, buffer + 1025, 32, 32, 16, 16);
-				double scoreB = applyFilter<GLdouble, GLubyte>(originalPatches[i], 32, 32, buffer + 2049, 32, 32, 16, 16);
-				double score = (scoreR + scoreG + scoreB) / 3;
-				//2. compare the score of images
-				if (score > patchMatchScore[i]) {
-					patchMatchScore[i] = score;
-					//substitute the image into ucPainting
-					int startX = i % numPatchWidth * 32;
-					int startY = i / numPatchWidth * 32;
-					for (int j = 0; j < 32; ++j)
-						for (int i = 0; i < 32; ++i)
+				for (int i = 0; i < 3 * channelSize; ++i)
+					distance += abs(buffer[i] - patch->data[i]);
+
+				//2. compare the distance of images
+				if (distance < patch->distance) {
+					patch->distance = distance;
+					// i j are coordinates in patch
+					// x y are coordinates in ucpainting
+					for (int j = 0; j < patchHeight; ++j)
+						for (int i = 0; i < patchWidth; ++i)
 						{
-							int x = i + startX;
-							int y = j + startY;
+							int x = i + patch->startX;
+							int y = j + patch->startY;
 							if (x >= m_nPaintWidth || y >= m_nPaintHeight)
 								continue;
-							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x), buffer + 1 + j * 32 + i, 1);
-							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x) + 1, buffer + 1025 + j * 32 + i, 1);
-							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x) + 2, buffer + 2049 + j * 32 + i, 1);
+							int bufferPos = j * patchWidth + i;
+							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x), buffer + bufferPos, 1); //R
+							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x) + 1, buffer + channelSize + bufferPos, 1); //G
+							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x) + 2, buffer + channelSize * 2 + bufferPos, 1); //B
 						}
-					m_pUI->m_paintView->RestoreContent();
-					glFlush();
 				}
 			}
 		}
+
+		inFile.close();
 	}
 	
 }
