@@ -5,7 +5,6 @@
 #include<iostream>
 #include"FL/gl.h"
 #include"../ImpressionistDoc.h"
-using namespace std;
 //filters. Top line at bottom.
 extern GLint SobelX[9];
 extern GLint SobelY[9];
