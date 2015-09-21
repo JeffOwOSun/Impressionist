@@ -33,6 +33,13 @@ public:
 	int     clearCanvas();                  // called by the UI to clear the drawing canvas
 	void	setBrushType(int type);			// called by the UI to set the brushType
 
+	void	setPaintlyStyle(int type);
+	int		getPaintlyStyle();
+	void	setPaintlyStroke(int type);
+	int		getPaintlyStroke();
+	void	setPaintlyThreshold(int val);
+	int		getPaintlyThreshold();
+
 	int		getStrokeDirectionType();
 	int		getSize();						// get the UI size
 	int		getWidth();
@@ -65,6 +72,7 @@ public:
 	GLboolean GetEdge(Point point);
 	void applyCustomFilter(double* kernel, int w, int h);
 	void applyAutoPaint(ImpBrush* brush, int space, bool vary);
+	void applyPaintlyPaint();
 
 // Attributes
 public:
@@ -77,6 +85,10 @@ public:
 	// Dimensions of the alpha mapped brush
 	int				m_nAlphaBrushWidth,
 					m_nAlphaBrushHeight;
+
+	int				m_nPaintlyStyleType,
+					m_nPaintlyStrokeType,
+					m_nPaintlyThreshold;
 	// Bitmaps for original image and painting.
 	GLubyte*	m_ucBitmap;
 	GLubyte*	m_ucPainting;

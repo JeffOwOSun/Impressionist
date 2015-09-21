@@ -115,9 +115,39 @@ void ImpressionistDoc::setBrushType(int type)
 		m_pUI->m_BrushSizeSlider->activate();
 		m_pUI->m_BrushAlphaSlider->activate();
 	}
-	
+}
+/////////////////////////././././././/////////////////////////
+void ImpressionistDoc::setPaintlyStyle(int type)
+{
+	m_nPaintlyStyleType = type;
 }
 
+int ImpressionistDoc::getPaintlyStyle()
+{
+	return m_nPaintlyStyleType;
+}
+
+void ImpressionistDoc::setPaintlyStroke(int type)
+{
+	m_nPaintlyStrokeType = type;
+}
+
+int ImpressionistDoc::getPaintlyStroke()
+{
+	return m_nPaintlyStrokeType;
+}
+
+void ImpressionistDoc::setPaintlyThreshold(int val)
+{
+	m_nPaintlyThreshold = val;
+}
+
+int ImpressionistDoc::getPaintlyThreshold()
+{
+	return m_nPaintlyThreshold;
+}
+
+///////////////////////////////////////////////////////////////
 void ImpressionistDoc::setStrokeDirectionType(int type)
 {
 	m_pUI->setStrokeDirection(type);
@@ -782,4 +812,9 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 		}
 		brush->BrushEnd(order.back(), order.back());
 	}
+}
+
+void ImpressionistDoc::applyPaintlyPaint()
+{
+	//////////////////////././././././././././././ TODODODODODOD
 }

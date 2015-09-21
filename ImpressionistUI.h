@@ -26,6 +26,20 @@
 
 #include "ImpBrush.h"
 
+enum {
+	STYLE_IMPRESSIONIST = 0,
+	STYLE_EXPRESSIONIST,
+	STYLE_COLORISTWASH,
+	STYLE_POINTILLIST,
+	STYLE_CUSTOMIZE,
+	NUM_PAINTLYSTYLE
+};
+
+enum {
+	STROKE_LINEBRUSH = 0,
+	NUM_PAINTLYSTROKE
+};
+
 class ImpressionistUI {
 public:
 	ImpressionistUI();
@@ -52,6 +66,20 @@ public:
 	Fl_Light_Button*	m_autoPaintRandSize;
 	Fl_Button*			m_autoPaintApply;
 	// ------
+
+	// ----- For paintly 
+	Fl_Window*			m_paintlyDialog;
+	Fl_Choice*			m_paintlyStyleChoice;
+	Fl_Choice*			m_paintlyStrokeChoice;
+	Fl_Button*			m_paintlyApplyButton;
+	Fl_Slider*			m_paintlyThresholdSlider;
+	Fl_Slider*			m_paintlyMaxBrushSizeSlider;
+	Fl_Slider*			m_paintlyMinBrushSizeSlider;
+	Fl_Slider*			m_paintlyCurvatureSlider;
+	Fl_Slider*			m_paintlyBlurSlider;
+	Fl_Slider*			m_paintlyMaxStrokeLengthSlider;
+	Fl_Slider*			m_paintlyMinStrokeLengthSlider;
+	// -----
 
 	Fl_Choice*			m_BrushTypeChoice;
 	Fl_Color_Chooser*	m_colorChooser;
@@ -136,6 +164,8 @@ private:
 	static Fl_Menu_Item		menuitems[];
 	static Fl_Menu_Item		brushTypeMenu[NUM_BRUSH_TYPE + 1];
 	static Fl_Menu_Item		strokeDirectionMenu[NUM_STROKE_DIR + 1];
+	static Fl_Menu_Item		paintlyStyleMenu[NUM_PAINTLYSTYLE + 1];
+	static Fl_Menu_Item		paintlyStrokeMenu[NUM_PAINTLYSTROKE + 1];
 
 	static ImpressionistUI*	whoami(Fl_Menu_* o);
 
@@ -176,6 +206,11 @@ private:
 	static void cb_load_another(Fl_Menu_ *o, void * v);
 	static void cb_load_dissolve(Fl_Menu_ *o, void* v);
 	static void cb_load_alpha_brush(Fl_Menu_ *o, void * v);
+	static void cb_paintly_window(Fl_Menu_* o, void* v);
+	static void cb_paintlyStyleChoice(Fl_Widget* o, void* v);
+	static void cb_paintlyStrokeChoice(Fl_Widget* o, void* v);
+	static void cb_paintlyApply(Fl_Widget* o, void* v);
+	static void cb_paintlyThresholdSlider(Fl_Widget* o, void* v);
 };
 
 #endif

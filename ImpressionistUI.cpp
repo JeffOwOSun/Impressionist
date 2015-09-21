@@ -595,6 +595,42 @@ void ImpressionistUI::cb_another_view(Fl_Menu_* o, void* v)
 	pUI->m_origView->refresh();
 }
 
+//-------------/././././-------------------------------------------------------------
+void ImpressionistUI::cb_paintly_window(Fl_Menu_* o, void* v)
+{
+	whoami(o)->m_paintlyDialog->show();
+}
+
+void ImpressionistUI::cb_paintlyStyleChoice(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int type = (int)v;
+	pDoc->setPaintlyStyle(type);
+}
+
+void ImpressionistUI::cb_paintlyStrokeChoice(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int type = (int)v;
+	pDoc->setPaintlyStroke(type);
+}
+
+void ImpressionistUI::cb_paintlyApply(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	pDoc->applyPaintlyPaint();
+}
+
+void ImpressionistUI::cb_paintlyThresholdSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int val = (int)v;
+	pDoc->setPaintlyThreshold(val);
+}
 
 //---------------------------------- per instance functions --------------------------------------
 
@@ -772,11 +808,12 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Undo", FL_ALT + 'z', (Fl_Callback *)ImpressionistUI::cb_undo_canvas},
 		{ "&Color palatte", FL_ALT + 'k', (Fl_Callback *)ImpressionistUI::cb_color_window, 0, FL_MENU_DIVIDER },
 		{ "&Define Filter", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_filter_size, 0, FL_MENU_DIVIDER},
+		{ "&Paintly", FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_paintly_window, 0, FL_MENU_DIVIDER},
 		{ "Load Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_edge_image },
 		{ "Save Edge Image...", 0, (Fl_Callback *)ImpressionistUI::cb_save_edge_image, 0, FL_MENU_DIVIDER },
-		{ "Load Mural Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_mural_image, 0, FL_MENU_DIVIDER },
-		{ "Load Another Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_another, 0, FL_MENU_DIVIDER },
-		{ "Load Dissolve Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_dissolve, 0, FL_MENU_DIVIDER},
+		{ "Load Mural Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_mural_image },
+		{ "Load Another Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_another },
+		{ "Load Dissolve Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_dissolve },
 		{ "Load Alpha Brush...", 0, (Fl_Callback *)ImpressionistUI::cb_load_alpha_brush, 0, FL_MENU_DIVIDER },
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
@@ -804,6 +841,20 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Sharpen Filter", FL_ALT+'s', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SHARPEN_FILTER},
   { "Alpha Mapped", 0, (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_ALPHA_MAPPED, FL_MENU_INACTIVE},
   {0}
+};
+
+Fl_Menu_Item ImpressionistUI::paintlyStyleMenu[NUM_PAINTLYSTYLE + 1] = {
+		{ "Impressionist", FL_ALT + 'i', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_IMPRESSIONIST},
+		{ "Expressionist", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_EXPRESSIONIST},
+		{ "Colorist Wash", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_COLORISTWASH},
+		{ "Pointillist", FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_POINTILLIST},
+		{ "Customized", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_CUSTOMIZE},
+		{0}
+};
+
+Fl_Menu_Item ImpressionistUI::paintlyStrokeMenu[NUM_PAINTLYSTROKE + 1] = {
+		{"Line Brush", FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_paintlyStrokeChoice, (void*)STROKE_LINEBRUSH},
+		{0}
 };
 
 Fl_Menu_Item ImpressionistUI::strokeDirectionMenu[NUM_STROKE_DIR + 1] = {
@@ -860,6 +911,9 @@ ImpressionistUI::ImpressionistUI() {
 	m_nEdgeThreshold = 100;
 	m_bAutoSizeVary = 0;
 	m_nAutoSpace = 4;
+	
+	m_paintlyStrokeChoice = 0;
+	m_paintlyStyleChoice = 0;
 
 	m_colorWindow = new Fl_Window(400, 325, "Color Dialog");
 		m_colorChooser = new Fl_Color_Chooser(50, 20, 150, 150, "&Color Chooser");
@@ -1004,5 +1058,45 @@ ImpressionistUI::ImpressionistUI() {
 			m_filterSizeApply->user_data((void*)(this));
 			m_filterSizeApply->callback(cb_filter_size_check);
 	m_filterSizeWindow->end();
+
+	m_paintlyDialog = new Fl_Window(500, 400, "Paintly");
+		m_paintlyStyleChoice = new Fl_Choice(50, 15, 140, 25, "&Style");
+		m_paintlyStyleChoice->user_data((void*)(this));	// record self to be used by static callback functions
+		m_paintlyStyleChoice->menu(paintlyStyleMenu);
+		m_paintlyStyleChoice->callback(cb_paintlyStyleChoice);
+
+		m_paintlyStrokeChoice = new Fl_Choice(250, 15, 110, 25, "&Stroke");
+		m_paintlyStrokeChoice->user_data((void*)(this));
+		m_paintlyStrokeChoice->menu(paintlyStrokeMenu);
+		m_paintlyStrokeChoice->callback(cb_paintlyStrokeChoice);
+
+		m_paintlyApplyButton = new Fl_Button(400, 15, 60, 25, "&Paint");
+		m_paintlyApplyButton->user_data((void*)(this));
+		m_paintlyApplyButton->callback(cb_paintlyApply);
+
+		m_paintlyThresholdSlider = new Fl_Value_Slider(15, 60, 200, 20, "Threshold");
+		m_paintlyThresholdSlider->user_data((void*)(this));
+		m_paintlyThresholdSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyThresholdSlider->labelfont(FL_COURIER);
+		m_paintlyThresholdSlider->labelsize(12);
+		m_paintlyThresholdSlider->minimum(0);
+		m_paintlyThresholdSlider->maximum(250);
+		m_paintlyThresholdSlider->step(1);
+		m_paintlyThresholdSlider->value(100);
+		m_paintlyThresholdSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyThresholdSlider->callback(cb_paintlyThresholdSlider);
+
+		m_paintlyThresholdSlider = new Fl_Value_Slider(15, 60, 200, 20, "Threshold");
+		m_paintlyThresholdSlider->user_data((void*)(this));
+		m_paintlyThresholdSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyThresholdSlider->labelfont(FL_COURIER);
+		m_paintlyThresholdSlider->labelsize(12);
+		m_paintlyThresholdSlider->minimum(0);
+		m_paintlyThresholdSlider->maximum(250);
+		m_paintlyThresholdSlider->step(1);
+		m_paintlyThresholdSlider->value(100);
+		m_paintlyThresholdSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyThresholdSlider->callback(cb_paintlyThresholdSlider);
+	m_paintlyDialog->end();
 
 }
