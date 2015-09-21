@@ -190,3 +190,4 @@ ModelManifest.xml
 
 # 4411 Project
 images/
+*.bin

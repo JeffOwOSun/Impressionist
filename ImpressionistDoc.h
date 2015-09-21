@@ -7,6 +7,7 @@
 #ifndef ImpressionistDoc_h
 #define ImpressionistDoc_h
 
+#include <cmath>
 #include "impressionist.h"
 #include "bitmap.h"
 #include "utility\Filter.h"
@@ -122,9 +123,13 @@ public:
 	GLubyte* CalculateEdgeMap(int EdgeThreshold);
 	// calculate the gradient
 	void CalculateGradient(const GLubyte * const source, GLint * const targetGradient, GLuint* const targetMod);
+	// Thumbnail Collage
+	void StartCollage();
+	//void StopCollage(); //Not sure if this will work when startgothic is in process. May need subprocess
 
 private:
 	char			m_imageName[256];
+	//bool			m_bGothicStopSignal; //this bit will be turned on by StopCollage()
 
 };
 

@@ -176,6 +176,7 @@ private:
 	static void cb_load_another(Fl_Menu_ *o, void * v);
 	static void cb_load_dissolve(Fl_Menu_ *o, void* v);
 	static void cb_load_alpha_brush(Fl_Menu_ *o, void * v);
+	static void cb_start_collage(Fl_Menu_ *o, void * v);
 };
 
 #endif
