@@ -79,6 +79,14 @@ public:
 	Fl_Slider*			m_paintlyBlurSlider;
 	Fl_Slider*			m_paintlyMaxStrokeLengthSlider;
 	Fl_Slider*			m_paintlyMinStrokeLengthSlider;
+	Fl_Slider*			m_paintlyAlphaSlider;
+	Fl_Slider*			m_paintlyLayersSlider;
+	Fl_Slider*			m_paintlyJrSlider;
+	Fl_Slider*			m_paintlyJgSlider;
+	Fl_Slider*			m_paintlyJbSlider;
+	Fl_Slider*			m_paintlyJhSlider;
+	Fl_Slider*			m_paintlyJsSlider;
+	Fl_Slider*			m_paintlyJvSlider;
 	// -----
 
 	Fl_Choice*			m_BrushTypeChoice;
@@ -138,6 +146,7 @@ public:
 
 	int					getEdgeThreshold();
 	void				setEdgeThreshold(int edgeThreshold);
+	
 
 	void				ShowFilterEntry(int w, int h);
 
@@ -160,6 +169,7 @@ private:
 	int		m_nAutoSpace;
 	bool	m_bAutoSizeVary;
 
+	
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
 	static Fl_Menu_Item		brushTypeMenu[NUM_BRUSH_TYPE + 1];
@@ -211,6 +221,20 @@ private:
 	static void cb_paintlyStrokeChoice(Fl_Widget* o, void* v);
 	static void cb_paintlyApply(Fl_Widget* o, void* v);
 	static void cb_paintlyThresholdSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyMaxBrushSizeSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyMinBrushSizeSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyCurvatureSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyBlurSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyMaxStrokeLengthSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyMinStrokeLengthSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyAlphaSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyLayersSlider(Fl_Widget* o, void* v);
+	static void	cb_paintlyJrSlider(Fl_Widget* o, void* v);
+	static void	cb_paintlyJgSlider(Fl_Widget* o, void* v);
+	static void	cb_paintlyJbSlider(Fl_Widget* o, void* v);
+	static void	cb_paintlyJhSlider(Fl_Widget* o, void* v);
+	static void	cb_paintlyJsSlider(Fl_Widget* o, void* v);
+	static void	cb_paintlyJvSlider(Fl_Widget* o, void* v);
 };
 
 #endif

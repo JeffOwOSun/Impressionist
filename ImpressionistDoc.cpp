@@ -147,6 +147,148 @@ int ImpressionistDoc::getPaintlyThreshold()
 	return m_nPaintlyThreshold;
 }
 
+
+int ImpressionistDoc::getPaintlyMaxBrush()
+{
+	return m_nPaintlyMaxBrush;
+}
+
+void ImpressionistDoc::setPaintlyMaxBrush(int val)
+{
+	m_nPaintlyMaxBrush = val;
+}
+
+int ImpressionistDoc::getPaintlyMinBrush()
+{
+	return m_nPaintlyMinBrush;
+}
+
+void ImpressionistDoc::setPaintlyMinBrush(int val)
+{
+	m_nPaintlyMinBrush = val;
+}
+
+double ImpressionistDoc::getPaintlyCurvature()
+{
+	return m_dPaintlyCurvature;
+}
+
+void ImpressionistDoc::setPaintlyCurvature(double val)
+{
+	m_dPaintlyCurvature = val;
+}
+
+double ImpressionistDoc::getPaintlyBlur()
+{
+	return m_dPaintlyBlur;
+}
+
+void ImpressionistDoc::setPaintlyBlur(double val)
+{
+	m_dPaintlyBlur = val;
+}
+
+int ImpressionistDoc::getPaintlyMaxStroke()
+{
+	return m_nPaintlyMaxStroke;
+}
+
+void ImpressionistDoc::setPaintlyMaxStroke(int val)
+{
+	m_nPaintlyMaxStroke = val;
+}
+
+int ImpressionistDoc::getPaintlyMinStroke()
+{
+	return m_nPaintlyMinStroke;
+}
+
+void ImpressionistDoc::setPaintlyMinStroke(int val)
+{
+	m_nPaintlyMinStroke = val;
+}
+
+double ImpressionistDoc::getPaintlyAlpha()
+{
+	return m_dPaintlyAlpha;
+}
+
+void ImpressionistDoc::setPaintlyAlpha(double val)
+{
+	m_dPaintlyAlpha = val;
+}
+
+int ImpressionistDoc::getPaintlyLayers()
+{
+	return m_nPaintlyLayers;
+}
+
+void ImpressionistDoc::setPaintlyLayers(int val)
+{
+	m_nPaintlyLayers = val;
+}
+
+double ImpressionistDoc::getPaintlyJr()
+{
+	return m_dPaintlyJr;
+}
+
+void ImpressionistDoc::setPaintlyJr(double val)
+{
+	m_dPaintlyJr = val;
+}
+
+double ImpressionistDoc::getPaintlyJg()
+{
+	return m_dPaintlyJg;
+}
+
+void ImpressionistDoc::setPaintlyJg(double val)
+{
+	m_dPaintlyJg = val;
+}
+
+double ImpressionistDoc::getPaintlyJb()
+{
+	return m_dPaintlyJb;
+}
+
+void ImpressionistDoc::setPaintlyJb(double val)
+{
+	m_dPaintlyJb = val;
+}
+
+double ImpressionistDoc::getPaintlyJh()
+{
+	return m_dPaintlyJr;
+}
+
+void ImpressionistDoc::setPaintlyJh(double val)
+{
+	m_dPaintlyJr = val;
+}
+
+double ImpressionistDoc::getPaintlyJs()
+{
+	return m_dPaintlyJg;
+}
+
+void ImpressionistDoc::setPaintlyJs(double val)
+{
+	m_dPaintlyJg = val;
+}
+
+double ImpressionistDoc::getPaintlyJv()
+{
+	return m_dPaintlyJb;
+}
+
+void ImpressionistDoc::setPaintlyJv(double val)
+{
+	m_dPaintlyJb = val;
+}
+
+
 ///////////////////////////////////////////////////////////////
 void ImpressionistDoc::setStrokeDirectionType(int type)
 {

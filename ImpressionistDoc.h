@@ -35,10 +35,49 @@ public:
 
 	void	setPaintlyStyle(int type);
 	int		getPaintlyStyle();
+
 	void	setPaintlyStroke(int type);
 	int		getPaintlyStroke();
+
 	void	setPaintlyThreshold(int val);
 	int		getPaintlyThreshold();
+
+	int		getPaintlyMaxBrush();
+	void	setPaintlyMaxBrush(int val);
+
+	int		getPaintlyMinBrush();
+	void	setPaintlyMinBrush(int val);
+	
+	double	getPaintlyCurvature();
+	void	setPaintlyCurvature(double val);
+
+	double	getPaintlyBlur();
+	void	setPaintlyBlur(double val);
+
+	int		getPaintlyMaxStroke();
+	void	setPaintlyMaxStroke(int val);
+
+	int		getPaintlyMinStroke();
+	void	setPaintlyMinStroke(int val);
+
+	double	getPaintlyAlpha();
+	void	setPaintlyAlpha(double val);
+
+	int		getPaintlyLayers();
+	void	setPaintlyLayers(int val);
+
+	double	getPaintlyJr();
+	void	setPaintlyJr(double val);
+	double	getPaintlyJg();
+	void	setPaintlyJg(double val);
+	double	getPaintlyJb();
+	void	setPaintlyJb(double val);
+	double	getPaintlyJh();
+	void	setPaintlyJh(double val);
+	double	getPaintlyJs();
+	void	setPaintlyJs(double val);
+	double	getPaintlyJv();
+	void	setPaintlyJv(double val);
 
 	int		getStrokeDirectionType();
 	int		getSize();						// get the UI size
@@ -88,7 +127,23 @@ public:
 
 	int				m_nPaintlyStyleType,
 					m_nPaintlyStrokeType,
-					m_nPaintlyThreshold;
+					m_nPaintlyThreshold,
+					m_nPaintlyMaxBrush,
+					m_nPaintlyMinBrush,
+					m_nPaintlyMaxStroke,
+					m_nPaintlyMinStroke,
+					m_nPaintlyLayers;
+	
+	double			m_dPaintlyCurvature,
+					m_dPaintlyBlur,
+					m_dPaintlyAlpha,
+					m_dPaintlyJr,
+					m_dPaintlyJg,
+					m_dPaintlyJb,
+					m_dPaintlyJh,
+					m_dPaintlyJs,
+					m_dPaintlyJv;
+
 	// Bitmaps for original image and painting.
 	GLubyte*	m_ucBitmap;
 	GLubyte*	m_ucPainting;

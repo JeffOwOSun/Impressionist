@@ -628,9 +628,122 @@ void ImpressionistUI::cb_paintlyThresholdSlider(Fl_Widget* o, void* v)
 {
 	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
 	ImpressionistDoc* pDoc = pUI->getDocument();
-	int val = (int)v;
+	int val = int(((Fl_Slider *)o)->value());
 	pDoc->setPaintlyThreshold(val);
 }
+
+void ImpressionistUI::cb_paintlyMaxBrushSizeSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int val = int(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyMaxBrush(val);
+}
+
+void ImpressionistUI::cb_paintlyMinBrushSizeSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int val = int(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyMinBrush(val);
+}
+
+void ImpressionistUI::cb_paintlyCurvatureSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyCurvature(val);
+}
+
+void ImpressionistUI::cb_paintlyBlurSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyBlur(val);
+}
+
+void ImpressionistUI::cb_paintlyMaxStrokeLengthSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int val = int(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyMaxStroke(val);
+}
+
+void ImpressionistUI::cb_paintlyMinStrokeLengthSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int val = int(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyMinStroke(val);
+}
+
+void ImpressionistUI::cb_paintlyAlphaSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyAlpha(val);
+}
+
+void ImpressionistUI::cb_paintlyLayersSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	int val = int(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyLayers(val);
+}
+
+void ImpressionistUI::cb_paintlyJrSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyJr(val);
+}
+
+void ImpressionistUI::cb_paintlyJgSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyJg(val);
+}
+
+void ImpressionistUI::cb_paintlyJbSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyJb(val);
+}
+
+void ImpressionistUI::cb_paintlyJhSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyJh(val);
+}
+
+void ImpressionistUI::cb_paintlyJsSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyJs(val);
+}
+
+void ImpressionistUI::cb_paintlyJvSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyJv(val);
+}
+
 
 //---------------------------------- per instance functions --------------------------------------
 
@@ -1086,17 +1199,177 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyThresholdSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyThresholdSlider->callback(cb_paintlyThresholdSlider);
 
-		m_paintlyThresholdSlider = new Fl_Value_Slider(15, 60, 200, 20, "Threshold");
-		m_paintlyThresholdSlider->user_data((void*)(this));
-		m_paintlyThresholdSlider->type(FL_HOR_NICE_SLIDER);
-		m_paintlyThresholdSlider->labelfont(FL_COURIER);
-		m_paintlyThresholdSlider->labelsize(12);
-		m_paintlyThresholdSlider->minimum(0);
-		m_paintlyThresholdSlider->maximum(250);
-		m_paintlyThresholdSlider->step(1);
-		m_paintlyThresholdSlider->value(100);
-		m_paintlyThresholdSlider->align(FL_ALIGN_RIGHT);
-		m_paintlyThresholdSlider->callback(cb_paintlyThresholdSlider);
+		m_paintlyMaxBrushSizeSlider = new Fl_Value_Slider(15, 90, 200, 20, "Max Brush");
+		m_paintlyMaxBrushSizeSlider->user_data((void*)(this));
+		m_paintlyMaxBrushSizeSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyMaxBrushSizeSlider->labelfont(FL_COURIER);
+		m_paintlyMaxBrushSizeSlider->labelsize(12);
+		m_paintlyMaxBrushSizeSlider->minimum(1);
+		m_paintlyMaxBrushSizeSlider->maximum(15);
+		m_paintlyMaxBrushSizeSlider->step(1);
+		m_paintlyMaxBrushSizeSlider->value(6);
+		m_paintlyMaxBrushSizeSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyMaxBrushSizeSlider->callback();
+
+		m_paintlyMinBrushSizeSlider = new Fl_Value_Slider(15, 120, 200, 20, "Min Brush");
+		m_paintlyMinBrushSizeSlider->user_data((void*)(this));
+		m_paintlyMinBrushSizeSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyMinBrushSizeSlider->labelfont(FL_COURIER);
+		m_paintlyMinBrushSizeSlider->labelsize(12);
+		m_paintlyMinBrushSizeSlider->minimum(1);
+		m_paintlyMinBrushSizeSlider->maximum(15);
+		m_paintlyMinBrushSizeSlider->step(1);
+		m_paintlyMinBrushSizeSlider->value(6);
+		m_paintlyMinBrushSizeSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyMinBrushSizeSlider->callback();
+
+		m_paintlyCurvatureSlider = new Fl_Value_Slider(15, 150, 200, 20, "Curvature");
+		m_paintlyCurvatureSlider->user_data((void*)(this));
+		m_paintlyCurvatureSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyCurvatureSlider->labelfont(FL_COURIER);
+		m_paintlyCurvatureSlider->labelsize(12);
+		m_paintlyCurvatureSlider->minimum(0);
+		m_paintlyCurvatureSlider->maximum(1);
+		m_paintlyCurvatureSlider->step(0.01);
+		m_paintlyCurvatureSlider->value(1);
+		m_paintlyCurvatureSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyCurvatureSlider->callback();
+
+		m_paintlyBlurSlider = new Fl_Value_Slider(15, 180, 200, 20, "Blur");
+		m_paintlyBlurSlider->user_data((void*)(this));
+		m_paintlyBlurSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyBlurSlider->labelfont(FL_COURIER);
+		m_paintlyBlurSlider->labelsize(12);
+		m_paintlyBlurSlider->minimum(0);
+		m_paintlyBlurSlider->maximum(1);
+		m_paintlyBlurSlider->step(0.01);
+		m_paintlyBlurSlider->value(0.50);
+		m_paintlyBlurSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyBlurSlider->callback();
+
+		m_paintlyMaxStrokeLengthSlider = new Fl_Value_Slider(15, 210, 200, 20, "Max Stroke");
+		m_paintlyMaxStrokeLengthSlider->user_data((void*)(this));
+		m_paintlyMaxStrokeLengthSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyMaxStrokeLengthSlider->labelfont(FL_COURIER);
+		m_paintlyMaxStrokeLengthSlider->labelsize(12);
+		m_paintlyMaxStrokeLengthSlider->minimum(0);
+		m_paintlyMaxStrokeLengthSlider->maximum(30);
+		m_paintlyMaxStrokeLengthSlider->step(1);
+		m_paintlyMaxStrokeLengthSlider->value(16);
+		m_paintlyMaxStrokeLengthSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyMaxStrokeLengthSlider->callback();
+	
+		m_paintlyMinStrokeLengthSlider = new Fl_Value_Slider(15, 240, 200, 20, "Min Stroke");
+		m_paintlyMinStrokeLengthSlider->user_data((void*)(this));
+		m_paintlyMinStrokeLengthSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyMinStrokeLengthSlider->labelfont(FL_COURIER);
+		m_paintlyMinStrokeLengthSlider->labelsize(12);
+		m_paintlyMinStrokeLengthSlider->minimum(0);
+		m_paintlyMinStrokeLengthSlider->maximum(30);
+		m_paintlyMinStrokeLengthSlider->step(1);
+		m_paintlyMinStrokeLengthSlider->value(4);
+		m_paintlyMinStrokeLengthSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyMinStrokeLengthSlider->callback();
+
+		m_paintlyAlphaSlider = new Fl_Value_Slider(15, 270, 200, 20, "Alpha");
+		m_paintlyAlphaSlider->user_data((void*)(this));
+		m_paintlyAlphaSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyAlphaSlider->labelfont(FL_COURIER);
+		m_paintlyAlphaSlider->labelsize(12);
+		m_paintlyAlphaSlider->minimum(0);
+		m_paintlyAlphaSlider->maximum(1);
+		m_paintlyAlphaSlider->step(0.01);
+		m_paintlyAlphaSlider->value(1);
+		m_paintlyAlphaSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyAlphaSlider->callback();
+
+		m_paintlyLayersSlider = new Fl_Value_Slider(15, 300, 200, 20, "Layers");
+		m_paintlyLayersSlider->user_data((void*)(this));
+		m_paintlyLayersSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyLayersSlider->labelfont(FL_COURIER);
+		m_paintlyLayersSlider->labelsize(12);
+		m_paintlyLayersSlider->minimum(1);
+		m_paintlyLayersSlider->maximum(5);
+		m_paintlyLayersSlider->step(1);
+		m_paintlyLayersSlider->value(3);
+		m_paintlyLayersSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyLayersSlider->callback();
+
+		m_paintlyJrSlider = new Fl_Value_Slider(330, 60, 25, 110, "Jr");
+		m_paintlyJrSlider->user_data((void*)(this));
+		m_paintlyJrSlider->type(FL_VERT_NICE_SLIDER);
+		m_paintlyJrSlider->labelfont(FL_COURIER);
+		m_paintlyJrSlider->labelsize(12);
+		m_paintlyJrSlider->minimum(0);
+		m_paintlyJrSlider->maximum(1);
+		m_paintlyJrSlider->step(0.01);
+		m_paintlyJrSlider->value(1);
+		m_paintlyJrSlider->align(FL_ALIGN_BOTTOM);
+		m_paintlyJrSlider->callback();
+
+		m_paintlyJgSlider = new Fl_Value_Slider(375, 60, 25, 110, "Jg");
+		m_paintlyJgSlider->user_data((void*)(this));
+		m_paintlyJgSlider->type(FL_VERT_NICE_SLIDER);
+		m_paintlyJgSlider->labelfont(FL_COURIER);
+		m_paintlyJgSlider->labelsize(12);
+		m_paintlyJgSlider->minimum(0);
+		m_paintlyJgSlider->maximum(1);
+		m_paintlyJgSlider->step(0.01);
+		m_paintlyJgSlider->value(1);
+		m_paintlyJgSlider->align(FL_ALIGN_BOTTOM);
+		m_paintlyJgSlider->callback();
+
+		m_paintlyJbSlider = new Fl_Value_Slider(420, 60, 25, 110, "Jb");
+		m_paintlyJbSlider->user_data((void*)(this));
+		m_paintlyJbSlider->type(FL_VERT_NICE_SLIDER);
+		m_paintlyJbSlider->labelfont(FL_COURIER);
+		m_paintlyJbSlider->labelsize(12);
+		m_paintlyJbSlider->minimum(0);
+		m_paintlyJbSlider->maximum(1);
+		m_paintlyJbSlider->step(0.01);
+		m_paintlyJbSlider->value(1);
+		m_paintlyJbSlider->align(FL_ALIGN_BOTTOM);
+		m_paintlyJbSlider->callback();
+
+		m_paintlyJhSlider = new Fl_Value_Slider(330, 200, 25, 110, "Jh");
+		m_paintlyJhSlider->user_data((void*)(this));
+		m_paintlyJhSlider->type(FL_VERT_NICE_SLIDER);
+		m_paintlyJhSlider->labelfont(FL_COURIER);
+		m_paintlyJhSlider->labelsize(12);
+		m_paintlyJhSlider->minimum(0);
+		m_paintlyJhSlider->maximum(1);
+		m_paintlyJhSlider->step(0.01);
+		m_paintlyJhSlider->value(1);
+		m_paintlyJhSlider->align(FL_ALIGN_BOTTOM);
+		m_paintlyJhSlider->callback();
+
+		m_paintlyJsSlider = new Fl_Value_Slider(375, 200, 25, 110, "Js");
+		m_paintlyJsSlider->user_data((void*)(this));
+		m_paintlyJsSlider->type(FL_VERT_NICE_SLIDER);
+		m_paintlyJsSlider->labelfont(FL_COURIER);
+		m_paintlyJsSlider->labelsize(12);
+		m_paintlyJsSlider->minimum(0);
+		m_paintlyJsSlider->maximum(1);
+		m_paintlyJsSlider->step(0.01);
+		m_paintlyJsSlider->value(1);
+		m_paintlyJsSlider->align(FL_ALIGN_BOTTOM);
+		m_paintlyJsSlider->callback();
+
+		m_paintlyJvSlider = new Fl_Value_Slider(420, 200, 25, 110, "Jv");
+		m_paintlyJvSlider->user_data((void*)(this));
+		m_paintlyJvSlider->type(FL_VERT_NICE_SLIDER);
+		m_paintlyJvSlider->labelfont(FL_COURIER);
+		m_paintlyJvSlider->labelsize(12);
+		m_paintlyJvSlider->minimum(0);
+		m_paintlyJvSlider->maximum(1);
+		m_paintlyJvSlider->step(0.01);
+		m_paintlyJvSlider->value(1);
+		m_paintlyJvSlider->align(FL_ALIGN_BOTTOM);
+		m_paintlyJvSlider->callback();
+
+
+			
+		
 	m_paintlyDialog->end();
 
 }
