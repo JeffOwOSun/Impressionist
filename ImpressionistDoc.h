@@ -47,6 +47,9 @@ public:
 
 	int		getPaintlyMinBrush();
 	void	setPaintlyMinBrush(int val);
+
+	double	getPaintlyGrid();
+	void	setPaintlyGrid(double val);
 	
 	double	getPaintlyCurvature();
 	void	setPaintlyCurvature(double val);
@@ -134,7 +137,8 @@ public:
 					m_nPaintlyMinStroke,
 					m_nPaintlyLayers;
 	
-	double			m_dPaintlyCurvature,
+	double			m_dPaintlyGrid,
+					m_dPaintlyCurvature,
 					m_dPaintlyBlur,
 					m_dPaintlyAlpha,
 					m_dPaintlyJr,

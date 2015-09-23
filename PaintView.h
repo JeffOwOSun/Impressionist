@@ -36,11 +36,13 @@ public:
 
 	void TriggerAutoPaint();
 
-	void paintlyBlur(unsigned char* source, unsigned char* reference, int brushSize);
+	void TriggerPaintly();
 
-	void paintlyDiff(unsigned char* canvas, unsigned char* reference, unsigned char* diff);
+	void paintlyBlur(unsigned char* source, unsigned char* reference, int brushSize, int width, int height);
 
-	void paintlyLayer();
+	void paintlyDiff(unsigned char* canvas, unsigned char* reference, unsigned char* diff, int width, int height);
+
+	void paintlyLayer(unsigned char* canvas, unsigned char* diff, double gridRate, int brushSize, int threshold, int width, int height);
 
 	void paintlyPaint();
 

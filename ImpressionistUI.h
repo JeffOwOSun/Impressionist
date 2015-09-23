@@ -75,6 +75,7 @@ public:
 	Fl_Slider*			m_paintlyThresholdSlider;
 	Fl_Slider*			m_paintlyMaxBrushSizeSlider;
 	Fl_Slider*			m_paintlyMinBrushSizeSlider;
+	Fl_Slider*			m_paintlyGridSlider;
 	Fl_Slider*			m_paintlyCurvatureSlider;
 	Fl_Slider*			m_paintlyBlurSlider;
 	Fl_Slider*			m_paintlyMaxStrokeLengthSlider;
@@ -223,6 +224,7 @@ private:
 	static void cb_paintlyThresholdSlider(Fl_Widget* o, void* v);
 	static void cb_paintlyMaxBrushSizeSlider(Fl_Widget* o, void* v);
 	static void cb_paintlyMinBrushSizeSlider(Fl_Widget* o, void* v);
+	static void cb_paintlyGridSlider(Fl_Widget* o, void* v);
 	static void cb_paintlyCurvatureSlider(Fl_Widget* o, void* v);
 	static void cb_paintlyBlurSlider(Fl_Widget* o, void* v);
 	static void cb_paintlyMaxStrokeLengthSlider(Fl_Widget* o, void* v);

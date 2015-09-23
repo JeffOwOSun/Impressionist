@@ -11,6 +11,8 @@
 #include "ImpBrush.h"
 #include <cmath>
 #include <string.h>
+#include <vector>
+#include <algorithm>
 #define PI 3.14159265358979
 
 
@@ -21,6 +23,7 @@
 #define RIGHT_MOUSE_DRAG	5
 #define RIGHT_MOUSE_UP		6
 #define AUTO_DRAW			7
+#define PAINTLY				8
 
 
 #ifndef WIN32
@@ -161,6 +164,11 @@ void PaintView::draw()
 			break;
 		case AUTO_DRAW:
 			m_pDoc->applyAutoPaint(m_pDoc->m_pCurrentBrush, m_pUI->getAutoPaintSpace(), m_pUI->getAutoVary());
+			SaveCurrentContent();
+			RestoreContent();
+			break;
+		case PAINTLY:
+			m_pDoc->applyPaintlyPaint();
 			SaveCurrentContent();
 			RestoreContent();
 			break;
@@ -305,9 +313,14 @@ void PaintView::TriggerAutoPaint()
 	redraw();
 }
 
+void PaintView::TriggerPaintly()
+{
+	isAnEvent = 1;
+	eventToDo = PAINTLY;
+	redraw();
+}
 
-
-void PaintView::paintlyBlur(unsigned char* source, unsigned char* reference, int brushSize)
+void PaintView::paintlyBlur(unsigned char* source, unsigned char* reference, int brushSize, int width, int height)
 {
 	double blurRate = brushSize * m_pDoc->getPaintlyBlur();
 	double* kernel = new double[25];
@@ -319,31 +332,29 @@ void PaintView::paintlyBlur(unsigned char* source, unsigned char* reference, int
 		for (int j = 0; j < 5; j++)
 		{
 			int offsetX = abs(i-kernelSize/2); int offsetY = abs(j-kernelSize/2);
-			kernel[i * 3 + j] = pow((2.71828183), (-(offsetX*offsetX + offsetY*offsetY) / (2 * blurRate*blurRate)));
-			cout << kernel[i * 3 + j] << endl;
+			kernel[i * 5 + j] = pow((2.71828183), (-(offsetX*offsetX + offsetY*offsetY) / (2 * blurRate*blurRate)));
+			Weight += kernel[i * 5 + j];
 		}
 	}
 
 
 
-	for (int i = 0; i < m_nDrawHeight; i += 1)
+	for (int i = 0; i < height; i += 1)
 	{
-		for (int j = 0; j < m_nDrawWidth; j+= 1)
+		for (int j = 0; j < width; j += 1)
 		{
-			int referencePosition = i * m_nDrawWidth + j;
+			int referencePosition = i * width + j;
 			double sum[3] = { 0, 0, 0 };
-			Weight = 0.0;
 			for (int _i = 0; _i < kernelSize; _i++)
 			{
 				for (int _j = 0; _j < kernelSize; _j++)
 				{
 					int curY = i + _i - kernelSize / 2;
 					int curX = j + _j - kernelSize / 2;
-					if (curY < 0 || curY > m_nDrawHeight - 1 || curX < 0 || curX > m_nDrawWidth - 1) continue;
-					sum[0] += source[(curY*m_nDrawWidth + curX) * 3] * kernel[_i*kernelSize + _j];
-					sum[1] += source[(curY*m_nDrawWidth + curX) * 3 + 1] * kernel[_i*kernelSize + _j];
-					sum[2] += source[(curY*m_nDrawWidth + curX) * 3 + 2] * kernel[_i*kernelSize + _j];
-					Weight += kernel[_i*kernelSize + _j];
+					if (curY < 0 || curY > height - 1 || curX < 0 || curX > width - 1) continue;
+					sum[0] += source[(curY*width + curX) * 3] * kernel[_i*kernelSize + _j];
+					sum[1] += source[(curY*width + curX) * 3 + 1] * kernel[_i*kernelSize + _j];
+					sum[2] += source[(curY*width + curX) * 3 + 2] * kernel[_i*kernelSize + _j];
 				}
 			}
 			for (int k = 0; k < 3; k++) {
@@ -354,26 +365,73 @@ void PaintView::paintlyBlur(unsigned char* source, unsigned char* reference, int
 			}
 		}
 	}
-};
+}
 
-void PaintView::paintlyDiff(unsigned char* canvas, unsigned char* reference, unsigned char* diff)
+void PaintView::paintlyDiff(unsigned char* canvas, unsigned char* reference, unsigned char* diff, int width, int height)
 {
-	for (int i = 0; i < m_nDrawHeight; ++i)
+	for (int i = 0; i < height; ++i)
 	{
-		for (int j = 0; j < m_nDrawWidth; ++j)
+		for (int j = 0; j < width; ++j)
 		{
-			int pos = i*m_nDrawHeight + j;
+			int pos = i * width + j;
 			diff[pos] = (reference[pos * 3] - canvas[pos * 3]) * (reference[pos * 3] - canvas[pos * 3])
 				+ (reference[pos * 3 + 1] - canvas[pos * 3 + 1]) * (reference[pos * 3 + 1] - canvas[pos * 3 + 1])
 				+ (reference[pos * 3 + 2] - canvas[pos * 3 + 2]) * (reference[pos * 3 + 2] - canvas[pos * 3 + 2]);
-			diff[pos] = (int)sqrt((double)diff[pos]);
+			diff[pos] = (unsigned char)sqrt((double)diff[pos]);
+			
+			//cout << (int)diff[pos] << " ";
 		}
 	}
+	
 }
 
-void PaintView::paintlyLayer()
+void PaintView::paintlyLayer(unsigned char* canvas, unsigned char* diff, double gridRate, int brushSize,
+	int threshold, int width, int height)
 {
+	int gridSize = gridRate * brushSize;
+	vector<Point> vec;
+	for (int i = 0; i < height; i += gridSize)
+	{
+		for (int j = 0; j < width; j += gridSize)
+		{
+			double sumError = 0;
+			double maxError = -10.0;
+			int maxErrorIndX = 0;
+			int maxErrorIndY = 0;
 
+			for (int ni = -gridSize / 2; ni < gridSize / 2; ni++)
+			{
+				for (int nj = -gridSize / 2; nj < gridSize / 2; nj++)
+				{
+					int curY = i + ni, curX = j + nj;
+					
+					if (curX < 0 || curY < 0 || curY > height - 1 || curX > width - 1) continue;
+					
+					sumError += ((double)diff[curY * width + curX]);// / (gridSize*gridSize);
+					
+					if (diff[curY * width + curX] > maxError)
+					{
+						maxError = diff[curY * width + curX];
+						maxErrorIndX = curX; maxErrorIndY = curY;
+					}
+				}
+			}
+
+			if (sumError > threshold)
+			{
+				vec.push_back(Point(maxErrorIndX, maxErrorIndY));
+			}
+		}
+	}
+
+	std::random_shuffle(vec.begin(), vec.end());
+	if (vec.size() != 0) {
+		m_pDoc->m_pUI->setSize(brushSize);
+		for (int i = 0; i < vec.size(); ++i)
+		{
+			m_pDoc->m_pCurrentBrush->BrushMove(vec[i], vec[i]);
+		}
+	}
 
 }
 
@@ -381,20 +439,22 @@ void PaintView::paintlyPaint()
 {
 	int width = m_pDoc->m_nWidth;
 	int height = m_pDoc->m_nHeight;
+	
 	unsigned char* canvas = m_pDoc->m_ucPainting;
 	unsigned char* reference = new unsigned char[width*height * 3];
 	unsigned char* diff = new unsigned char[width*height];
 
 	memset(canvas, -1, width * height * 3);
-
-	int brushSize = m_pDoc->getPaintlyMaxBrush();
-
-	paintlyBlur(m_pDoc->m_ucBitmap, reference, brushSize);
-	paintlyDiff(canvas, reference, diff);
 	
-	m_pDoc->m_ucPainting = diff;
+	int maxbrushSize = m_pDoc->getPaintlyMaxBrush();
+	int minbrushSize = m_pDoc->getPaintlyMinBrush();
+	double gridRate = m_pDoc->getPaintlyGrid();
+	int threshold = m_pDoc->getPaintlyThreshold();
+	
+	for (int i = maxbrushSize; i >= minbrushSize; i-=2) {
+		paintlyBlur(m_pDoc->m_ucBitmap, reference, i, width, height);
+		paintlyDiff(canvas, reference, diff, width, height);
+		paintlyLayer(canvas, diff, gridRate, i, threshold, width, height);
+	}
 	m_pDoc->m_pUI->m_paintView->refresh();
-	
-
-	
 }

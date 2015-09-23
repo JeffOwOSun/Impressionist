@@ -50,6 +50,7 @@ m_ucAlphaBrush(NULL)
 	m_nPaintlyMinStroke = 4;
 	m_nPaintlyLayers = 3;
 
+	m_dPaintlyGrid = 1.0;
 	m_dPaintlyCurvature = 1.0;
 	m_dPaintlyBlur = 0.5;
 	m_dPaintlyAlpha = 1.0;
@@ -184,6 +185,15 @@ int ImpressionistDoc::getPaintlyMinBrush()
 void ImpressionistDoc::setPaintlyMinBrush(int val)
 {
 	m_nPaintlyMinBrush = val;
+}
+
+double ImpressionistDoc::getPaintlyGrid()
+{
+	return m_dPaintlyGrid;
+}
+void ImpressionistDoc::setPaintlyGrid(double val)
+{
+	m_dPaintlyGrid = val;
 }
 
 double ImpressionistDoc::getPaintlyCurvature()

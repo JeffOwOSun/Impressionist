@@ -621,7 +621,7 @@ void ImpressionistUI::cb_paintlyApply(Fl_Widget* o, void* v)
 {
 	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
 	ImpressionistDoc* pDoc = pUI->getDocument();
-	pDoc->applyPaintlyPaint();
+	pUI->m_paintView->TriggerPaintly();
 }
 
 void ImpressionistUI::cb_paintlyThresholdSlider(Fl_Widget* o, void* v)
@@ -646,6 +646,14 @@ void ImpressionistUI::cb_paintlyMinBrushSizeSlider(Fl_Widget* o, void* v)
 	ImpressionistDoc* pDoc = pUI->getDocument();
 	int val = int(((Fl_Slider *)o)->value());
 	pDoc->setPaintlyMinBrush(val);
+}
+
+void ImpressionistUI::cb_paintlyGridSlider(Fl_Widget* o, void* v)
+{
+	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
+	ImpressionistDoc* pDoc = pUI->getDocument();
+	double val = double(((Fl_Slider *)o)->value());
+	pDoc->setPaintlyGrid(val);
 }
 
 void ImpressionistUI::cb_paintlyCurvatureSlider(Fl_Widget* o, void* v)
@@ -1222,7 +1230,19 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMinBrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMinBrushSizeSlider->callback(cb_paintlyMinBrushSizeSlider);
 
-		m_paintlyCurvatureSlider = new Fl_Value_Slider(15, 150, 200, 20, "Curvature");
+		m_paintlyGridSlider = new Fl_Value_Slider(15, 150, 200, 20, "Grid Size");
+		m_paintlyGridSlider->user_data((void*)(this));
+		m_paintlyGridSlider->type(FL_HOR_NICE_SLIDER);
+		m_paintlyGridSlider->labelfont(FL_COURIER);
+		m_paintlyGridSlider->labelsize(12);
+		m_paintlyGridSlider->minimum(0);
+		m_paintlyGridSlider->maximum(1);
+		m_paintlyGridSlider->step(0.01);
+		m_paintlyGridSlider->value(1);
+		m_paintlyGridSlider->align(FL_ALIGN_RIGHT);
+		m_paintlyGridSlider->callback(cb_paintlyGridSlider);
+
+		m_paintlyCurvatureSlider = new Fl_Value_Slider(15, 180, 200, 20, "Curvature");
 		m_paintlyCurvatureSlider->user_data((void*)(this));
 		m_paintlyCurvatureSlider->type(FL_HOR_NICE_SLIDER);
 		m_paintlyCurvatureSlider->labelfont(FL_COURIER);
@@ -1234,7 +1254,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyCurvatureSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyCurvatureSlider->callback(cb_paintlyCurvatureSlider);
 
-		m_paintlyBlurSlider = new Fl_Value_Slider(15, 180, 200, 20, "Blur");
+		m_paintlyBlurSlider = new Fl_Value_Slider(15, 210, 200, 20, "Blur");
 		m_paintlyBlurSlider->user_data((void*)(this));
 		m_paintlyBlurSlider->type(FL_HOR_NICE_SLIDER);
 		m_paintlyBlurSlider->labelfont(FL_COURIER);
@@ -1246,7 +1266,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyBlurSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyBlurSlider->callback(cb_paintlyBlurSlider);
 
-		m_paintlyMaxStrokeLengthSlider = new Fl_Value_Slider(15, 210, 200, 20, "Max Stroke");
+		m_paintlyMaxStrokeLengthSlider = new Fl_Value_Slider(15, 240, 200, 20, "Max Stroke");
 		m_paintlyMaxStrokeLengthSlider->user_data((void*)(this));
 		m_paintlyMaxStrokeLengthSlider->type(FL_HOR_NICE_SLIDER);
 		m_paintlyMaxStrokeLengthSlider->labelfont(FL_COURIER);
@@ -1258,7 +1278,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMaxStrokeLengthSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMaxStrokeLengthSlider->callback(cb_paintlyMaxStrokeLengthSlider);
 	
-		m_paintlyMinStrokeLengthSlider = new Fl_Value_Slider(15, 240, 200, 20, "Min Stroke");
+		m_paintlyMinStrokeLengthSlider = new Fl_Value_Slider(15, 270, 200, 20, "Min Stroke");
 		m_paintlyMinStrokeLengthSlider->user_data((void*)(this));
 		m_paintlyMinStrokeLengthSlider->type(FL_HOR_NICE_SLIDER);
 		m_paintlyMinStrokeLengthSlider->labelfont(FL_COURIER);
@@ -1270,7 +1290,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMinStrokeLengthSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMinStrokeLengthSlider->callback(cb_paintlyMinStrokeLengthSlider);
 
-		m_paintlyAlphaSlider = new Fl_Value_Slider(15, 270, 200, 20, "Alpha");
+		m_paintlyAlphaSlider = new Fl_Value_Slider(15, 300, 200, 20, "Alpha");
 		m_paintlyAlphaSlider->user_data((void*)(this));
 		m_paintlyAlphaSlider->type(FL_HOR_NICE_SLIDER);
 		m_paintlyAlphaSlider->labelfont(FL_COURIER);
@@ -1282,7 +1302,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyAlphaSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyAlphaSlider->callback(cb_paintlyAlphaSlider);
 
-		m_paintlyLayersSlider = new Fl_Value_Slider(15, 300, 200, 20, "Layers");
+		m_paintlyLayersSlider = new Fl_Value_Slider(15, 330, 200, 20, "Layers");
 		m_paintlyLayersSlider->user_data((void*)(this));
 		m_paintlyLayersSlider->type(FL_HOR_NICE_SLIDER);
 		m_paintlyLayersSlider->labelfont(FL_COURIER);
