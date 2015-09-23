@@ -36,6 +36,14 @@ public:
 
 	void TriggerAutoPaint();
 
+	void paintlyBlur(unsigned char* source, unsigned char* reference, int brushSize);
+
+	void paintlyDiff(unsigned char* canvas, unsigned char* reference, unsigned char* diff);
+
+	void paintlyLayer();
+
+	void paintlyPaint();
+
 	ImpressionistDoc	*m_pDoc;
 	ImpressionistUI		*m_pUI;
 

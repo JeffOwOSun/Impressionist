@@ -41,6 +41,24 @@ m_ucAlphaBrush(NULL)
 
 	m_nWidth		= -1;
 
+	m_nPaintlyStyleType = 0;
+	m_nPaintlyStrokeType = 0;
+	m_nPaintlyThreshold = 100;
+	m_nPaintlyMaxBrush = 6;
+	m_nPaintlyMinBrush = 6;
+	m_nPaintlyMaxStroke = 16;
+	m_nPaintlyMinStroke = 4;
+	m_nPaintlyLayers = 3;
+
+	m_dPaintlyCurvature = 1.0;
+	m_dPaintlyBlur = 0.5;
+	m_dPaintlyAlpha = 1.0;
+	m_dPaintlyJr = 1.0;
+	m_dPaintlyJg = 1.0;
+	m_dPaintlyJb = 1.0;
+	m_dPaintlyJh = 1.0;
+	m_dPaintlyJs = 1.0;
+	m_dPaintlyJv = 1.0;
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -958,5 +976,5 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 
 void ImpressionistDoc::applyPaintlyPaint()
 {
-	//////////////////////././././././././././././ TODODODODODOD
+	m_pUI->m_paintView->paintlyPaint();
 }

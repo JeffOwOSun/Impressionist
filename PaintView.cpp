@@ -10,6 +10,7 @@
 #include "paintview.h"
 #include "ImpBrush.h"
 #include <cmath>
+#include <string.h>
 #define PI 3.14159265358979
 
 
@@ -302,4 +303,98 @@ void PaintView::TriggerAutoPaint()
 	isAnEvent = 1;
 	eventToDo = AUTO_DRAW;
 	redraw();
+}
+
+
+
+void PaintView::paintlyBlur(unsigned char* source, unsigned char* reference, int brushSize)
+{
+	double blurRate = brushSize * m_pDoc->getPaintlyBlur();
+	double* kernel = new double[25];
+	int kernelSize = 5;
+	double Weight = 0.0;
+	// Initialize kernel
+	for (int i = 0; i < 5; i++)
+	{
+		for (int j = 0; j < 5; j++)
+		{
+			int offsetX = abs(i-kernelSize/2); int offsetY = abs(j-kernelSize/2);
+			kernel[i * 3 + j] = pow((2.71828183), (-(offsetX*offsetX + offsetY*offsetY) / (2 * blurRate*blurRate)));
+			cout << kernel[i * 3 + j] << endl;
+		}
+	}
+
+
+
+	for (int i = 0; i < m_nDrawHeight; i += 1)
+	{
+		for (int j = 0; j < m_nDrawWidth; j+= 1)
+		{
+			int referencePosition = i * m_nDrawWidth + j;
+			double sum[3] = { 0, 0, 0 };
+			Weight = 0.0;
+			for (int _i = 0; _i < kernelSize; _i++)
+			{
+				for (int _j = 0; _j < kernelSize; _j++)
+				{
+					int curY = i + _i - kernelSize / 2;
+					int curX = j + _j - kernelSize / 2;
+					if (curY < 0 || curY > m_nDrawHeight - 1 || curX < 0 || curX > m_nDrawWidth - 1) continue;
+					sum[0] += source[(curY*m_nDrawWidth + curX) * 3] * kernel[_i*kernelSize + _j];
+					sum[1] += source[(curY*m_nDrawWidth + curX) * 3 + 1] * kernel[_i*kernelSize + _j];
+					sum[2] += source[(curY*m_nDrawWidth + curX) * 3 + 2] * kernel[_i*kernelSize + _j];
+					Weight += kernel[_i*kernelSize + _j];
+				}
+			}
+			for (int k = 0; k < 3; k++) {
+				double res = sum[k] / Weight;
+				if (res < 0) res = 0;
+				if (res > 255) res = 255;
+				reference[referencePosition * 3 + k] = (unsigned char)res;
+			}
+		}
+	}
+};
+
+void PaintView::paintlyDiff(unsigned char* canvas, unsigned char* reference, unsigned char* diff)
+{
+	for (int i = 0; i < m_nDrawHeight; ++i)
+	{
+		for (int j = 0; j < m_nDrawWidth; ++j)
+		{
+			int pos = i*m_nDrawHeight + j;
+			diff[pos] = (reference[pos * 3] - canvas[pos * 3]) * (reference[pos * 3] - canvas[pos * 3])
+				+ (reference[pos * 3 + 1] - canvas[pos * 3 + 1]) * (reference[pos * 3 + 1] - canvas[pos * 3 + 1])
+				+ (reference[pos * 3 + 2] - canvas[pos * 3 + 2]) * (reference[pos * 3 + 2] - canvas[pos * 3 + 2]);
+			diff[pos] = (int)sqrt((double)diff[pos]);
+		}
+	}
+}
+
+void PaintView::paintlyLayer()
+{
+
+
+}
+
+void PaintView::paintlyPaint()
+{
+	int width = m_pDoc->m_nWidth;
+	int height = m_pDoc->m_nHeight;
+	unsigned char* canvas = m_pDoc->m_ucPainting;
+	unsigned char* reference = new unsigned char[width*height * 3];
+	unsigned char* diff = new unsigned char[width*height];
+
+	memset(canvas, -1, width * height * 3);
+
+	int brushSize = m_pDoc->getPaintlyMaxBrush();
+
+	paintlyBlur(m_pDoc->m_ucBitmap, reference, brushSize);
+	paintlyDiff(canvas, reference, diff);
+	
+	m_pDoc->m_ucPainting = diff;
+	m_pDoc->m_pUI->m_paintView->refresh();
+	
+
+	
 }
