@@ -127,6 +127,7 @@ public:
 	GLubyte* GetOriginalPixel( const Point p ); 
 	// Get the color of the painted picture at the specified point
 	GLubyte* GetPaintPixel(int x, int y, EdgeMode mode);
+	GLubyte* GetPaintPixel(double x, double y, EdgeMode mode);
 	GLubyte* GetPaintPixel(const Point p, EdgeMode mode);
 	void SetPaintPixel(int x, int y, const GLubyte* color);
 	void SetPaintPixel(const Point p, const GLubyte* color);
@@ -141,6 +142,7 @@ public:
 private:
 	char			m_imageName[256];
 	//bool			m_bGothicStopSignal; //this bit will be turned on by StopCollage()
+	GLubyte			m_blackColor[3];
 
 };
 

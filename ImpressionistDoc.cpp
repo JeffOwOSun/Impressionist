@@ -37,6 +37,7 @@ m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL),
 m_ucDissolve(NULL),
 m_ucAlphaBrush(NULL)
 {
+	memset(m_blackColor, 0, 3);
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
 
@@ -579,8 +580,7 @@ GLubyte* ImpressionistDoc::GetPaintPixel(int x, int y, EdgeMode mode = Impressio
 			return (GLubyte*)(m_ucPainting + 3 * (y*m_nWidth + x));
 		else
 		{
-			GLubyte blackColor[] = { 0, 0, 0 };
-			return (GLubyte*)blackColor;
+			return m_blackColor;
 		}		
 		break;
 	}
@@ -595,6 +595,38 @@ GLubyte* ImpressionistDoc::GetPaintPixel(int x, int y, EdgeMode mode = Impressio
 GLubyte* ImpressionistDoc::GetPaintPixel(const Point p, EdgeMode mode =	ImpressionistDoc::EDGE_CONFINE)
 {
 	return GetPaintPixel(p.x, p.y, mode);
+}
+
+GLubyte* ImpressionistDoc::GetPaintPixel(double x, double y, EdgeMode mode = ImpressionistDoc::EDGE_CONFINE)
+{
+	int ceilx = ceil(x);
+	int ceily = ceil(y);
+	int floorx = floor(x);
+	int floory = floor(y);
+	if (ceilx == floorx && ceily == floory) return GetPaintPixel((int)x, (int)y, mode);
+	if (ceilx == floorx || ceily == floory)
+	{
+		GLubyte* pixel1 = GetPaintPixel(ceilx, ceily, mode);
+		GLubyte* pixel2 = GetPaintPixel(floorx, floory, mode);
+		//take average of the two pixels
+		GLubyte* pixel = new GLubyte[3];
+		for (int i = 0; i < 3; ++i)
+		{
+			pixel[i] = (pixel1[i] + pixel2[i]) / 2;
+		}
+		return pixel;
+	}
+	GLubyte* pixel1 = GetPaintPixel(ceilx, ceily, mode);
+	GLubyte* pixel2 = GetPaintPixel(ceilx, floory, mode);
+	GLubyte* pixel3 = GetPaintPixel(floorx, ceily, mode);
+	GLubyte* pixel4 = GetPaintPixel(floorx, floory, mode);
+	//take average of the two pixels
+	GLubyte* pixel = new GLubyte[3];
+	for (int i = 0; i < 3; ++i)
+	{
+		pixel[i] = (pixel1[i] + pixel2[i] + pixel3[i] + pixel4[i]) / 4;
+	}
+	return pixel;
 }
 
 //------------------------------------------------------------------

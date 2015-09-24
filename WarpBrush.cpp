@@ -71,17 +71,19 @@ void WarpBrush::BrushEnd(const Point source, const Point target)
 */
 Point WarpBrush::warppedSourcePoint(const Point center, int targetX, int targetY, const Point displacement, int radius)
 {
-	double slope = 0.9;
+	//this determines how much the center is moved relative to brush movement
+	const double ratio = 0.9;
 	const int diffX = targetX - center.x;
 	const int diffY = targetY - center.y;
 	//distance of givent point from the center of brush
-	const double distance = sqrt(diffX*diffX + diffY*diffY); 
+	const double distance = sqrt(diffX*diffX + diffY*diffY);
+	if (distance >= radius) return Point(targetX, targetY);
+	//this is the displacementMagnitude of the brush relative to last position
 	const double displacementMagnitude = sqrt(displacement.x * displacement.x + displacement.y * displacement.y);
 	//the offset of desired point should be the minimum of two values:
 	//1. center equal displacementMagnitude, decrease linearly by slope with distance
 	//2. edge equal 0, increase linearly by slope with (radius - distance)
-	double offset = min(displacementMagnitude - slope * distance, slope * ((double)radius - distance));
-	if (offset < 0) offset = 0;
+	double offset = ratio * displacementMagnitude * (1 - pow(distance / radius, 2));
 	//with the given offset and the direction of displacement, calculate the point to which target should be mapped
 	Point warped = Point(targetX - (offset / displacementMagnitude) * displacement.x, targetY -(offset/displacementMagnitude) * displacement.y);
 	//printf("disMag: %f diff: %d %d target: %d %d orig: %d %d\n", displacementMagnitude, diffX, diffY,targetX, targetY, warped.x, warped.y);
