@@ -407,7 +407,7 @@ void PaintView::paintlyLayer(unsigned char* canvas, unsigned char* diff, double 
 					
 					if (curX < 0 || curY < 0 || curY > height - 1 || curX > width - 1) continue;
 					
-					sumError += ((double)diff[curY * width + curX]);// / (gridSize*gridSize);
+					sumError += ((double)diff[curY * width + curX]) / (gridSize*gridSize);
 					
 					if (diff[curY * width + curX] > maxError)
 					{
@@ -435,6 +435,24 @@ void PaintView::paintlyLayer(unsigned char* canvas, unsigned char* diff, double 
 
 }
 
+void PaintView::paintlyPostProcess(unsigned char* source, unsigned char* canvas, int width, int height)
+{
+	for (int i = 0; i < height; i++)
+	{
+		for (int j = 0; j < width; j++)
+		{
+			int pos = 3 * (i*width + j);
+			if (canvas[pos] == 0 && canvas[pos + 1] == 0 && canvas[pos + 2] == 0)
+			{
+				
+				canvas[pos] = 200;
+				canvas[pos + 1] = 200;
+				canvas[pos + 2] = 200;
+			}
+		}
+	}
+}
+
 void PaintView::paintlyPaint()
 {
 	int width = m_pDoc->m_nWidth;
@@ -456,5 +474,6 @@ void PaintView::paintlyPaint()
 		paintlyDiff(canvas, reference, diff, width, height);
 		paintlyLayer(canvas, diff, gridRate, i, threshold, width, height);
 	}
+	//paintlyPostProcess(m_pDoc->m_ucBitmap, canvas, width, height);
 	m_pDoc->m_pUI->m_paintView->refresh();
 }

@@ -44,6 +44,8 @@ public:
 
 	void paintlyLayer(unsigned char* canvas, unsigned char* diff, double gridRate, int brushSize, int threshold, int width, int height);
 
+	void paintlyPostProcess(unsigned char* source, unsigned char* canvas, int width, int height);
+
 	void paintlyPaint();
 
 	ImpressionistDoc	*m_pDoc;
