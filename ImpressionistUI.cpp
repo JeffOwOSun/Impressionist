@@ -614,7 +614,16 @@ void ImpressionistUI::cb_paintlyStrokeChoice(Fl_Widget* o, void* v)
 	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
 	ImpressionistDoc* pDoc = pUI->getDocument();
 	int type = (int)v;
-	pDoc->setPaintlyStroke(type);
+	switch (type)
+	{
+	case STROKE_CIRCLEBRUSH:
+		pDoc->setPaintlyStroke(type);
+		pDoc->setBrushType(BRUSH_CIRCLES); cout << "here" << endl;
+		break;
+	case STROKE_CURVEDBRUSH:
+		pDoc->setPaintlyStroke(type);
+		break;
+	}
 }
 
 void ImpressionistUI::cb_paintlyApply(Fl_Widget* o, void* v)
@@ -974,7 +983,8 @@ Fl_Menu_Item ImpressionistUI::paintlyStyleMenu[NUM_PAINTLYSTYLE + 1] = {
 };
 
 Fl_Menu_Item ImpressionistUI::paintlyStrokeMenu[NUM_PAINTLYSTROKE + 1] = {
-		{"Line Brush", FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_paintlyStrokeChoice, (void*)STROKE_LINEBRUSH},
+		{"Circle Brush", FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_paintlyStrokeChoice, (void*)STROKE_CIRCLEBRUSH},
+		{"Curved Brush", FL_ALT + 'b', (Fl_Callback *)ImpressionistUI::cb_paintlyStrokeChoice, (void*)STROKE_CURVEDBRUSH},
 		{0}
 };
 
@@ -1032,7 +1042,6 @@ ImpressionistUI::ImpressionistUI() {
 	m_nEdgeThreshold = 100;
 	m_bAutoSizeVary = 0;
 	m_nAutoSpace = 4;
-
 
 
 	m_colorWindow = new Fl_Window(400, 325, "Color Dialog");
@@ -1214,7 +1223,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMaxBrushSizeSlider->minimum(1);
 		m_paintlyMaxBrushSizeSlider->maximum(15);
 		m_paintlyMaxBrushSizeSlider->step(1);
-		m_paintlyMaxBrushSizeSlider->value(6);
+		m_paintlyMaxBrushSizeSlider->value(10);
 		m_paintlyMaxBrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMaxBrushSizeSlider->callback(cb_paintlyMaxBrushSizeSlider);
 
@@ -1226,7 +1235,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMinBrushSizeSlider->minimum(1);
 		m_paintlyMinBrushSizeSlider->maximum(15);
 		m_paintlyMinBrushSizeSlider->step(1);
-		m_paintlyMinBrushSizeSlider->value(6);
+		m_paintlyMinBrushSizeSlider->value(4);
 		m_paintlyMinBrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMinBrushSizeSlider->callback(cb_paintlyMinBrushSizeSlider);
 

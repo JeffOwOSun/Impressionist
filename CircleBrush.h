@@ -20,7 +20,6 @@ public:
 	void BrushEnd( const Point source, const Point target );
 	char* BrushName( void );
 
-protected:
 	void DrawCircle(Point source, Point target, float r);
 };
 

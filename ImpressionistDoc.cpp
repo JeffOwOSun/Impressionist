@@ -44,7 +44,7 @@ m_ucAlphaBrush(NULL)
 	m_nPaintlyStyleType = 0;
 	m_nPaintlyStrokeType = 0;
 	m_nPaintlyThreshold = 100;
-	m_nPaintlyMaxBrush = 6;
+	m_nPaintlyMaxBrush = 10;
 	m_nPaintlyMinBrush = 6;
 	m_nPaintlyMaxStroke = 16;
 	m_nPaintlyMinStroke = 4;
@@ -983,6 +983,8 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 		brush->BrushEnd(order.back(), order.back());
 	}
 }
+
+
 
 void ImpressionistDoc::applyPaintlyPaint()
 {

@@ -42,11 +42,14 @@ public:
 
 	void paintlyDiff(unsigned char* canvas, unsigned char* reference, unsigned char* diff, int width, int height);
 
-	void paintlyLayer(unsigned char* canvas, unsigned char* diff, double gridRate, int brushSize, int threshold, int width, int height);
+	void paintlyLayer(unsigned char* canvas, unsigned char* diff, double gridRate, int brushSize, int threshold, int width, int height, unsigned char* reference);
 
 	void paintlyPostProcess(unsigned char* source, unsigned char* canvas, int width, int height);
 
 	void paintlyPaint();
+
+	void makeCurved(const Point& start, unsigned char* reference, int brushSize, unsigned char* canvas
+		, vector<Point>& vP, vector<int>& vR, vector<int>& vG, vector<int>& vB);
 
 	ImpressionistDoc	*m_pDoc;
 	ImpressionistUI		*m_pUI;
