@@ -25,6 +25,7 @@
 #include "FilterSharpenBrush.h"
 #include "FilterCustomized.h"
 #include "AlphaMappedBrush.h"
+#include "WarpBrush.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
@@ -65,6 +66,8 @@ m_ucAlphaBrush(NULL)
 		= new FilterSharpenBrush(this, "Sharpen Filter");
 	ImpBrush::c_pBrushes[BRUSH_ALPHA_MAPPED]
 		= new AlphaMappedBrush(this, "Alpha Mapped");
+	ImpBrush::c_pBrushes[BRUSH_WARP]
+		= new WarpBrush(this, "Warp Brush");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -544,6 +547,72 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( int x, int y )
 GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 {
 	return GetOriginalPixel( p.x, p.y );
+}
+
+//------------------------------------------------------------------
+// Get the color of the pixel in the paint image at coord x and y
+//------------------------------------------------------------------
+GLubyte* ImpressionistDoc::GetPaintPixel(int x, int y, EdgeMode mode = ImpressionistDoc::EDGE_CONFINE)
+{
+	switch (mode)
+	{
+	case ImpressionistDoc::EDGE_CONFINE:
+		if (x < 0)
+			x = 0;
+		else if (x >= m_nWidth)
+			x = m_nWidth - 1;
+
+		if (y < 0)
+			y = 0;
+		else if (y >= m_nHeight)
+			y = m_nHeight - 1;
+		return (GLubyte*)(m_ucPainting + 3 * (y*m_nWidth + x));
+		break;
+	case ImpressionistDoc::EDGE_REFLECTION:
+		x = (x < m_nWidth) ? abs(x) : 2 * (m_nWidth - 1) - x;
+		y = (y < m_nHeight) ? abs(y) : 2 * (m_nHeight - 1) - y;
+		return (GLubyte*)(m_ucPainting + 3 * (y*m_nWidth + x));
+		break;
+	case ImpressionistDoc::EDGE_BLACK:
+	{
+		if (x < m_nWidth && y < m_nHeight && x > 0 && y > 0)
+			return (GLubyte*)(m_ucPainting + 3 * (y*m_nWidth + x));
+		else
+		{
+			GLubyte blackColor[] = { 0, 0, 0 };
+			return (GLubyte*)blackColor;
+		}		
+		break;
+	}
+		
+	}
+	
+}
+
+//----------------------------------------------------------------
+// Get the color of the pixel in the paint image at point p
+//----------------------------------------------------------------
+GLubyte* ImpressionistDoc::GetPaintPixel(const Point p, EdgeMode mode =	ImpressionistDoc::EDGE_CONFINE)
+{
+	return GetPaintPixel(p.x, p.y, mode);
+}
+
+//------------------------------------------------------------------
+// SET the color of the pixel in the paint image at coord x and y
+//------------------------------------------------------------------
+void ImpressionistDoc::SetPaintPixel(int x, int y, const GLubyte* color)
+{
+	//directly ignore outbound situations
+	if (x < m_nWidth && y < m_nHeight && x > 0 && y > 0)
+		memcpy(m_ucPainting + 3 * (y * m_nWidth + x), color, 3);
+}
+
+//----------------------------------------------------------------
+// Set the color of the pixel in the paint image at point p
+//----------------------------------------------------------------
+void ImpressionistDoc::SetPaintPixel(const Point p, const GLubyte* color)
+{
+	SetPaintPixel(p.x, p.y, color);
 }
 
 /*
