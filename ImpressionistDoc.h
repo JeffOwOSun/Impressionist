@@ -7,6 +7,7 @@
 #ifndef ImpressionistDoc_h
 #define ImpressionistDoc_h
 
+#include <cmath>
 #include "impressionist.h"
 #include "bitmap.h"
 #include "utility\Filter.h"
@@ -185,17 +186,34 @@ public:
 
 // Operations
 public:
+	// Determine how to treat outbound points
+	enum EdgeMode{
+		EDGE_CONFINE, //confine the given coordinate to projection onto the viable margin
+		EDGE_REFLECTION, //reflect the point as if there were more images out of the bound
+		EDGE_BLACK //return black color if out of bound
+	};
 	// Get the color of the original picture at the specified coord
 	GLubyte* GetOriginalPixel( int x, int y );   
 	// Get the color of the original picture at the specified point	
-	GLubyte* GetOriginalPixel( const Point p );  
+	GLubyte* GetOriginalPixel( const Point p ); 
+	// Get the color of the painted picture at the specified point
+	GLubyte* GetPaintPixel(int x, int y, EdgeMode mode);
+	GLubyte* GetPaintPixel(double x, double y, EdgeMode mode);
+	GLubyte* GetPaintPixel(const Point p, EdgeMode mode);
+	void SetPaintPixel(int x, int y, const GLubyte* color);
+	void SetPaintPixel(const Point p, const GLubyte* color);
 	// Calculate the edge map using gradient mod and threshold
 	GLubyte* CalculateEdgeMap(int EdgeThreshold);
 	// calculate the gradient
 	void CalculateGradient(const GLubyte * const source, GLint * const targetGradient, GLuint* const targetMod);
+	// Thumbnail Collage
+	void StartCollage();
+	//void StopCollage(); //Not sure if this will work when startgothic is in process. May need subprocess
 
 private:
 	char			m_imageName[256];
+	//bool			m_bGothicStopSignal; //this bit will be turned on by StopCollage()
+	GLubyte			m_blackColor[3];
 
 };
 

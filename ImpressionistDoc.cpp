@@ -25,6 +25,7 @@
 #include "FilterSharpenBrush.h"
 #include "FilterCustomized.h"
 #include "AlphaMappedBrush.h"
+#include "WarpBrush.h"
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
@@ -36,6 +37,7 @@ m_ucAnother(NULL), m_iReferenceGradient(NULL), m_uiReferenceGradientMod(NULL),
 m_ucDissolve(NULL),
 m_ucAlphaBrush(NULL)
 {
+	memset(m_blackColor, 0, 3);
 	// Set NULL image name as init.
 	m_imageName[0]	='\0';
 
@@ -84,6 +86,8 @@ m_ucAlphaBrush(NULL)
 		= new FilterSharpenBrush(this, "Sharpen Filter");
 	ImpBrush::c_pBrushes[BRUSH_ALPHA_MAPPED]
 		= new AlphaMappedBrush(this, "Alpha Mapped");
+	ImpBrush::c_pBrushes[BRUSH_WARP]
+		= new WarpBrush(this, "Warp Brush");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -792,6 +796,103 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 	return GetOriginalPixel( p.x, p.y );
 }
 
+//------------------------------------------------------------------
+// Get the color of the pixel in the paint image at coord x and y
+//------------------------------------------------------------------
+GLubyte* ImpressionistDoc::GetPaintPixel(int x, int y, EdgeMode mode = ImpressionistDoc::EDGE_CONFINE)
+{
+	switch (mode)
+	{
+	case ImpressionistDoc::EDGE_CONFINE:
+		if (x < 0)
+			x = 0;
+		else if (x >= m_nWidth)
+			x = m_nWidth - 1;
+
+		if (y < 0)
+			y = 0;
+		else if (y >= m_nHeight)
+			y = m_nHeight - 1;
+		return (GLubyte*)(m_ucPainting + 3 * (y*m_nWidth + x));
+		break;
+	case ImpressionistDoc::EDGE_REFLECTION:
+		x = (x < m_nWidth) ? abs(x) : 2 * (m_nWidth - 1) - x;
+		y = (y < m_nHeight) ? abs(y) : 2 * (m_nHeight - 1) - y;
+		return (GLubyte*)(m_ucPainting + 3 * (y*m_nWidth + x));
+		break;
+	case ImpressionistDoc::EDGE_BLACK:
+	{
+		if (x < m_nWidth && y < m_nHeight && x > 0 && y > 0)
+			return (GLubyte*)(m_ucPainting + 3 * (y*m_nWidth + x));
+		else
+		{
+			return m_blackColor;
+		}		
+		break;
+	}
+		
+	}
+	
+}
+
+//----------------------------------------------------------------
+// Get the color of the pixel in the paint image at point p
+//----------------------------------------------------------------
+GLubyte* ImpressionistDoc::GetPaintPixel(const Point p, EdgeMode mode =	ImpressionistDoc::EDGE_CONFINE)
+{
+	return GetPaintPixel(p.x, p.y, mode);
+}
+
+GLubyte* ImpressionistDoc::GetPaintPixel(double x, double y, EdgeMode mode = ImpressionistDoc::EDGE_CONFINE)
+{
+	int ceilx = ceil(x);
+	int ceily = ceil(y);
+	int floorx = floor(x);
+	int floory = floor(y);
+	if (ceilx == floorx && ceily == floory) return GetPaintPixel((int)x, (int)y, mode);
+	if (ceilx == floorx || ceily == floory)
+	{
+		GLubyte* pixel1 = GetPaintPixel(ceilx, ceily, mode);
+		GLubyte* pixel2 = GetPaintPixel(floorx, floory, mode);
+		//take average of the two pixels
+		GLubyte* pixel = new GLubyte[3];
+		for (int i = 0; i < 3; ++i)
+		{
+			pixel[i] = (pixel1[i] + pixel2[i]) / 2;
+		}
+		return pixel;
+	}
+	GLubyte* pixel1 = GetPaintPixel(ceilx, ceily, mode);
+	GLubyte* pixel2 = GetPaintPixel(ceilx, floory, mode);
+	GLubyte* pixel3 = GetPaintPixel(floorx, ceily, mode);
+	GLubyte* pixel4 = GetPaintPixel(floorx, floory, mode);
+	//take average of the two pixels
+	GLubyte* pixel = new GLubyte[3];
+	for (int i = 0; i < 3; ++i)
+	{
+		pixel[i] = (pixel1[i] + pixel2[i] + pixel3[i] + pixel4[i]) / 4;
+	}
+	return pixel;
+}
+
+//------------------------------------------------------------------
+// SET the color of the pixel in the paint image at coord x and y
+//------------------------------------------------------------------
+void ImpressionistDoc::SetPaintPixel(int x, int y, const GLubyte* color)
+{
+	//directly ignore outbound situations
+	if (x < m_nWidth && y < m_nHeight && x > 0 && y > 0)
+		memcpy(m_ucPainting + 3 * (y * m_nWidth + x), color, 3);
+}
+
+//----------------------------------------------------------------
+// Set the color of the pixel in the paint image at point p
+//----------------------------------------------------------------
+void ImpressionistDoc::SetPaintPixel(const Point p, const GLubyte* color)
+{
+	SetPaintPixel(p.x, p.y, color);
+}
+
 /*
 //------------------------------------------------------------------
 // Get the Intensity of original image coord x and y
@@ -1014,8 +1115,122 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 }
 
 
-
 void ImpressionistDoc::applyPaintlyPaint()
 {
 	m_pUI->m_paintView->paintlyPaint();
+}
+
+// Generate Thumbnail Collage
+void ImpressionistDoc::StartCollage()
+{
+	const int numPatchHeight = ceil((double)m_nPaintHeight / 32.0);
+	const int numPatchWidth = ceil((double)m_nPaintWidth / 32.0);
+	const int patchHeight = 32;
+	const int patchWidth = 32;
+	const int channelSize = 1024;
+	const int numFiles = 6;
+	const string fileNames[] = {
+		"data_batch_1.bin",
+		"data_batch_2.bin",
+		"data_batch_3.bin",
+		"data_batch_4.bin",
+		"data_batch_5.bin",
+		"test_batch.bin",
+	};
+	const int imageSize = 3073; //1 class byte (useless here) + 3 * 1024 bytes for each channel
+	const int imageOffset = 1;
+	struct Patch {
+		GLubyte* data;
+		int startX;
+		int startY;
+		int distance;
+		Patch(GLubyte* data = NULL, int x = 0, int y = 0): distance(INT_MAX), data(data), startX(x), startY(y){}
+	};
+
+	//1. slice the original image
+	//printf("slicing original image\n");
+	vector<Patch> originalPatches = vector<Patch>();
+	for (int y = 0; y < m_nPaintHeight; y += patchHeight)
+	{
+		for (int x = 0; x < m_nPaintWidth; x += patchWidth)
+		{
+			// array to store pixels of this patch. First 1024 bytes R, second G, third B.
+			GLubyte* thisPatch = new GLubyte[patchWidth * patchHeight * 3];
+			//copy this 32*32 patch out to the vector
+#pragma loop(hint_parallel(8))
+			for (int j = 0; j < patchHeight; ++j)
+				for (int i = 0; i < patchWidth; ++i)
+				{
+					const GLubyte* origPixel = GetOriginalPixel(x + i, y + j);
+					int pos = j * patchWidth + i;
+					//shuffle the RGB format
+					thisPatch[pos] = origPixel[0]; //R
+					thisPatch[pos + channelSize] = origPixel[1]; //G
+					thisPatch[pos + 2 * channelSize] = origPixel[2]; //B
+				}
+
+			originalPatches.push_back(Patch(thisPatch, x, y));
+		}
+	}
+
+	
+	//count of thumbnails
+	int count = 0;
+	//for each bin file
+	for (int fileIdx = 0; fileIdx < numFiles; ++fileIdx)
+	{
+		//open the file
+		string fileName = fileNames[fileIdx];
+
+		ifstream inFile(fileName, ios::in | ios::binary);
+
+		//buffer contains an external image
+		GLubyte buffer[imageSize-imageOffset]; //for the real image
+		GLubyte reverseBuffer[imageSize]; //the image read directly
+		
+		while (inFile.read((char*)reverseBuffer, imageSize))
+		{
+			++count;
+			if (count % 1000 == 0) printf("processing thumbnail %d\n", count);
+			//reverse row sequence in the buffer and remove the first byte
+#pragma loop(hint_parallel(8))
+			for (int i = 0; i < patchHeight; ++i){
+				memcpy(buffer + i * patchWidth, imageOffset + reverseBuffer + (patchHeight - 1 - i) * patchWidth, patchWidth);
+				memcpy(buffer + channelSize + i * patchWidth, imageOffset + channelSize + reverseBuffer + (patchHeight - 1 - i) * patchWidth, patchWidth);
+				memcpy(buffer + channelSize * 2 + i * patchWidth, imageOffset + channelSize * 2 + reverseBuffer + (patchHeight - 1 - i) * patchWidth, patchWidth);
+			}
+
+			//for every image patch
+			for (vector<Patch>::iterator patch = originalPatches.begin(); patch != originalPatches.end(); ++patch)
+			{
+				// distance of the patch to the thumbnail
+				int distance = 0;
+#pragma loop(hint_parallel(8))
+				for (int i = 0; i < 3 * channelSize; ++i)
+					distance += abs(buffer[i] - patch->data[i]);
+
+				//2. compare the distance of images
+				if (distance < patch->distance) {
+					patch->distance = distance;
+					// i j are coordinates in patch
+					// x y are coordinates in ucpainting
+					for (int j = 0; j < patchHeight; ++j)
+						for (int i = 0; i < patchWidth; ++i)
+						{
+							int x = i + patch->startX;
+							int y = j + patch->startY;
+							if (x >= m_nPaintWidth || y >= m_nPaintHeight)
+								continue;
+							int bufferPos = j * patchWidth + i;
+							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x), buffer + bufferPos, 1); //R
+							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x) + 1, buffer + channelSize + bufferPos, 1); //G
+							memcpy(m_ucPainting + 3 * (y * m_nPaintWidth + x) + 2, buffer + channelSize * 2 + bufferPos, 1); //B
+						}
+				}
+			}
+		}
+
+		inFile.close();
+	}
+	
 }

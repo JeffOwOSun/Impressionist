@@ -21,6 +21,7 @@ enum
 	BRUSH_BLUR_FILTER, 
 	BRUSH_SHARPEN_FILTER,
 	BRUSH_ALPHA_MAPPED,
+	BRUSH_WARP,
 	NUM_BRUSH_TYPE // Make sure this stays at the end!
 };
 
@@ -43,6 +44,7 @@ public:
 	Point(int xx, int yy) { x = xx; y = yy; };
 
 	int x, y;
+	Point operator-(const Point another) const { return Point(x - another.x, y - another.y); }
 };
 
 class ImpBrush

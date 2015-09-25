@@ -539,6 +539,13 @@ void ImpressionistUI::cb_applyFilter(Fl_Widget* o, void* v)
 	db->m_paintView->refresh();
 }
 
+void ImpressionistUI::cb_start_collage(Fl_Menu_* o, void* v)
+{
+	ImpressionistUI *pUI = whoami(o);
+	ImpressionistDoc * pDoc = pUI->getDocument();
+	pDoc->StartCollage();
+}
+
 void ImpressionistUI::ShowFilterEntry(int w, int h)
 {
 	int dialogWidth = w * 30 + (w + 1) * 10 + 20;
@@ -946,6 +953,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "Load Another Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_another },
 		{ "Load Dissolve Image...", 0, (Fl_Callback *)ImpressionistUI::cb_load_dissolve },
 		{ "Load Alpha Brush...", 0, (Fl_Callback *)ImpressionistUI::cb_load_alpha_brush, 0, FL_MENU_DIVIDER },
+		{ "Start Collage...", 0, (Fl_Callback *)ImpressionistUI::cb_start_collage, 0, FL_MENU_DIVIDER },
 		{ "&Quit",			FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_exit },
 		{ 0 },
 	{ "&View", 0, 0, 0, FL_SUBMENU }, // change the view
@@ -971,6 +979,7 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Blur Filter", FL_ALT+'b', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_BLUR_FILTER},
   {"Sharpen Filter", FL_ALT+'s', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SHARPEN_FILTER},
   { "Alpha Mapped", 0, (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_ALPHA_MAPPED, FL_MENU_INACTIVE},
+  { "&Warp Filter", FL_ALT + 'w', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_WARP },
   {0}
 };
 
