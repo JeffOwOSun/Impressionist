@@ -449,10 +449,10 @@ void PaintView::paintlyLayer(unsigned char* canvas, unsigned char* diff, double 
 			vector<int> vg;
 			vector<int> vb;
 			makeCurved(vec[i], reference, brushSize, canvas, vp, vr, vg, vb);
-			for (int i = 0; i < vp.size(); i++) 
+			for (int j = 0; j < vp.size(); j++) 
 			{
 				CircleBrush* a = (CircleBrush*)m_pDoc->m_pCurrentBrush;
-				a->DrawCircle(vp[0], vp[i], (((float)(brushSize*2))/3.0));
+				a->DrawCircle(vp[0], vp[j], (((float)(brushSize*2))/3.0));
 			}
 		}
 		else

@@ -986,8 +986,8 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
 Fl_Menu_Item ImpressionistUI::paintlyStyleMenu[NUM_PAINTLYSTYLE + 1] = {
 		{ "Impressionist", FL_ALT + 'i', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_IMPRESSIONIST},
 		{ "Expressionist", FL_ALT + 'e', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_EXPRESSIONIST},
-		{ "Colorist Wash", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_COLORISTWASH},
-		{ "Pointillist", FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_POINTILLIST},
+		//{ "Colorist Wash", FL_ALT + 'o', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_COLORISTWASH},
+		//{ "Pointillist", FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_POINTILLIST},
 		{ "Customized", FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_paintlyStyleChoice, (void*)STYLE_CUSTOMIZE},
 		{0}
 };
@@ -1333,81 +1333,84 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyLayersSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyLayersSlider->callback(cb_paintlyLayersSlider);
 
-		m_paintlyJrSlider = new Fl_Value_Slider(330, 60, 25, 110, "Jr");
-		m_paintlyJrSlider->user_data((void*)(this));
-		m_paintlyJrSlider->type(FL_VERT_NICE_SLIDER);
-		m_paintlyJrSlider->labelfont(FL_COURIER);
-		m_paintlyJrSlider->labelsize(12);
-		m_paintlyJrSlider->minimum(0);
-		m_paintlyJrSlider->maximum(1);
-		m_paintlyJrSlider->step(0.01);
-		m_paintlyJrSlider->value(1);
-		m_paintlyJrSlider->align(FL_ALIGN_BOTTOM);
-		m_paintlyJrSlider->callback(cb_paintlyJrSlider);
-
-		m_paintlyJgSlider = new Fl_Value_Slider(375, 60, 25, 110, "Jg");
-		m_paintlyJgSlider->user_data((void*)(this));
-		m_paintlyJgSlider->type(FL_VERT_NICE_SLIDER);
-		m_paintlyJgSlider->labelfont(FL_COURIER);
-		m_paintlyJgSlider->labelsize(12);
-		m_paintlyJgSlider->minimum(0);
-		m_paintlyJgSlider->maximum(1);
-		m_paintlyJgSlider->step(0.01);
-		m_paintlyJgSlider->value(1);
-		m_paintlyJgSlider->align(FL_ALIGN_BOTTOM);
-		m_paintlyJgSlider->callback(cb_paintlyJgSlider);
-
-		m_paintlyJbSlider = new Fl_Value_Slider(420, 60, 25, 110, "Jb");
-		m_paintlyJbSlider->user_data((void*)(this));
-		m_paintlyJbSlider->type(FL_VERT_NICE_SLIDER);
-		m_paintlyJbSlider->labelfont(FL_COURIER);
-		m_paintlyJbSlider->labelsize(12);
-		m_paintlyJbSlider->minimum(0);
-		m_paintlyJbSlider->maximum(1);
-		m_paintlyJbSlider->step(0.01);
-		m_paintlyJbSlider->value(1);
-		m_paintlyJbSlider->align(FL_ALIGN_BOTTOM);
-		m_paintlyJbSlider->callback(cb_paintlyJbSlider);
-
-		m_paintlyJhSlider = new Fl_Value_Slider(330, 200, 25, 110, "Jh");
-		m_paintlyJhSlider->user_data((void*)(this));
-		m_paintlyJhSlider->type(FL_VERT_NICE_SLIDER);
-		m_paintlyJhSlider->labelfont(FL_COURIER);
-		m_paintlyJhSlider->labelsize(12);
-		m_paintlyJhSlider->minimum(0);
-		m_paintlyJhSlider->maximum(1);
-		m_paintlyJhSlider->step(0.01);
-		m_paintlyJhSlider->value(1);
-		m_paintlyJhSlider->align(FL_ALIGN_BOTTOM);
-		m_paintlyJhSlider->callback(cb_paintlyJhSlider);
-
-		m_paintlyJsSlider = new Fl_Value_Slider(375, 200, 25, 110, "Js");
-		m_paintlyJsSlider->user_data((void*)(this));
-		m_paintlyJsSlider->type(FL_VERT_NICE_SLIDER);
-		m_paintlyJsSlider->labelfont(FL_COURIER);
-		m_paintlyJsSlider->labelsize(12);
-		m_paintlyJsSlider->minimum(0);
-		m_paintlyJsSlider->maximum(1);
-		m_paintlyJsSlider->step(0.01);
-		m_paintlyJsSlider->value(1);
-		m_paintlyJsSlider->align(FL_ALIGN_BOTTOM);
-		m_paintlyJsSlider->callback(cb_paintlyJsSlider);
-
-		m_paintlyJvSlider = new Fl_Value_Slider(420, 200, 25, 110, "Jv");
-		m_paintlyJvSlider->user_data((void*)(this));
-		m_paintlyJvSlider->type(FL_VERT_NICE_SLIDER);
-		m_paintlyJvSlider->labelfont(FL_COURIER);
-		m_paintlyJvSlider->labelsize(12);
-		m_paintlyJvSlider->minimum(0);
-		m_paintlyJvSlider->maximum(1);
-		m_paintlyJvSlider->step(0.01);
-		m_paintlyJvSlider->value(1);
-		m_paintlyJvSlider->align(FL_ALIGN_BOTTOM);
-		m_paintlyJvSlider->callback(cb_paintlyJvSlider);
-
+		
 
 			
 		
 	m_paintlyDialog->end();
+
+
+	m_paintlyJrSlider = new Fl_Value_Slider(330, 60, 25, 110, "Jr");
+	m_paintlyJrSlider->user_data((void*)(this));
+	m_paintlyJrSlider->type(FL_VERT_NICE_SLIDER);
+	m_paintlyJrSlider->labelfont(FL_COURIER);
+	m_paintlyJrSlider->labelsize(12);
+	m_paintlyJrSlider->minimum(0);
+	m_paintlyJrSlider->maximum(1);
+	m_paintlyJrSlider->step(0.01);
+	m_paintlyJrSlider->value(1);
+	m_paintlyJrSlider->align(FL_ALIGN_BOTTOM);
+	m_paintlyJrSlider->callback(cb_paintlyJrSlider);
+
+	m_paintlyJgSlider = new Fl_Value_Slider(375, 60, 25, 110, "Jg");
+	m_paintlyJgSlider->user_data((void*)(this));
+	m_paintlyJgSlider->type(FL_VERT_NICE_SLIDER);
+	m_paintlyJgSlider->labelfont(FL_COURIER);
+	m_paintlyJgSlider->labelsize(12);
+	m_paintlyJgSlider->minimum(0);
+	m_paintlyJgSlider->maximum(1);
+	m_paintlyJgSlider->step(0.01);
+	m_paintlyJgSlider->value(1);
+	m_paintlyJgSlider->align(FL_ALIGN_BOTTOM);
+	m_paintlyJgSlider->callback(cb_paintlyJgSlider);
+
+	m_paintlyJbSlider = new Fl_Value_Slider(420, 60, 25, 110, "Jb");
+	m_paintlyJbSlider->user_data((void*)(this));
+	m_paintlyJbSlider->type(FL_VERT_NICE_SLIDER);
+	m_paintlyJbSlider->labelfont(FL_COURIER);
+	m_paintlyJbSlider->labelsize(12);
+	m_paintlyJbSlider->minimum(0);
+	m_paintlyJbSlider->maximum(1);
+	m_paintlyJbSlider->step(0.01);
+	m_paintlyJbSlider->value(1);
+	m_paintlyJbSlider->align(FL_ALIGN_BOTTOM);
+	m_paintlyJbSlider->callback(cb_paintlyJbSlider);
+
+	m_paintlyJhSlider = new Fl_Value_Slider(330, 200, 25, 110, "Jh");
+	m_paintlyJhSlider->user_data((void*)(this));
+	m_paintlyJhSlider->type(FL_VERT_NICE_SLIDER);
+	m_paintlyJhSlider->labelfont(FL_COURIER);
+	m_paintlyJhSlider->labelsize(12);
+	m_paintlyJhSlider->minimum(0);
+	m_paintlyJhSlider->maximum(1);
+	m_paintlyJhSlider->step(0.01);
+	m_paintlyJhSlider->value(1);
+	m_paintlyJhSlider->align(FL_ALIGN_BOTTOM);
+	m_paintlyJhSlider->callback(cb_paintlyJhSlider);
+
+	m_paintlyJsSlider = new Fl_Value_Slider(375, 200, 25, 110, "Js");
+	m_paintlyJsSlider->user_data((void*)(this));
+	m_paintlyJsSlider->type(FL_VERT_NICE_SLIDER);
+	m_paintlyJsSlider->labelfont(FL_COURIER);
+	m_paintlyJsSlider->labelsize(12);
+	m_paintlyJsSlider->minimum(0);
+	m_paintlyJsSlider->maximum(1);
+	m_paintlyJsSlider->step(0.01);
+	m_paintlyJsSlider->value(1);
+	m_paintlyJsSlider->align(FL_ALIGN_BOTTOM);
+	m_paintlyJsSlider->callback(cb_paintlyJsSlider);
+
+	m_paintlyJvSlider = new Fl_Value_Slider(420, 200, 25, 110, "Jv");
+	m_paintlyJvSlider->user_data((void*)(this));
+	m_paintlyJvSlider->type(FL_VERT_NICE_SLIDER);
+	m_paintlyJvSlider->labelfont(FL_COURIER);
+	m_paintlyJvSlider->labelsize(12);
+	m_paintlyJvSlider->minimum(0);
+	m_paintlyJvSlider->maximum(1);
+	m_paintlyJvSlider->step(0.01);
+	m_paintlyJvSlider->value(1);
+	m_paintlyJvSlider->align(FL_ALIGN_BOTTOM);
+	m_paintlyJvSlider->callback(cb_paintlyJvSlider);
+
 
 }

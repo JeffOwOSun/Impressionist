@@ -145,6 +145,7 @@ void ImpressionistDoc::setPaintlyStyle(int type)
 	if (type != STYLE_CUSTOMIZE)
 	{
 		m_pUI->m_paintlyStrokeChoice->deactivate();
+		m_pUI->m_paintlyThresholdSlider->deactivate();
 		m_pUI->m_paintlyMaxBrushSizeSlider->deactivate();
 		m_pUI->m_paintlyMinBrushSizeSlider->deactivate();
 		m_pUI->m_paintlyGridSlider->deactivate();
@@ -155,11 +156,26 @@ void ImpressionistDoc::setPaintlyStyle(int type)
 		m_pUI->m_paintlyAlphaSlider->deactivate();
 		m_pUI->m_paintlyLayersSlider->deactivate();
 	}
+	else
+	{
+		setPaintlyStroke(0);
+		m_pUI->m_paintlyStrokeChoice->activate();
+		m_pUI->m_paintlyThresholdSlider->activate();
+		m_pUI->m_paintlyMaxBrushSizeSlider->activate();
+		m_pUI->m_paintlyMinBrushSizeSlider->activate();
+		m_pUI->m_paintlyGridSlider->activate();
+		m_pUI->m_paintlyCurvatureSlider->activate();
+		m_pUI->m_paintlyBlurSlider->activate();
+		m_pUI->m_paintlyMaxStrokeLengthSlider->activate();
+		m_pUI->m_paintlyMinStrokeLengthSlider->activate();
+		m_pUI->m_paintlyAlphaSlider->activate();
+		m_pUI->m_paintlyLayersSlider->activate();
+	}
 
 	if (type == STYLE_IMPRESSIONIST)
 	{
-		m_nPaintlyStrokeType = 1;
-		m_nPaintlyThreshold = 30;
+		setPaintlyStroke(1);
+		setPaintlyThreshold(30);
 		m_nPaintlyMaxBrush = 8;
 		m_nPaintlyMinBrush = 2;
 		m_dPaintlyGrid = 1.0;
@@ -169,6 +185,21 @@ void ImpressionistDoc::setPaintlyStyle(int type)
 		m_nPaintlyMinStroke = 4;
 		m_dPaintlyAlpha = 0.85;
 		m_nPaintlyLayers = 2;
+	}
+
+	if (type == STYLE_EXPRESSIONIST)
+	{
+		m_nPaintlyStrokeType = 1;
+		m_nPaintlyThreshold = 10;
+		m_nPaintlyMaxBrush = 7;
+		m_nPaintlyMinBrush = 3;
+		m_dPaintlyGrid = 1.0;
+		m_dPaintlyCurvature = 0.45;
+		m_dPaintlyBlur = 0.5;
+		m_nPaintlyMaxStroke = 20;
+		m_nPaintlyMinStroke = 12;
+		m_dPaintlyAlpha = 1.0;
+		m_nPaintlyLayers = 3;
 	}
 
 	m_nPaintlyStyleType = type;
