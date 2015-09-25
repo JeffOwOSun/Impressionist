@@ -42,20 +42,20 @@ m_ucAlphaBrush(NULL)
 	m_imageName[0]	='\0';
 
 	m_nWidth		= -1;
-
+	//default impressionist values
 	m_nPaintlyStyleType = 0;
-	m_nPaintlyStrokeType = 0;
-	m_nPaintlyThreshold = 100;
-	m_nPaintlyMaxBrush = 10;
-	m_nPaintlyMinBrush = 6;
-	m_nPaintlyMaxStroke = 16;
+	m_nPaintlyStrokeType = 1;
+	m_nPaintlyThreshold = 30;
+	m_nPaintlyMaxBrush = 8;
+	m_nPaintlyMinBrush = 2;
+	m_nPaintlyMaxStroke = 8;
 	m_nPaintlyMinStroke = 4;
-	m_nPaintlyLayers = 3;
+	m_nPaintlyLayers = 2;
 
 	m_dPaintlyGrid = 1.0;
 	m_dPaintlyCurvature = 1.0;
-	m_dPaintlyBlur = 0.5;
-	m_dPaintlyAlpha = 1.0;
+	m_dPaintlyBlur = 0.8;
+	m_dPaintlyAlpha = 0.85;
 	m_dPaintlyJr = 1.0;
 	m_dPaintlyJg = 1.0;
 	m_dPaintlyJb = 1.0;

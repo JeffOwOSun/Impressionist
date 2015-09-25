@@ -1208,6 +1208,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyStrokeChoice->user_data((void*)(this));
 		m_paintlyStrokeChoice->menu(paintlyStrokeMenu);
 		m_paintlyStrokeChoice->callback(cb_paintlyStrokeChoice);
+		m_paintlyStrokeChoice->deactivate();
 
 		m_paintlyApplyButton = new Fl_Button(400, 15, 60, 25, "&Paint");
 		m_paintlyApplyButton->user_data((void*)(this));
@@ -1224,6 +1225,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyThresholdSlider->value(100);
 		m_paintlyThresholdSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyThresholdSlider->callback(cb_paintlyThresholdSlider);
+		m_paintlyThresholdSlider->deactivate();
 
 		m_paintlyMaxBrushSizeSlider = new Fl_Value_Slider(15, 90, 200, 20, "Max Brush");
 		m_paintlyMaxBrushSizeSlider->user_data((void*)(this));
@@ -1236,6 +1238,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMaxBrushSizeSlider->value(10);
 		m_paintlyMaxBrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMaxBrushSizeSlider->callback(cb_paintlyMaxBrushSizeSlider);
+		m_paintlyMaxBrushSizeSlider->deactivate();
 
 		m_paintlyMinBrushSizeSlider = new Fl_Value_Slider(15, 120, 200, 20, "Min Brush");
 		m_paintlyMinBrushSizeSlider->user_data((void*)(this));
@@ -1248,6 +1251,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMinBrushSizeSlider->value(4);
 		m_paintlyMinBrushSizeSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMinBrushSizeSlider->callback(cb_paintlyMinBrushSizeSlider);
+		m_paintlyMinBrushSizeSlider->deactivate();
 
 		m_paintlyGridSlider = new Fl_Value_Slider(15, 150, 200, 20, "Grid Size");
 		m_paintlyGridSlider->user_data((void*)(this));
@@ -1260,6 +1264,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyGridSlider->value(1);
 		m_paintlyGridSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyGridSlider->callback(cb_paintlyGridSlider);
+		m_paintlyGridSlider->deactivate();
 
 		m_paintlyCurvatureSlider = new Fl_Value_Slider(15, 180, 200, 20, "Curvature");
 		m_paintlyCurvatureSlider->user_data((void*)(this));
@@ -1272,6 +1277,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyCurvatureSlider->value(1);
 		m_paintlyCurvatureSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyCurvatureSlider->callback(cb_paintlyCurvatureSlider);
+		m_paintlyCurvatureSlider->deactivate();
 
 		m_paintlyBlurSlider = new Fl_Value_Slider(15, 210, 200, 20, "Blur");
 		m_paintlyBlurSlider->user_data((void*)(this));
@@ -1284,6 +1290,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyBlurSlider->value(0.50);
 		m_paintlyBlurSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyBlurSlider->callback(cb_paintlyBlurSlider);
+		m_paintlyBlurSlider->deactivate();
 
 		m_paintlyMaxStrokeLengthSlider = new Fl_Value_Slider(15, 240, 200, 20, "Max Stroke");
 		m_paintlyMaxStrokeLengthSlider->user_data((void*)(this));
@@ -1296,6 +1303,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMaxStrokeLengthSlider->value(16);
 		m_paintlyMaxStrokeLengthSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMaxStrokeLengthSlider->callback(cb_paintlyMaxStrokeLengthSlider);
+		m_paintlyMaxStrokeLengthSlider->deactivate();
 	
 		m_paintlyMinStrokeLengthSlider = new Fl_Value_Slider(15, 270, 200, 20, "Min Stroke");
 		m_paintlyMinStrokeLengthSlider->user_data((void*)(this));
@@ -1308,6 +1316,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyMinStrokeLengthSlider->value(4);
 		m_paintlyMinStrokeLengthSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyMinStrokeLengthSlider->callback(cb_paintlyMinStrokeLengthSlider);
+		m_paintlyMinStrokeLengthSlider->deactivate();
 
 		m_paintlyAlphaSlider = new Fl_Value_Slider(15, 300, 200, 20, "Alpha");
 		m_paintlyAlphaSlider->user_data((void*)(this));
@@ -1320,6 +1329,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyAlphaSlider->value(1);
 		m_paintlyAlphaSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyAlphaSlider->callback(cb_paintlyAlphaSlider);
+		m_paintlyAlphaSlider->deactivate();
 
 		m_paintlyLayersSlider = new Fl_Value_Slider(15, 330, 200, 20, "Layers");
 		m_paintlyLayersSlider->user_data((void*)(this));
@@ -1332,6 +1342,7 @@ ImpressionistUI::ImpressionistUI() {
 		m_paintlyLayersSlider->value(3);
 		m_paintlyLayersSlider->align(FL_ALIGN_RIGHT);
 		m_paintlyLayersSlider->callback(cb_paintlyLayersSlider);
+		m_paintlyLayersSlider->deactivate();
 
 		
 

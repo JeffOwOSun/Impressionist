@@ -55,7 +55,7 @@ void WarpBrush::BrushMove(const Point source, const Point target)
 		{
 			pDoc->SetPaintPixel(startX + i, startY + j, imagePatch + 3 * (j * 2 * effectiveRadius + i));
 		}
-	printf("warpped! displacement: %d %d center: %d %d radius: %d\n", displacement.x, displacement.y, target.x, target.y, effectiveRadius);
+	//printf("warpped! displacement: %d %d center: %d %d radius: %d\n", displacement.x, displacement.y, target.x, target.y, effectiveRadius);
 	delete[] imagePatch;
 	lastPoint = target;
 	pUI->m_paintView->RestoreContent();
