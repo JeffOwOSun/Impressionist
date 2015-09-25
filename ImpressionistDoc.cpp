@@ -138,6 +138,35 @@ void ImpressionistDoc::setBrushType(int type)
 /////////////////////////././././././/////////////////////////
 void ImpressionistDoc::setPaintlyStyle(int type)
 {
+	if (type != STYLE_CUSTOMIZE)
+	{
+		m_pUI->m_paintlyStrokeChoice->deactivate();
+		m_pUI->m_paintlyMaxBrushSizeSlider->deactivate();
+		m_pUI->m_paintlyMinBrushSizeSlider->deactivate();
+		m_pUI->m_paintlyGridSlider->deactivate();
+		m_pUI->m_paintlyCurvatureSlider->deactivate();
+		m_pUI->m_paintlyBlurSlider->deactivate();
+		m_pUI->m_paintlyMaxStrokeLengthSlider->deactivate();
+		m_pUI->m_paintlyMinStrokeLengthSlider->deactivate();
+		m_pUI->m_paintlyAlphaSlider->deactivate();
+		m_pUI->m_paintlyLayersSlider->deactivate();
+	}
+
+	if (type == STYLE_IMPRESSIONIST)
+	{
+		m_nPaintlyStrokeType = 1;
+		m_nPaintlyThreshold = 30;
+		m_nPaintlyMaxBrush = 8;
+		m_nPaintlyMinBrush = 2;
+		m_dPaintlyGrid = 1.0;
+		m_dPaintlyCurvature = 1.0;
+		m_dPaintlyBlur = 0.8;
+		m_nPaintlyMaxStroke = 8;
+		m_nPaintlyMinStroke = 4;
+		m_dPaintlyAlpha = 0.85;
+		m_nPaintlyLayers = 2;
+	}
+
 	m_nPaintlyStyleType = type;
 }
 

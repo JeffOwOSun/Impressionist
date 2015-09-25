@@ -12,6 +12,8 @@
 #include <FL/gl.h>
 #include <GL/glu.h>
 #include <stdlib.h>
+#include <vector>
+using namespace std;
 
 class ImpressionistDoc;
 class ImpressionistUI;

@@ -702,6 +702,7 @@ void ImpressionistUI::cb_paintlyAlphaSlider(Fl_Widget* o, void* v)
 	ImpressionistUI* pUI = ((ImpressionistUI *)(o->user_data()));
 	ImpressionistDoc* pDoc = pUI->getDocument();
 	double val = double(((Fl_Slider *)o)->value());
+	pUI->setAlpha(val*255);
 	pDoc->setPaintlyAlpha(val);
 }
 
