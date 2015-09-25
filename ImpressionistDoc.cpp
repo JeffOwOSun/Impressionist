@@ -43,6 +43,25 @@ m_ucAlphaBrush(NULL)
 
 	m_nWidth		= -1;
 
+	m_nPaintlyStyleType = 0;
+	m_nPaintlyStrokeType = 0;
+	m_nPaintlyThreshold = 100;
+	m_nPaintlyMaxBrush = 10;
+	m_nPaintlyMinBrush = 6;
+	m_nPaintlyMaxStroke = 16;
+	m_nPaintlyMinStroke = 4;
+	m_nPaintlyLayers = 3;
+
+	m_dPaintlyGrid = 1.0;
+	m_dPaintlyCurvature = 1.0;
+	m_dPaintlyBlur = 0.5;
+	m_dPaintlyAlpha = 1.0;
+	m_dPaintlyJr = 1.0;
+	m_dPaintlyJg = 1.0;
+	m_dPaintlyJb = 1.0;
+	m_dPaintlyJh = 1.0;
+	m_dPaintlyJs = 1.0;
+	m_dPaintlyJv = 1.0;
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -119,9 +138,250 @@ void ImpressionistDoc::setBrushType(int type)
 		m_pUI->m_BrushSizeSlider->activate();
 		m_pUI->m_BrushAlphaSlider->activate();
 	}
-	
+}
+/////////////////////////././././././/////////////////////////
+void ImpressionistDoc::setPaintlyStyle(int type)
+{
+	if (type != STYLE_CUSTOMIZE)
+	{
+		m_pUI->m_paintlyStrokeChoice->deactivate();
+		m_pUI->m_paintlyThresholdSlider->deactivate();
+		m_pUI->m_paintlyMaxBrushSizeSlider->deactivate();
+		m_pUI->m_paintlyMinBrushSizeSlider->deactivate();
+		m_pUI->m_paintlyGridSlider->deactivate();
+		m_pUI->m_paintlyCurvatureSlider->deactivate();
+		m_pUI->m_paintlyBlurSlider->deactivate();
+		m_pUI->m_paintlyMaxStrokeLengthSlider->deactivate();
+		m_pUI->m_paintlyMinStrokeLengthSlider->deactivate();
+		m_pUI->m_paintlyAlphaSlider->deactivate();
+		m_pUI->m_paintlyLayersSlider->deactivate();
+	}
+	else
+	{
+		setPaintlyStroke(0);
+		m_pUI->m_paintlyStrokeChoice->activate();
+		m_pUI->m_paintlyThresholdSlider->activate();
+		m_pUI->m_paintlyMaxBrushSizeSlider->activate();
+		m_pUI->m_paintlyMinBrushSizeSlider->activate();
+		m_pUI->m_paintlyGridSlider->activate();
+		m_pUI->m_paintlyCurvatureSlider->activate();
+		m_pUI->m_paintlyBlurSlider->activate();
+		m_pUI->m_paintlyMaxStrokeLengthSlider->activate();
+		m_pUI->m_paintlyMinStrokeLengthSlider->activate();
+		m_pUI->m_paintlyAlphaSlider->activate();
+		m_pUI->m_paintlyLayersSlider->activate();
+	}
+
+	if (type == STYLE_IMPRESSIONIST)
+	{
+		setPaintlyStroke(1);
+		setPaintlyThreshold(30);
+		m_nPaintlyMaxBrush = 8;
+		m_nPaintlyMinBrush = 2;
+		m_dPaintlyGrid = 1.0;
+		m_dPaintlyCurvature = 1.0;
+		m_dPaintlyBlur = 0.8;
+		m_nPaintlyMaxStroke = 8;
+		m_nPaintlyMinStroke = 4;
+		m_dPaintlyAlpha = 0.85;
+		m_nPaintlyLayers = 2;
+	}
+
+	if (type == STYLE_EXPRESSIONIST)
+	{
+		m_nPaintlyStrokeType = 1;
+		m_nPaintlyThreshold = 10;
+		m_nPaintlyMaxBrush = 7;
+		m_nPaintlyMinBrush = 3;
+		m_dPaintlyGrid = 1.0;
+		m_dPaintlyCurvature = 0.45;
+		m_dPaintlyBlur = 0.5;
+		m_nPaintlyMaxStroke = 20;
+		m_nPaintlyMinStroke = 12;
+		m_dPaintlyAlpha = 1.0;
+		m_nPaintlyLayers = 3;
+	}
+
+	m_nPaintlyStyleType = type;
 }
 
+int ImpressionistDoc::getPaintlyStyle()
+{
+	return m_nPaintlyStyleType;
+}
+
+void ImpressionistDoc::setPaintlyStroke(int type)
+{
+	m_nPaintlyStrokeType = type;
+}
+
+int ImpressionistDoc::getPaintlyStroke()
+{
+	return m_nPaintlyStrokeType;
+}
+
+void ImpressionistDoc::setPaintlyThreshold(int val)
+{
+	m_nPaintlyThreshold = val;
+}
+
+int ImpressionistDoc::getPaintlyThreshold()
+{
+	return m_nPaintlyThreshold;
+}
+
+
+int ImpressionistDoc::getPaintlyMaxBrush()
+{
+	return m_nPaintlyMaxBrush;
+}
+
+void ImpressionistDoc::setPaintlyMaxBrush(int val)
+{
+	m_nPaintlyMaxBrush = val;
+}
+
+int ImpressionistDoc::getPaintlyMinBrush()
+{
+	return m_nPaintlyMinBrush;
+}
+
+void ImpressionistDoc::setPaintlyMinBrush(int val)
+{
+	m_nPaintlyMinBrush = val;
+}
+
+double ImpressionistDoc::getPaintlyGrid()
+{
+	return m_dPaintlyGrid;
+}
+void ImpressionistDoc::setPaintlyGrid(double val)
+{
+	m_dPaintlyGrid = val;
+}
+
+double ImpressionistDoc::getPaintlyCurvature()
+{
+	return m_dPaintlyCurvature;
+}
+
+void ImpressionistDoc::setPaintlyCurvature(double val)
+{
+	m_dPaintlyCurvature = val;
+}
+
+double ImpressionistDoc::getPaintlyBlur()
+{
+	return m_dPaintlyBlur;
+}
+
+void ImpressionistDoc::setPaintlyBlur(double val)
+{
+	m_dPaintlyBlur = val;
+}
+
+int ImpressionistDoc::getPaintlyMaxStroke()
+{
+	return m_nPaintlyMaxStroke;
+}
+
+void ImpressionistDoc::setPaintlyMaxStroke(int val)
+{
+	m_nPaintlyMaxStroke = val;
+}
+
+int ImpressionistDoc::getPaintlyMinStroke()
+{
+	return m_nPaintlyMinStroke;
+}
+
+void ImpressionistDoc::setPaintlyMinStroke(int val)
+{
+	m_nPaintlyMinStroke = val;
+}
+
+double ImpressionistDoc::getPaintlyAlpha()
+{
+	return m_dPaintlyAlpha;
+}
+
+void ImpressionistDoc::setPaintlyAlpha(double val)
+{
+	m_dPaintlyAlpha = val;
+}
+
+int ImpressionistDoc::getPaintlyLayers()
+{
+	return m_nPaintlyLayers;
+}
+
+void ImpressionistDoc::setPaintlyLayers(int val)
+{
+	m_nPaintlyLayers = val;
+}
+
+double ImpressionistDoc::getPaintlyJr()
+{
+	return m_dPaintlyJr;
+}
+
+void ImpressionistDoc::setPaintlyJr(double val)
+{
+	m_dPaintlyJr = val;
+}
+
+double ImpressionistDoc::getPaintlyJg()
+{
+	return m_dPaintlyJg;
+}
+
+void ImpressionistDoc::setPaintlyJg(double val)
+{
+	m_dPaintlyJg = val;
+}
+
+double ImpressionistDoc::getPaintlyJb()
+{
+	return m_dPaintlyJb;
+}
+
+void ImpressionistDoc::setPaintlyJb(double val)
+{
+	m_dPaintlyJb = val;
+}
+
+double ImpressionistDoc::getPaintlyJh()
+{
+	return m_dPaintlyJr;
+}
+
+void ImpressionistDoc::setPaintlyJh(double val)
+{
+	m_dPaintlyJr = val;
+}
+
+double ImpressionistDoc::getPaintlyJs()
+{
+	return m_dPaintlyJg;
+}
+
+void ImpressionistDoc::setPaintlyJs(double val)
+{
+	m_dPaintlyJg = val;
+}
+
+double ImpressionistDoc::getPaintlyJv()
+{
+	return m_dPaintlyJb;
+}
+
+void ImpressionistDoc::setPaintlyJv(double val)
+{
+	m_dPaintlyJb = val;
+}
+
+
+///////////////////////////////////////////////////////////////
 void ImpressionistDoc::setStrokeDirectionType(int type)
 {
 	m_pUI->setStrokeDirection(type);
@@ -397,7 +657,7 @@ int ImpressionistDoc::loadDissolveImage(char* iname)
 	if (m_ucDissolve) delete[] m_ucDissolve;
 	m_ucDissolve = data;
 	
-	double dissolveRate = 0.5;
+	/*double dissolveRate = 0.5;
 	for (int row = 0; row < height; ++row)
 	{
 		for (int col = 0; col < width; ++col)
@@ -407,6 +667,23 @@ int ImpressionistDoc::loadDissolveImage(char* iname)
 				int pixel = (row*width + col) * 3 + channel;
 				m_ucBitmap[pixel] = ((double)m_ucBitmap[pixel] * (1 - dissolveRate)) + ((double)m_ucDissolve[pixel] * dissolveRate);
 			}
+		}
+	}*/
+
+
+	for (int row = 0; row < height; ++row)
+	{
+		for (int col = 0; col < width; ++col)
+		{
+			int p = rand() % 10;
+			int pixel = (row*width + col) * 3;
+			if (p > 5)
+			{
+				m_ucBitmap[pixel] = m_ucDissolve[pixel];
+				m_ucBitmap[pixel + 1] = m_ucDissolve[pixel + 1];
+				m_ucBitmap[pixel + 2] = m_ucDissolve[pixel + 2];
+			}
+
 		}
 	}
 
@@ -866,6 +1143,12 @@ void ImpressionistDoc::applyAutoPaint(ImpBrush* brush, int space, bool vary)
 		}
 		brush->BrushEnd(order.back(), order.back());
 	}
+}
+
+
+void ImpressionistDoc::applyPaintlyPaint()
+{
+	m_pUI->m_paintView->paintlyPaint();
 }
 
 // Generate Thumbnail Collage
