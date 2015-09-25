@@ -238,6 +238,7 @@ private:
 	static void	cb_paintlyJhSlider(Fl_Widget* o, void* v);
 	static void	cb_paintlyJsSlider(Fl_Widget* o, void* v);
 	static void	cb_paintlyJvSlider(Fl_Widget* o, void* v);
+	static void cb_start_collage(Fl_Menu_ *o, void * v);
 };
 
 #endif

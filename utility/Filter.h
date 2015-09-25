@@ -5,7 +5,6 @@
 #include<iostream>
 #include"FL/gl.h"
 #include"../ImpressionistDoc.h"
-using namespace std;
 //filters. Top line at bottom.
 extern GLint SobelX[9];
 extern GLint SobelY[9];
@@ -42,13 +41,13 @@ inline GLubyte filterIntensity(const GLubyte* const pixel, int num_channel=3)
  * \param source The source image. Assume single color
  */
 template<typename filterType, typename sourceType>
-inline GLint applyFilter(const filterType* filter, int filterW, int filterH, const sourceType* source, int sourceW, int sourceH, int x, int y)
+inline GLdouble applyFilter(const filterType* filter, int filterW, int filterH, const sourceType* source, int sourceW, int sourceH, int x, int y)
 {
 	//the origin of the convolution on source
 	int alignX = x - (filterW / 2);
 	int alignY = y - (filterH / 2);
 
-	int result = 0;
+	GLdouble result = 0;
 
 	for (int j = 0; j < filterH; ++j)
 	{
@@ -64,7 +63,7 @@ inline GLint applyFilter(const filterType* filter, int filterW, int filterH, con
 			//convert coordinate to index in 1D
 			int filterPos = j * filterW + i; //According to blue book, pixels are stored row-first
 			int sourcePos = y * sourceW + x;
-			result += (int) (filter[filterPos] * source[sourcePos]);
+			result += (GLdouble) (filter[filterPos] * source[sourcePos]);
 		}
 	}
 	return result;
